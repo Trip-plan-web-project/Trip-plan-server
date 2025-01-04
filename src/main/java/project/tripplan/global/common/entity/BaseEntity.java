@@ -1,4 +1,4 @@
-package project.tripplan.global.common;
+package project.tripplan.global.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
