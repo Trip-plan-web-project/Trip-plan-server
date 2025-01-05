@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @MappedSuperclass
@@ -17,8 +18,9 @@ public abstract class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false)
-    private LocalDateTime CreatedAt;
+
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LocalDateTime UpdatedAt;
+    private LocalDateTime updatedAt;
 }
