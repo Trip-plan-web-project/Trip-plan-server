@@ -13,6 +13,7 @@ import project.tripplan.global.common.entity.BaseEntity;
 @Builder
 public class PlanCategory extends BaseEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_category_id")
     private Long id;
 

@@ -19,6 +19,7 @@ public class PlanTransportationCategory {
     @JoinColumn(name = "transportation_category_id")
     private TransportationCategory transportationCategory;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")
     private Plan plan;

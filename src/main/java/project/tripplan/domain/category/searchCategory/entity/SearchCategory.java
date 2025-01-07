@@ -1,4 +1,4 @@
-package project.tripplan.domain.category.searchCategory.entity;
+package project.tripplan.domain.category.selfSearchCategory.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,11 +14,11 @@ import static jakarta.persistence.FetchType.LAZY;
 @Getter
 @Entity
 @Builder
-public class SearchCategory {
+public class SelfSearchCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "self_search_place_id")
+    @Column(name = "self_search_category_id")
     private Long id;
 
     private String name;
@@ -27,9 +27,9 @@ public class SearchCategory {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "parent_id")
-    private SearchCategory parent;
+    private SelfSearchCategory parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SearchCategory> children = new ArrayList<>();
+    private List<SelfSearchCategory> children = new ArrayList<>();
 
 }

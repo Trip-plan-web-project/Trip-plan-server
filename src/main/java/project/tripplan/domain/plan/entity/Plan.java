@@ -46,6 +46,7 @@ public class Plan {
     private LocalDate startDate;
 
     @Column(nullable = false)
+
     private LocalDate endDate;
 
     @OneToMany(mappedBy = "plan")
