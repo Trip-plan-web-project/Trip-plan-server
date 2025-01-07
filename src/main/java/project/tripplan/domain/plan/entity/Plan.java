@@ -50,18 +50,7 @@ public class Plan {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
-    private List<PlanLike> planLikes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
-    private List<Bookmark> bookmarks = new ArrayList<>();
-
     @OneToMany(mappedBy = "plan")
     private List<PlanDay> planDays = new ArrayList<>();
 
-    @OneToMany(mappedBy = "plan")
-    private List<PlanTransportationCategory> planTransportationCategories = new ArrayList<>();
-
-    @OneToMany(mappedBy = "plan")
-    private List<PlanSearchCategory> planSearchCategories = new ArrayList<>();
 }

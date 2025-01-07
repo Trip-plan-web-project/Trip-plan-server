@@ -2,7 +2,7 @@ package project.tripplan.domain.category.planCategory.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import project.tripplan.domain.category.planCategory.entity.enums.PlanCategoryName;
+import project.tripplan.domain.category.planCategory.enums.PlanCategoryName;
 import project.tripplan.global.common.entity.BaseEntity;
 
 

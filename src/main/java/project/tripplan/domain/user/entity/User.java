@@ -42,6 +42,4 @@ public class User extends BaseEntity {
 	@Column(columnDefinition = "TEXT")
 	private String image;
 
-	@OneToMany(mappedBy = "user")
-	private List<Plan> plans = new ArrayList<>();
 }
