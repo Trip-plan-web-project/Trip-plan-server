@@ -15,26 +15,29 @@ public class PlanDayDetail extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Key")
-    private String keyId;
+    @Column(name = "plan_day_detail_id")
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "plandetail_id")
+    @JoinColumn(name = "plan_day_id")
     private PlanDay planDay;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_category_id")
     private PlanCategory planCategory;
 
-    @Column(name = "order_index")
-    private Long orderIndex;
+    private int orderIndex;
 
-    @Column(name = "place_name")
+    @Column(nullable = false)
     private String placeName;
-    @Column(name = "street_address")
+
+    @Column(nullable = false)
     private String streetAddress;
 
+    @Column(nullable = false)
     private Double latitude;
+
+    @Column(nullable = false)
     private Double longitude;
 
 }

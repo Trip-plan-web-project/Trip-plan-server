@@ -14,8 +14,8 @@ public class TransportationCategory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "transport_category_id")
-    private Long transportCategoryId;
+    @Column(name = "transportation_category_id")
+    private Long id;
 
     @Enumerated(EnumType.STRING)
     private TransportationName name;

@@ -19,18 +19,19 @@ public class PlanDay extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "plandetail_id")
+    @Column(name = "plan_day_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "plan_id")
+    @JoinColumn(name = "plan_id")
     private Plan plan;
 
-    private Long day;
+    private int day;
 
+    @Column(nullable = false)
     private LocalDate date;
 
-    private Long cost;
+    private int cost;
 
     @OneToMany(mappedBy = "planDay")
     private List<PlanDayDetail> planDayDetails = new ArrayList<>();

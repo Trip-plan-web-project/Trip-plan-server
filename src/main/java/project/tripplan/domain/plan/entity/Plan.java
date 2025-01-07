@@ -18,36 +18,35 @@ import java.util.List;
 @Entity
 @Builder
 public class Plan {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_id")
-    private Long planId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "view_count")
     private Long viewCount;
 
-    private Long people;
+    private int people;
 
-    @Column(name = "image_url")
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     private PlanStatus status;
 
-    @Column(name = "total_cost")
+    @Column(nullable = false)
     private Long totalCost;
 
-    @Column(name = "start_date")
+    @Column(nullable = false)
     private LocalDate startDate;
 
-    @Column(name = "end_date")
+    @Column(nullable = false)
+
     private LocalDate endDate;
 
     @OneToMany(mappedBy = "plan")

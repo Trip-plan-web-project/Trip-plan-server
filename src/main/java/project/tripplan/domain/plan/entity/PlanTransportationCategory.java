@@ -10,15 +10,15 @@ import project.tripplan.domain.category.transportationCategory.entitiy.Transport
 @Entity
 @Builder
 public class PlanTransportationCategory {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Key")
-    private Long keyId;
+    @Column(name = "plan_transportation_category_id")
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "transport_category_id")
-    private TransportationCategory transportCategory;
+    @JoinColumn(name = "transportation_category_id")
+    private TransportationCategory transportationCategory;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id")
