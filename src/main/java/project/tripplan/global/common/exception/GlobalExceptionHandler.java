@@ -3,7 +3,7 @@ package project.tripplan.global.common.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import project.tripplan.global.code.ErrorCode;
+import project.tripplan.global.common.response.BaseResponseCode;
 import project.tripplan.global.common.response.BaseResponse;
 
 @Slf4j
@@ -21,9 +21,9 @@ public class GlobalExceptionHandler {
     public BaseResponse<?> handleCustomException(CustomException e) {
         log.error("[handleCustomException] : {}", e.getMessage(), e);
 
-        ErrorCode ec = e.getErrorCode();
+        BaseResponseCode ec = e.getBaseResponseCode();
         return new BaseResponse<>(
-                false,
+                ec.getStatus(),
                 ec.getCode(),
                 ec.getMessage(),
                 ec.getHttpStatus()
@@ -37,9 +37,9 @@ public class GlobalExceptionHandler {
     public BaseResponse<?> handleException(Exception e) {
         log.error("[handleException] : {}", e.getMessage(), e);
 
-        ErrorCode ec = ErrorCode.INTERNAL_SERVER_ERROR;
+        BaseResponseCode ec = BaseResponseCode.INTERNAL_SERVER_ERROR;
         return new BaseResponse<>(
-                false,
+                ec.getStatus(),
                 ec.getCode(),
                 ec.getMessage(),
                 ec.getHttpStatus()

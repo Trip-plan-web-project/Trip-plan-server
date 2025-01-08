@@ -11,8 +11,6 @@ public class BaseResponse<T> {
     // 성공(true) / 실패(false)
     private final boolean status;
 
-    // 에러 전용 코드 (성공시 JSON 응답에는 넣지 않음)
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private final Integer code;
 
     private final String message;
