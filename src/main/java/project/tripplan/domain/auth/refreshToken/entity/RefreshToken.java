@@ -1,4 +1,4 @@
-package project.tripplan.domain.refreshToken.entity;
+package project.tripplan.domain.auth.refreshToken.entity;
 
 import java.time.LocalDateTime;
 
@@ -36,5 +36,7 @@ public class RefreshToken extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	public void updateRefreshToken(String refreshToken) {this.refreshToken = refreshToken;}
+	public void updateRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
 }
