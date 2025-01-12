@@ -67,7 +67,7 @@ public class OAuthAttributes {
 	 */
 	public User toEntity(Provider provider, OAuth2UserInfo oauth2UserInfo) {
 		return User.builder()
-			.userRole(UserRole.ROLE_NORMAL)
+			.userRole(UserRole.NORMAL)
 			.socialId(oauth2UserInfo.getId())
 			.email(oauth2UserInfo.getEmail())
 			.nickname(oauth2UserInfo.getNickname())

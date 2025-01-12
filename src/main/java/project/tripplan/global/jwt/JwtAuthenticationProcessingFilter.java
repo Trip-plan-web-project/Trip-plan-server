@@ -1,9 +1,11 @@
 package project.tripplan.global.jwt;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -171,15 +173,21 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		// User 엔티티의 정보를 기반으로 UserDetails 객체 생성
 		UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
 			.username(user.getSocialId()) // 소셜 로그인에서는 socialId를 username으로 사용
+			.password("")
 			.roles(user.getUserRole().name())
 			.build();
 
 		// Authentication 객체 생성
 		Authentication authentication = new UsernamePasswordAuthenticationToken(
-			userDetailsUser,
+			user, // User 엔티티를 직접 principal로 설정
 			null,
-			userDetailsUser.getAuthorities() // 권한 정보 그대로 사용
+			authoritiesMapper.mapAuthorities(
+				Collections.singletonList(
+					new SimpleGrantedAuthority(user.getUserRole().name()) // userRole을 기반으로 권한 생성
+				)
+			)
 		);
+
 
 		// SecurityContextHolder에 인증 정보 설정
 		SecurityContextHolder.getContext().setAuthentication(authentication);
