@@ -33,6 +33,18 @@ public class PlanDay extends BaseEntity {
 
     private int cost;
 
-    @OneToMany(mappedBy = "planDay")
+    @Builder.Default
+    @OneToMany(mappedBy = "planDay", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanDayDetail> planDayDetails = new ArrayList<>();
+
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+
+
+    public void addPlanDayDetail(PlanDayDetail planDayDetail) {
+        planDayDetails.add(planDayDetail);
+        planDayDetail.setPlanDay(this);
+    }
 }

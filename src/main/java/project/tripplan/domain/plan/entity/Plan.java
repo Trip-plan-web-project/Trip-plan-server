@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Getter
 @Entity
 @Builder
@@ -32,6 +32,9 @@ public class Plan {
 
     private Long viewCount;
 
+    @Column(nullable = false)
+    private String subtitle;
+
     private int people;
 
     private String imageUrl;
@@ -46,10 +49,29 @@ public class Plan {
     private LocalDate startDate;
 
     @Column(nullable = false)
-
     private LocalDate endDate;
 
-    @OneToMany(mappedBy = "plan")
+
+    @Builder.Default
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlanDay> planDays = new ArrayList<>();
 
+    public Plan(User user, String title, int people, String imageUrl, PlanStatus status, Long totalCost) {
+        this.user = user;
+        this.title = title;
+        this.people = people;
+        this.imageUrl = imageUrl;
+        this.status = status;
+        this.totalCost = totalCost;
+    }
+
+    public void addPlanDay(PlanDay planDay) {
+        planDays.add(planDay);
+        planDay.setPlan(this);
+    }
+
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

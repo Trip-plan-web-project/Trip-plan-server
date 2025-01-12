@@ -2,8 +2,8 @@ package project.tripplan.domain.category.planCategory.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import project.tripplan.domain.category.planCategory.enums.PlanCategoryName;
 import project.tripplan.global.common.entity.BaseEntity;
+
 
 
 @AllArgsConstructor
@@ -11,15 +11,13 @@ import project.tripplan.global.common.entity.BaseEntity;
 @Getter
 @Entity
 @Builder
+@Table(name = "plan_category")
 public class PlanCategory extends BaseEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "plan_category_id")
-    private Long id;
+    @Column(name = "name", unique = true, nullable = false)
+    private String name;
 
-    @Enumerated(EnumType.STRING)
-    private PlanCategoryName name;
-
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String image;
 }

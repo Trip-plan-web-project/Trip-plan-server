@@ -2,7 +2,7 @@ package project.tripplan.domain.plan.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import project.tripplan.domain.category.searchCategory.entity.SearchCategory;
+import project.tripplan.domain.category.selfSearchCategory.entity.SelfSearchCategory;
 import project.tripplan.global.common.entity.BaseEntity;
 
 @AllArgsConstructor
@@ -23,6 +23,6 @@ public class PlanSearchCategory extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "self_search_place_id")
-    private SearchCategory searchCategory;
+    private SelfSearchCategory searchCategory;
 
 }
