@@ -17,23 +17,23 @@ public class PlanDayDetail extends BaseEntity {
     @Column(name = "plan_day_detail_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plan_day_id")
-    private PlanDay planDay;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "plan_day_id")
+	private PlanDay planDay;
 
     private int orderIndex;
 
-    @Column(nullable = false)
-    private String placeName;
+	@Column(nullable = false)
+	private String placeName;
 
-    @Column(nullable = false)
-    private String streetAddress;
+	@Column(nullable = false)
+	private String streetAddress;
 
-    @Column(nullable = false)
-    private Double latitude;
+	@Column(nullable = false)
+	private Double latitude;
 
-    @Column(nullable = false)
-    private Double longitude;
+	@Column(nullable = false)
+	private Double longitude;
 
     @Column(nullable = false)
     private String planCategoryName;

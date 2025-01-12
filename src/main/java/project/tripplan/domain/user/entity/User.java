@@ -26,6 +26,9 @@ public class User extends BaseEntity {
 	private Long id;
 
 	@Column(nullable = false)
+	private String socialId;
+
+	@Column(nullable = false)
 	private String email;
 
 	@Column(nullable = false)
