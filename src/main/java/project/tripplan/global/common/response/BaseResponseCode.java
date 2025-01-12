@@ -17,6 +17,9 @@ public enum BaseResponseCode {
 	ADD_BOOKMARK_SUCCESS(true, 1301, "해당 게시글이 즐겨찾기에 추가되었습니다.", HttpStatus.OK),
 	DELETE_BOOKMARK_SUCCESS(true,1302,"해당 게시글을 즐겨찾기에서 삭제하였습니다.", HttpStatus.OK),
 
+	//plan 1400 ~
+	ADD_PLAN_SUCCESS(true, 1401, "게시글이 생성되었습니다.", HttpStatus.OK),
+
 	/**
 	 * 2000 : request 오류
 	 */
