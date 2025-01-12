@@ -2,12 +2,15 @@ package project.tripplan.domain.plan.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import project.tripplan.domain.plan.dto.PlanDto;
 import project.tripplan.domain.plan.service.PlanService;
+import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.response.BaseResponse;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -22,9 +25,9 @@ public class PlanController {
     @PostMapping("/plans/new")
     public BaseResponse<?> createPlan(
             @RequestPart("thumbnail") MultipartFile thumbnail,
-            @RequestPart("plan") PlanDto planDto
+            @RequestPart("plan") PlanDto planDto,
+            @AuthenticationPrincipal User user
     ) throws IOException {
-
-        return new BaseResponse<>(BaseResponseCode.ADD_PLAN_SUCCESS, planService.savePlan(planDto, thumbnail));
+        return new BaseResponse<>(BaseResponseCode.ADD_PLAN_SUCCESS, planService.savePlan(user ,planDto, thumbnail));
     }
 }
