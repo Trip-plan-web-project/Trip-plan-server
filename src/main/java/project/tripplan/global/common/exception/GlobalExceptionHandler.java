@@ -1,12 +1,22 @@
 package project.tripplan.global.common.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import project.tripplan.global.common.response.BaseResponseCode;
 import project.tripplan.global.common.response.BaseResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
@@ -44,5 +54,29 @@ public class GlobalExceptionHandler {
 			responseCode,
 			null // 데이터가 없으므로 null
 		);
+	}
+
+
+	@ExceptionHandler(BindException.class)
+	public BaseResponse<?> bindException(BindException e) {
+		List<ErrorField> errorFields = new ArrayList<>();
+
+		for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+			errorFields.add(new ErrorField(fieldError.getField(), fieldError.getDefaultMessage()));
+		}
+
+		BaseResponseCode responseCode = BaseResponseCode.VALIDATION_FAILED;
+
+		return new BaseResponse<>(
+				responseCode,
+				errorFields
+		);
+	}
+
+	@Getter
+	@AllArgsConstructor
+	public static class ErrorField {
+		private Object value;
+		private String message;
 	}
 }
