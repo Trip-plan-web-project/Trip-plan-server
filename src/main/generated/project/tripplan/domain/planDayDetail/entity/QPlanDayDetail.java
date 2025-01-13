@@ -37,7 +37,7 @@ public class QPlanDayDetail extends EntityPathBase<PlanDayDetail> {
 
     public final StringPath placeName = createString("placeName");
 
-    public final project.tripplan.domain.category.planCategory.entity.QPlanCategory planCategory;
+    public final StringPath planCategoryName = createString("planCategoryName");
 
     public final project.tripplan.domain.planDay.entity.QPlanDay planDay;
 
@@ -64,7 +64,6 @@ public class QPlanDayDetail extends EntityPathBase<PlanDayDetail> {
 
     public QPlanDayDetail(Class<? extends PlanDayDetail> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.planCategory = inits.isInitialized("planCategory") ? new project.tripplan.domain.category.planCategory.entity.QPlanCategory(forProperty("planCategory")) : null;
         this.planDay = inits.isInitialized("planDay") ? new project.tripplan.domain.planDay.entity.QPlanDay(forProperty("planDay"), inits.get("planDay")) : null;
     }
 

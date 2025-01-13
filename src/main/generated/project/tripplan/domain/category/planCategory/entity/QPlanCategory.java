@@ -24,11 +24,9 @@ public class QPlanCategory extends EntityPathBase<PlanCategory> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
-    public final NumberPath<Long> id = createNumber("id", Long.class);
-
     public final StringPath image = createString("image");
 
-    public final EnumPath<project.tripplan.domain.category.planCategory.enums.PlanCategoryName> name = createEnum("name", project.tripplan.domain.category.planCategory.enums.PlanCategoryName.class);
+    public final StringPath name = createString("name");
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
