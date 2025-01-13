@@ -15,7 +15,7 @@ import project.tripplan.global.common.entity.BaseEntity;
 public class PlanCategory extends BaseEntity {
 
     @Id
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Column(columnDefinition = "TEXT", nullable = false)

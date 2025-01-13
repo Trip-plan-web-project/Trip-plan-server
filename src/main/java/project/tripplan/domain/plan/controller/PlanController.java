@@ -22,7 +22,7 @@ import java.io.IOException;
 public class PlanController {
 
     private final PlanService planService;
-    @PostMapping("/plans/new")
+    @PostMapping("/plans")
     public BaseResponse<?> createPlan(
             @RequestPart("thumbnail") MultipartFile thumbnail,
             @RequestPart("plan") PlanDto planDto,
