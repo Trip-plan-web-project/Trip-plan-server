@@ -13,6 +13,11 @@ public enum BaseResponseCode {
 	 * 1000 : 성공
 	 */
 
+	//comment 1200 ~
+	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),
+	DELETE_COMMENT_SUCCESS(true, 1202, "댓글을 삭제하였습니다.", HttpStatus.OK),
+	UPDATE_COMMENT_SUCCESS(true, 1203, "댓글을 수정하였습니다.", HttpStatus.OK),
+
 	//bookmark 1300 ~
 	ADD_BOOKMARK_SUCCESS(true, 1301, "해당 게시글이 즐겨찾기에 추가되었습니다.", HttpStatus.OK),
 	DELETE_BOOKMARK_SUCCESS(true,1302,"해당 게시글을 즐겨찾기에서 삭제하였습니다.", HttpStatus.OK),
@@ -36,6 +41,12 @@ public enum BaseResponseCode {
 	//plan 2100 ~
 	PLAN_NOT_EXIST(false, 2101, "존재하지 않는 게시글입니다.", HttpStatus.NOT_FOUND),
 	CATEGORY_NOT_EXIST(false,2002,"존재하지 않는 카테고리입니다.",HttpStatus.NOT_FOUND),
+<<<<<<< Updated upstream
+=======
+
+	//comment 2200 ~
+	COMMENT_NOT_EXIST(false, 2201, "존재하지 않는 댓글입니다.", HttpStatus.NOT_FOUND),
+>>>>>>> Stashed changes
 
 	//bookmark 2300 ~
 	BOOKMARK_NOT_EXIST(false,2301,"존재하지 않는 즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),

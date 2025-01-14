@@ -1,6 +1,7 @@
 package project.tripplan.domain.bookmark.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class BookmarkService {
 	private final PlanRespository planRespository;
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
 
+	@Transactional
 	public Long addBookmark(User user, Long planId) {
 		Plan findPlan = planRespository.findById(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
@@ -34,6 +36,7 @@ public class BookmarkService {
 		return bookmarkRepository.save(bookmark).getId();
 	}
 
+	@Transactional
 	public void deleteBookmark(User user, Long bookmarkId) {
 		Bookmark findBookmark = bookmarkRepositoryCustom.findByBookmarkIdWithUser(bookmarkId, user.getId())
 			.orElseThrow(() -> new CustomException(BaseResponseCode.BOOKMARK_NOT_EXIST));

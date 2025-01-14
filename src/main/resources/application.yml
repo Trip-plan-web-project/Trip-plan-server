@@ -73,10 +73,13 @@ jwt:
     expiration: 604800000 # 1주일 (1000ms * 60s * 60m * 24h * 7일)
     header: Authorization_refresh
 
+<<<<<<< Updated upstream
 
 file:
   dir: ${FILE_DIR}
 
+=======
+>>>>>>> Stashed changes
 cloud:
   aws:
     s3:
