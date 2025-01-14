@@ -76,3 +76,16 @@ jwt:
 
 file:
   dir: ${FILE_DIR}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${BUCKET_NAME}
+    credentials:
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_KEY}
+    region:
+      static: ap-southeast-2
+      auto: false
+    stack:
+      auto: false

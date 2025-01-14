@@ -45,11 +45,13 @@ public enum BaseResponseCode {
 	/**
 	 * 3000 : response 오류
 	 */
+	FILE_FORMAT_FAIL(false,3000,"잘못된 형식의 파일 입니다.",HttpStatus.BAD_REQUEST),
 
 	/**
 	 * 4000 : server 오류
 	 */
-	INTERNAL_SERVER_ERROR(false, 4001, "서버 오류입니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+	INTERNAL_SERVER_ERROR(false, 4001, "서버 오류입니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+	FILE_UPLOAD_ERROR(false,4002,"파일 업로드에 실패했습니다.",HttpStatus.INTERNAL_SERVER_ERROR);
 
 	private final Boolean status;
 	private final Integer code;
