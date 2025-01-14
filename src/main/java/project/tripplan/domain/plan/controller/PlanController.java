@@ -1,5 +1,6 @@
 package project.tripplan.domain.plan.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +26,7 @@ public class PlanController {
     @PostMapping("/plans")
     public BaseResponse<?> createPlan(
             @RequestPart("thumbnail") MultipartFile thumbnail,
-            @RequestPart("plan") PlanDto planDto,
+            @Valid @RequestPart("plan") PlanDto planDto,
             @AuthenticationPrincipal User user
     ) throws IOException {
         return new BaseResponse<>(BaseResponseCode.ADD_PLAN_SUCCESS, planService.savePlan(user ,planDto, thumbnail));

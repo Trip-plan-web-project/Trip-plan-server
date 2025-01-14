@@ -20,6 +20,8 @@ import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.planDay.entity.PlanDay;
 import project.tripplan.domain.planDayDetail.entity.PlanDayDetail;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.global.common.exception.CustomException;
+import project.tripplan.global.common.response.BaseResponseCode;
 
 import java.io.IOException;
 import java.util.List;
@@ -93,7 +95,7 @@ public class PlanService {
 
                         // 카테고리 이름이 존재하는지 검증
                         if (!planCategoryRepository.existsById(categoryName)) {
-                            throw new IllegalArgumentException("category name: " + categoryName + "없음");
+                            throw new CustomException(BaseResponseCode.CATEGORY_NOT_EXIST);
                         }
 
                         // PlanDayDetail 엔티티 생성

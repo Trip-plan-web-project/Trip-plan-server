@@ -21,7 +21,8 @@ public enum BaseResponseCode {
 	ADD_PLAN_SUCCESS(true, 1401, "게시글이 생성되었습니다.", HttpStatus.OK),
 
 	/**
-	 * 2000 : request 오류
+	 * 2000 ~ 2899: request 오류
+	 * 2900 ~ 3000: validation 오류
 	 */
 
 	//user 2000 ~
@@ -29,8 +30,12 @@ public enum BaseResponseCode {
 	REFRESHTOKEN_NOT_EXIST(false, 2002, "리프레시 토큰이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	INVALID_OAUTH2_REQUEST(false, 2003, "유효하지 않은 OAuth2 요청입니다.", HttpStatus.BAD_REQUEST),
 
+	//valid 2900 ~
+	VALIDATION_FAILED(false,2900,"Bind Exception",HttpStatus.BAD_REQUEST),
+
 	//plan 2100 ~
 	PLAN_NOT_EXIST(false, 2101, "존재하지 않는 게시글입니다.", HttpStatus.NOT_FOUND),
+	CATEGORY_NOT_EXIST(false,2002,"존재하지 않는 카테고리입니다.",HttpStatus.NOT_FOUND),
 
 	//bookmark 2300 ~
 	BOOKMARK_NOT_EXIST(false,2301,"존재하지 않는 즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
