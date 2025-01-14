@@ -13,8 +13,7 @@ import project.tripplan.domain.plan.dto.DetailDto;
 import project.tripplan.domain.plan.dto.PlanDto;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
-import project.tripplan.domain.plan.file.FileStore;
-import project.tripplan.domain.plan.file.UploadFile;
+import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepository;
 import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.planDay.entity.PlanDay;
@@ -38,7 +37,7 @@ public class PlanService {
     private final PlanCategoryRepository planCategoryRepository;
     private final PlaceCategoryRepository placeCategoryRepository;
     private final PlanPlaceCategoryRepository planPlaceCategoryRepository;
-    private final FileStore fileStore;
+    private final S3Service s3Service;
 
     /**
      * 계획 저장 메서드
@@ -71,8 +70,8 @@ public class PlanService {
 
         // 6) 마지막에 파일(썸네일) 저장
         if (thumbnail != null && !thumbnail.isEmpty()) {
-            UploadFile savedThumbnail = fileStore.storeFile(thumbnail);
-            savedPlan.setImageUrl(savedThumbnail.getStoreFileName());
+            String savedThumbnail = s3Service.uploadFile(thumbnail);
+            savedPlan.setImageUrl(savedThumbnail);
         }
 
         return true;
