@@ -28,7 +28,7 @@ public class User extends BaseEntity {
 	@Column(nullable = false)
 	private String socialId;
 
-	@Column(nullable = false)
+	@Column
 	private String email;
 
 	@Column(nullable = false)

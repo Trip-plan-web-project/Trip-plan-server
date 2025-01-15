@@ -51,8 +51,6 @@ public class JWTService {
 	 */
 	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
 	private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
-	private static final String EMAIL_CLAIM = "email";
-	private static final String PROVIDER_CLAIM = "provider";
 	private static final String BEARER = "Bearer ";
 
 	private final UserRepositoryCustom userRepositoryCustom;
@@ -62,13 +60,12 @@ public class JWTService {
 	/**
 	 * AccessToken 생성 메소드
 	 */
-	public String createAccessToken(String email, Provider provider) {
+	public String createAccessToken(String socialId) {
 		Date now = new Date();
 		String accessToken = JWT.create()
 			.withSubject(ACCESS_TOKEN_SUBJECT)
 			.withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
-			.withClaim(EMAIL_CLAIM, email)
-			.withClaim(PROVIDER_CLAIM, provider.name())
+			.withClaim("social_id", socialId)
 			.sign(Algorithm.HMAC512(secretKey));
 
 		log.info("accessToken 발급 완료");
@@ -136,36 +133,28 @@ public class JWTService {
 	}
 
 	/**
-	 * AccessToken에서 Email 추출
+	 * AccessToken에서 socialId 추출
 	 * 추출 전에 JWT.require()로 검증기 생성
 	 * verify로 AceessToken 검증 후
 	 * 유효하다면 getClaim()으로 이메일 추출
 	 * 유효하지 않다면 빈 Optional 객체 반환
 	 */
-	public Optional<Map<String, Object>> extractEmailAndProvider(String accessToken) {
+	public Optional<Map<String, Object>> extractSocialId(String accessToken) {
 		try {
 			// JWT 검증 및 클레임 추출
 			var decodedJWT = JWT.require(Algorithm.HMAC512(secretKey))
 				.build() // JWT Verifier 생성
 				.verify(accessToken); // accessToken 검증
 
-			// email과 provider 클레임 추출
-			String email = decodedJWT.getClaim(EMAIL_CLAIM).asString();
-			String providerString = decodedJWT.getClaim(PROVIDER_CLAIM).asString();
+			// socialId 추출
+			String socialId = decodedJWT.getClaim("social_id").asString();
 
-			if (email != null && providerString != null) {
-				try {
-					Provider provider = Provider.valueOf(providerString.toUpperCase()); // String -> Enum 변환
-					Map<String, Object> claims = new HashMap<>();
-					claims.put("email", email);
-					claims.put("provider", provider);
-					return Optional.of(claims);
-				} catch (IllegalArgumentException e) {
-					log.error("유효하지 않은 provider 값: {}", providerString);
-					return Optional.empty();
-				}
+			if (socialId != null) {
+				Map<String, Object> claims = new HashMap<>();
+				claims.put("social_id", socialId); // socialId를 클레임에 추가
+				return Optional.of(claims);
 			} else {
-				log.error("email 또는 provider 클레임이 존재하지 않습니다.");
+				log.error("social_id 클레임이 존재하지 않습니다.");
 				return Optional.empty();
 			}
 		} catch (Exception e) {
@@ -173,6 +162,7 @@ public class JWTService {
 			return Optional.empty();
 		}
 	}
+
 
 
 
@@ -193,9 +183,9 @@ public class JWTService {
 	/**
 	 * RefreshToken DB 저장(업데이트)
 	 */
-	public void updateRefreshToken(String email, Provider provider, String refreshToken) {
+	public void updateRefreshToken(String socialId, String refreshToken) {
 		// 사용자 조회
-		User findUser = userRepositoryCustom.findByEmailAndProvider(email, provider)
+		User findUser = userRepositoryCustom.findBySocialId(socialId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.USER_NOT_EXIST));
 
 		// 기존 RefreshToken 조회
