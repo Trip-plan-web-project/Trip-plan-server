@@ -13,7 +13,7 @@ import project.tripplan.domain.user.entity.QUser;
 
 @Repository
 @RequiredArgsConstructor
-public class RefreshTokenRepositoryImpl implements RefreshTokenRepositoryCustom {
+public class RefreshTokenRepositoryCustomImpl implements RefreshTokenRepositoryCustom {
 	private final JPAQueryFactory qf;
 	private final QRefreshToken rToken = QRefreshToken.refreshToken1;
 	private final QUser user = QUser.user;
