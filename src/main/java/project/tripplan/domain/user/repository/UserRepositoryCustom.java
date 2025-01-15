@@ -8,6 +8,5 @@ import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.enums.Provider;
 
 public interface UserRepositoryCustom {
-	Optional<User> findByEmailAndProvider(String email, Provider provider);
 	Optional<User> findBySocialId(String socialId);
 }

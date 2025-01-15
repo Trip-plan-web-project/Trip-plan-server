@@ -12,14 +12,12 @@ import project.tripplan.domain.user.enums.Provider;
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
 
-	private String email;
-	private Provider provider;
+	private String socialId;
 
 	public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
 		Map<String, Object> attributes, String nameAttributeKey,
-		String email, Provider provider) {
+		String socialId) {
 		super(authorities, attributes, nameAttributeKey);
-		this.email = email;
-		this.provider = provider;
+		this.socialId = socialId;
 	}
 }

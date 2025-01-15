@@ -18,17 +18,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	private final QUser user = QUser.user;
 
 	@Override
-	public Optional<User> findByEmailAndProvider(String email, Provider provider) {
-		return Optional.ofNullable(
-			qf.selectFrom(user)
-			.where(
-				user.email.eq(email),
-				user.provider.eq(provider)
-			).fetchOne()
-		);
-	}
-
-	@Override
 	public Optional<User> findBySocialId(String socialId) {
 		return Optional.ofNullable(
 			qf.selectFrom(user)

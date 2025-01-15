@@ -22,6 +22,11 @@ public class QPlan extends EntityPathBase<Plan> {
 
     public static final QPlan plan = new QPlan("plan");
 
+    public final project.tripplan.global.common.entity.QBaseEntity _super = new project.tripplan.global.common.entity.QBaseEntity(this);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
+
     public final DatePath<java.time.LocalDate> endDate = createDate("endDate", java.time.LocalDate.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -41,6 +46,9 @@ public class QPlan extends EntityPathBase<Plan> {
     public final StringPath title = createString("title");
 
     public final NumberPath<Long> totalCost = createNumber("totalCost", Long.class);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final project.tripplan.domain.user.entity.QUser user;
 

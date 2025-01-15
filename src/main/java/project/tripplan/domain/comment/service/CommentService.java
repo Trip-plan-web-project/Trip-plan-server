@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.tripplan.domain.comment.dto.CommentReqDto;
+import project.tripplan.domain.comment.dto.CommentReq;
 import project.tripplan.domain.comment.entity.Comment;
 import project.tripplan.domain.comment.repository.CommentRepository;
 import project.tripplan.domain.plan.entity.Plan;
@@ -23,14 +23,14 @@ public class CommentService {
 	private final PlanRepository planRepository;
 
 	@Transactional
-	public Long addComment(User user, Long planId, CommentReqDto commentReqDto) {
+	public Long addComment(User user, Long planId, CommentReq commentReq) {
 		Plan findPlan = planRepository.findById(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
 
 		Comment comment = Comment.builder()
 			.user(user)
 			.plan(findPlan)
-			.content(commentReqDto.getContent())
+			.content(commentReq.getContent())
 			.build();
 
 		return commentRepository.save(comment).getId();
@@ -45,11 +45,11 @@ public class CommentService {
 	}
 
 	@Transactional
-	public void updateComment(User user, Long commentId, CommentReqDto commentReqDto) {
+	public void updateComment(User user, Long commentId, CommentReq commentReq) {
 		Comment findComment = commentRepository.findById(commentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
 
-		findComment.updateComment(commentReqDto.getContent());
+		findComment.updateComment(commentReq.getContent());
 	}
 
 }

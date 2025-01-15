@@ -95,7 +95,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		String reIssuedRefreshToken = reIssueRefreshToken(user);
 
 		// Access Token 생성
-		String accessToken = jwtService.createAccessToken(user.getEmail(), user.getProvider());
+		String accessToken = jwtService.createAccessToken(user.getSocialId());
 
 		// Access Token과 Refresh Token을 응답 헤더에 설정
 		jwtService.sendAccessAndRefreshToken(response, accessToken, reIssuedRefreshToken);
@@ -137,16 +137,15 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 		jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
-			.ifPresent(accessToken -> jwtService.extractEmailAndProvider(accessToken)
+			.ifPresent(accessToken -> jwtService.extractSocialId(accessToken)
 				.ifPresent(claims -> {
-					String email = (String)claims.get("email");
-					Provider provider = (Provider)claims.get("provider");
-					log.info("Extracted email: {}, provider: {}", email, provider);
+					String socialId = (String)claims.get("social_id");
+					log.info("Extracted socialId : {}", socialId);
 
-					User findUser = userRepositoryCustom.findByEmailAndProvider(email, provider)
+					User findUser = userRepositoryCustom.findBySocialId(socialId)
 						.orElseThrow(() -> new CustomException(BaseResponseCode.USER_NOT_EXIST));
 
-					log.info("Found user for email: {} and provider: {}", email, provider);
+					log.info("Found user for socialId : {}", socialId);
 					saveAuthentication(findUser);
 				})
 			);

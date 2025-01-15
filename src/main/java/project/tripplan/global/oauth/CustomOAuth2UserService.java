@@ -66,8 +66,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 				Collections.singleton(new SimpleGrantedAuthority(createUser.getUserRole().toString())),
 				attributes,
 				extractAttributes.getNameAttributeKey(),
-				createUser.getEmail(),
-				createUser.getProvider()
+				createUser.getSocialId()
 			);
 
 		} catch (OAuth2AuthenticationException ex) {
@@ -96,11 +95,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	 */
 	private User getUser(OAuthAttributes attributes, Provider provider) {
 		log.info("getUser 메서드로 회원 조회 ");
-		Optional<User> findUser = userRepositoryCustom.findByEmailAndProvider(
-			attributes.getOauth2UserInfo().getEmail(), provider);
+
+		Optional<User> findUser = userRepositoryCustom.findBySocialId(attributes.getOauth2UserInfo().getId());
 
 		if (findUser.isPresent()) {
-			log.info("이미 존재하는 유저 검색 완료: {}", findUser.get().getEmail());
+			log.info("이미 존재하는 유저 검색 완료: {}", findUser.get().getNickname());
 			return findUser.get(); // 기존 유저 반환
 		} else {
 			log.info("해당 유저가 존재하지 않아 OAUTH2로 새로 회원을 저장합니다.");

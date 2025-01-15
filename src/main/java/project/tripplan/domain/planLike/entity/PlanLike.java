@@ -33,6 +33,6 @@ public class PlanLike extends BaseEntity {
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "plan")
+	@JoinColumn(name = "plan_id")
 	private Plan plan;
 }

@@ -9,7 +9,7 @@ import project.tripplan.domain.bookmark.entity.Bookmark;
 import project.tripplan.domain.bookmark.repository.BookmarkRepository;
 import project.tripplan.domain.bookmark.repository.BookmarkRepositoryCustom;
 import project.tripplan.domain.plan.entity.Plan;
-import project.tripplan.domain.plan.repository.PlanRespository;
+import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
@@ -20,12 +20,12 @@ import project.tripplan.global.common.response.BaseResponseCode;
 public class BookmarkService {
 
 	private final BookmarkRepository bookmarkRepository;
-	private final PlanRespository planRespository;
+	private final PlanRepository planRepository;
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
 
 	@Transactional
 	public Long addBookmark(User user, Long planId) {
-		Plan findPlan = planRespository.findById(planId)
+		Plan findPlan = planRepository.findById(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
 
 		Bookmark bookmark = Bookmark.builder()
