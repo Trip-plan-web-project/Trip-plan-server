@@ -1,13 +1,18 @@
 package project.tripplan.domain.plan.service;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import static project.tripplan.domain.plan.enums.PlanStatus.*;
 
+import java.io.IOException;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.category.placeCategory.entity.PlaceCategory;
 import project.tripplan.domain.category.placeCategory.repository.PlaceCategoryRepository;
 import project.tripplan.domain.category.planCategory.repository.PlanCategoryRepository;
@@ -15,6 +20,8 @@ import project.tripplan.domain.plan.dto.DayPlanDto;
 import project.tripplan.domain.plan.dto.DetailDto;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
 import project.tripplan.domain.plan.dto.PlanDto;
+import project.tripplan.domain.plan.dto.PlanSearchReq;
+import project.tripplan.domain.plan.dto.PlanSearchRes;
 import project.tripplan.domain.plan.dto.PlanStatusReq;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
@@ -31,11 +38,6 @@ import project.tripplan.domain.planLike.repository.PlanLikeRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
-
-import java.io.IOException;
-import java.util.List;
-
-import static project.tripplan.domain.plan.enums.PlanStatus.PUBLIC;
 
 @Service
 @RequiredArgsConstructor
@@ -247,5 +249,12 @@ public class PlanService {
 		planDetailRes.setTotalCost(placeCategory.getPlan().getTotalCost());
 
 		return planDetailRes;
+	}
+
+	@Transactional(readOnly = true)
+	public Page<PlanSearchRes> getPlanSearch(PlanSearchReq req) {
+
+		Page<Plan> planPage = planRepositoryCustom.searchPlan(req, req.toPageable());
+		return planPage.map(PlanSearchRes::new);
 	}
 }
