@@ -10,20 +10,22 @@ import lombok.Setter;
 @Setter
 public class PlanNoOffsetReq {
 
-	private int size = 10;          // 한 번에 가져올 개수 (default 10)
-	private String sortBy = "id"; // 정렬 기준 필드 ("createdAt", "viewCount", "id" 등)
-	private String direction = "DESC";   // 정렬 방향 ("ASC" / "DESC")
+	private int size;                  // 페이지 크기
+	private String sortBy;             // 정렬 기준 (예: "viewCount", "id")
+	private String direction;          // 정렬 방향 (예: "ASC", "DESC")
+	private String lastValue;          // 커서로 사용되는 기준 값 (예: viewCount)
+	private Long lastId;               // 커서로 사용되는 PK 값
 
-	// 검색 조건
-	private List<String> categoryNames;
-	private Integer day;
-	private String transportCategoryName;
-	private Integer people;
+	private List<CategoryNameDepthReq> categoryNames;
 
-	// ★ 무한 스크롤 커서 (직전 페이지의 마지막 레코드 정보)
-	// 예: 마지막 레코드의 정렬 필드 값 (createdAt, viewCount 등)
-	private String lastValue;  // String으로 받되, 변환이 필요할 수 있음 (예: DateTime이면 "2025-01-19T10:00:00")
-	private Long lastId;       // 마지막 레코드의 PK
+	private Integer day;               // 총 며칠 여행인지
+	private String transportCategoryName; // "CAR" or "PUBLIC_TRANSPORT"
+	private Integer people;            // 인원 수
 
-	private Set<Long> categoryIds; // Service에서 채움
+	// Service 단에서 세팅해서 Repository로 넘길 필드
+	private Set<Long> categoryIds;
+
+	public void setCategoryIds(Set<Long> categoryIds) {
+		this.categoryIds = categoryIds;
+	}
 }

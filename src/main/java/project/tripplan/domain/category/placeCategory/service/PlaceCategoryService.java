@@ -5,48 +5,104 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import project.tripplan.domain.category.placeCategory.entity.PlaceCategory;
 import project.tripplan.domain.category.placeCategory.repository.PlaceCategoryRepository;
+import project.tripplan.domain.plan.dto.CategoryNameDepthReq;
+import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
 
-@Service
 @RequiredArgsConstructor
+@Service
+@Transactional
 public class PlaceCategoryService {
 
 	private final PlaceCategoryRepository placeCategoryRepository;
 
-	/**
-	 * 예: categoryNames = ["안산시","서울시"]
-	 *    → DB에서 이름이 안산시 or 서울시 인 Category 찾기 (rootList)
-	 *    → 각 root의 모든 자식(후손)까지 ID를 수집
-	 */
-	public Set<Long> findAllDescendantCategoryIds(List<String> categoryNames) {
-		// 1) 이름 목록에 해당하는 카테고리(들) 조회
-		//    (부모 or 어떤 depth이든 이름이 정확히 일치하는 목록)
-		List<PlaceCategory> rootList = placeCategoryRepository.findByNameIn(categoryNames);
+	public PlaceCategory searchPlaceCategory(PlaceCategoryNamesReq req) {
+		// 1) parent 카테고리
+		PlaceCategory parentCategory = null;
+		if (hasText(req.getParent())) {
+			parentCategory = placeCategoryRepository.findByNameAndParent(req.getParent(), null);
 
-		// 2) 결과 ID를 담을 Set
-		Set<Long> resultIds = new HashSet<>();
-
-		// 3) 각 root에 대해 DFS/재귀로 자식까지 ID 수집
-		for (PlaceCategory root : rootList) {
-			collectAllChildren(root, resultIds);
+			// parentCategory가 없는 경우 생성
+			if (parentCategory == null) {
+				parentCategory = PlaceCategory.builder()
+					.name(req.getParent())
+					.depth(0)
+					.parent(null)
+					.build();
+				placeCategoryRepository.save(parentCategory);
+			}
 		}
 
-		return resultIds;
+		// 2) child 카테고리
+		if (hasText(req.getChild()) && parentCategory != null) {
+			PlaceCategory childCategory = placeCategoryRepository.findByNameAndParent(req.getChild(), parentCategory);
+
+			if (childCategory == null) {
+				childCategory = PlaceCategory.builder()
+					.name(req.getChild())
+					.depth(parentCategory.getDepth() + 1)
+					.parent(parentCategory)
+					.build();
+				placeCategoryRepository.save(childCategory);
+			}
+			// 자식이 있으면 자식을 최종 반환
+			return childCategory;
+		}
+
+		// 자식이 없으면 parentCategory 반환
+		return parentCategory;
+	}
+
+	private boolean hasText(String str) {
+		return str != null && !str.trim().isEmpty();
 	}
 
 	/**
-	 * root부터 시작해 모든 하위 노드(자식, 손자, ...)의 ID를 재귀로 수집
+	 * 요청에 있는 여러 categoryNames(depth 포함)를 순회하면서
+	 * - depth=0 => 해당 카테고리 + 모든 자손 ID
+	 * - depth>0 => 해당 카테고리 자신만
+	 * 결과를 하나의 Set에 담는다 => OR 조건
 	 */
-	private void collectAllChildren(PlaceCategory current, Set<Long> result) {
-		if (current == null)
-			return;
-		result.add(current.getId());
-		// children 필드에 자식들이 있다고 가정
-		for (PlaceCategory child : current.getChildren()) {
-			collectAllChildren(child, result);
+	public Set<Long> findAllDescendantCategoryIds(List<CategoryNameDepthReq> categoryNameDepthList) {
+		Set<Long> result = new HashSet<>();
+		if (categoryNameDepthList == null || categoryNameDepthList.isEmpty()) {
+			return result;
 		}
+
+		for (CategoryNameDepthReq req : categoryNameDepthList) {
+			// name, depth 로 카테고리 찾기 (직접 parent=null 조건 추가 등은 필요시 적용)
+			PlaceCategory category = placeCategoryRepository.findByNameAndDepth(req.getName(), req.getDepth());
+			if (category != null) {
+				if (req.getDepth() == 0) {
+					// depth=0 => 자손까지 포함
+					result.addAll(getDescendantIds(category));
+				} else {
+					// depth>=1 => 자기 자신만
+					result.add(category.getId());
+				}
+			}
+		}
+		return result;
+		// -> 중복이면 Set으로 합쳐지고, 최종적으로 in(...) 연산 시 OR
+	}
+
+	/**
+	 * 특정 카테고리(category) + 모든 하위 자손들의 id까지 재귀적으로 수집
+	 */
+	private Set<Long> getDescendantIds(PlaceCategory category) {
+		Set<Long> ids = new HashSet<>();
+		ids.add(category.getId());
+
+		// 자식 목록 조회
+		List<PlaceCategory> children = placeCategoryRepository.findByParent(category);
+		for (PlaceCategory child : children) {
+			ids.addAll(getDescendantIds(child));
+		}
+
+		return ids;
 	}
 }

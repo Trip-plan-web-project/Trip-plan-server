@@ -30,10 +30,10 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 	private final JPAQueryFactory qf;
 	private final QPlan plan = QPlan.plan;
 	private final QUser user = QUser.user;
-	private final QPlanTransportationCategory planTransportationCategory = QPlanTransportationCategory.planTransportationCategory;
 	private final QTransportationCategory transportationCategory = QTransportationCategory.transportationCategory;
 	private final QPlanPlaceCategory planPlaceCategory = QPlanPlaceCategory.planPlaceCategory;
 	private final QPlanTransportationCategory planTransport = QPlanTransportationCategory.planTransportationCategory;
+	private final QPlaceCategory placeCategory = QPlaceCategory.placeCategory;
 
 	@Override
 	public Optional<Plan> findByPlanIdWithUser(Long planId) {
@@ -47,45 +47,42 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 
 	@Override
 	public List<Plan> searchPlanNoOffset(PlanNoOffsetReq req) {
-		// 1) size+1
+		// (A) limit
 		int limit = req.getSize() + 1;
 
-		// 2) 검색 조건 (카테고리, day, people, transportCategoryName 등)
+		// (B) 필터링 조건
 		BooleanBuilder builder = buildSearchCondition(req);
 
-		// 3) 쿼리 생성 + 필요한 JOIN
+		// (C) 쿼리 생성 (중복 Plan 제거 위해 distinct)
 		JPAQuery<Plan> query = qf
-			.selectFrom(plan)
+			.selectDistinct(plan)
+			.from(plan)
 			.leftJoin(plan.planPlaceCategories, planPlaceCategory).fetchJoin()
-			.leftJoin(planPlaceCategory.placeCategory, QPlaceCategory.placeCategory).fetchJoin()
+			.leftJoin(planPlaceCategory.placeCategory, placeCategory).fetchJoin()
 			.leftJoin(plan.planTransportationCategories, planTransport).fetchJoin()
 			.leftJoin(planTransport.transportationCategory, transportationCategory).fetchJoin()
 			.where(builder);
 
-		// 4) 정렬/커서 처리
+		// (D) No-Offset 커서 처리 + ORDER BY
 		applyNoOffset(query, req);
 
-		// 5) limit
+		// (E) limit
 		query.limit(limit);
 
-		// 6) fetch
+		// (F) fetch
 		return query.fetch();
 	}
 
-	/**
-	 * 검색 조건 (카테고리, day, people, transportCategory)
-	 */
 	private BooleanBuilder buildSearchCondition(PlanNoOffsetReq req) {
 		BooleanBuilder builder = new BooleanBuilder();
 
-		// 1) categoryIds 가 있다면
+		// 1) 카테고리 ID in (OR 조건)
 		if (req.getCategoryIds() != null && !req.getCategoryIds().isEmpty()) {
-			builder.and(QPlaceCategory.placeCategory.id.in(req.getCategoryIds()));
+			builder.and(placeCategory.id.in(req.getCategoryIds()));
 		}
 
-		// day
+		// 2) day
 		if (req.getDay() != null && req.getDay() > 0) {
-			// DATEDIFF(endDate, startDate)+1 = day
 			builder.and(
 				Expressions.numberTemplate(Integer.class, "DATEDIFF({0}, {1})", plan.endDate, plan.startDate)
 					.add(1)
@@ -93,54 +90,54 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 			);
 		}
 
-		// transportCategoryName
+		// 3) 교통수단
 		if (req.getTransportCategoryName() != null && !req.getTransportCategoryName().isEmpty()) {
 			TransportationName enumValue = TransportationName.valueOf(req.getTransportCategoryName());
 			builder.and(transportationCategory.name.eq(enumValue));
 		}
 
-		// people
+		// 4) 인원
 		if (req.getPeople() != null && req.getPeople() > 0) {
 			builder.and(plan.people.eq(req.getPeople()));
 		}
 
-		// ★ 여기에서는 lastId( plan.id < lastId )는 적용 X
-		//   -> 정렬이 id일 때는 applyNoOffset()에서 처리.
-
 		return builder;
 	}
 
-	/**
-	 * 정렬/커서(No-Offset) 로직
-	 */
 	private void applyNoOffset(JPAQuery<Plan> query, PlanNoOffsetReq req) {
-		String sortBy = req.getSortBy() != null ? req.getSortBy().toLowerCase() : "id";
-		String direction = req.getDirection() != null ? req.getDirection().toUpperCase() : "DESC";
+		String sortBy = (req.getSortBy() != null) ? req.getSortBy() : "id";
+		String direction = (req.getDirection() != null) ? req.getDirection().toUpperCase() : "DESC";
 		String lastValue = req.getLastValue();
 		Long lastId = req.getLastId();
 
-		// (A) WHERE 커서 조건
+		// (A) 커서 조건
 		if (lastValue != null && lastId != null) {
 			switch (sortBy) {
 				case "viewCount":
 					long lastViewCount = Long.parseLong(lastValue);
 					if ("DESC".equals(direction)) {
+						// viewCount < lastViewCount OR (== and plan.id < lastId)
 						query.where(
 							plan.viewCount.lt(lastViewCount)
-								.or(plan.viewCount.eq(lastViewCount)
-									.and(plan.id.lt(lastId)))
+								.or(
+									plan.viewCount.eq(lastViewCount)
+										.and(plan.id.lt(lastId))
+								)
 						);
 					} else {
+						// viewCount > lastViewCount OR (== and plan.id > lastId)
 						query.where(
 							plan.viewCount.gt(lastViewCount)
-								.or(plan.viewCount.eq(lastViewCount)
-									.and(plan.id.gt(lastId)))
+								.or(
+									plan.viewCount.eq(lastViewCount)
+										.and(plan.id.gt(lastId))
+								)
 						);
 					}
 					break;
+
 				case "id":
 				default:
-					// id 정렬
 					long lastPk = Long.parseLong(lastValue);
 					if ("DESC".equals(direction)) {
 						query.where(plan.id.lt(lastPk));
@@ -155,11 +152,14 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		switch (sortBy) {
 			case "viewCount":
 				if ("DESC".equals(direction)) {
-					query.orderBy(plan.viewCount.desc());
+					// viewCount DESC, id DESC
+					query.orderBy(plan.viewCount.desc(), plan.id.desc());
 				} else {
-					query.orderBy(plan.viewCount.asc());
+					// viewCount ASC, id ASC
+					query.orderBy(plan.viewCount.asc(), plan.id.asc());
 				}
 				break;
+
 			case "id":
 			default:
 				if ("DESC".equals(direction)) {
@@ -170,4 +170,5 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 				break;
 		}
 	}
+
 }
