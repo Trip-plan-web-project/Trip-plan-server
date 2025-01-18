@@ -4,8 +4,8 @@ import static project.tripplan.domain.plan.enums.PlanStatus.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,12 +15,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.category.placeCategory.entity.PlaceCategory;
 import project.tripplan.domain.category.placeCategory.repository.PlaceCategoryRepository;
+import project.tripplan.domain.category.placeCategory.service.PlaceCategoryService;
 import project.tripplan.domain.category.planCategory.repository.PlanCategoryRepository;
 import project.tripplan.domain.plan.dto.DayPlanDto;
 import project.tripplan.domain.plan.dto.DetailDto;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
 import project.tripplan.domain.plan.dto.PlanDto;
-import project.tripplan.domain.plan.dto.PlanSearchReq;
+import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
+import project.tripplan.domain.plan.dto.PlanNoOffsetRes;
 import project.tripplan.domain.plan.dto.PlanSearchRes;
 import project.tripplan.domain.plan.dto.PlanStatusReq;
 import project.tripplan.domain.plan.entity.Plan;
@@ -54,6 +56,7 @@ public class PlanService {
 	private final PlanRepositoryCustom planRepositoryCustom;
 	private final PlanLikeRepositoryCustom planLikeRepositoryCustom;
 	private final S3Service s3Service;
+	private final PlaceCategoryService placeCategoryService;
 
 	/**
 	 * 계획 저장 메서드
@@ -252,9 +255,59 @@ public class PlanService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<PlanSearchRes> getPlanSearch(PlanSearchReq req) {
+	public PlanNoOffsetRes getPlanNoOffset(PlanNoOffsetReq req) {
 
-		Page<Plan> planPage = planRepositoryCustom.searchPlan(req, req.toPageable());
-		return planPage.map(PlanSearchRes::new);
+		// 1) categoryNames가 있는 경우, 자식까지 포함한 categoryIds 구하기
+		if (req.getCategoryNames() != null && !req.getCategoryNames().isEmpty()) {
+			Set<Long> allIds = placeCategoryService.findAllDescendantCategoryIds(req.getCategoryNames());
+			// 요청 DTO에 세팅 (나중에 Repository에서 사용)
+			req.setCategoryIds(allIds);
+		}
+
+		// 1) DB 조회 (size+1 개)
+		List<Plan> rawList = planRepositoryCustom.searchPlanNoOffset(req);
+
+		// 2) hasNext (size 이상이면 다음 페이지 존재)
+		boolean hasNext = false;
+		if (rawList.size() > req.getSize()) {
+			hasNext = true;
+		}
+
+		// 3) 실제 반환 목록 (size까지만)
+		List<Plan> content = hasNext ? rawList.subList(0, req.getSize()) : rawList;
+
+		// 4) nextValue, nextId
+		String nextValue = null;
+		Long nextId = null;
+		if (!content.isEmpty()) {
+			Plan lastPlan = content.get(content.size() - 1);
+
+			// 정렬 기준별로 lastValue 계산
+			switch (req.getSortBy()) {
+				case "viewCount":
+					nextValue = String.valueOf(lastPlan.getViewCount());
+					break;
+				case "id":
+				default:
+					// id 만으로 정렬이거나, 지정 안 된 경우
+					nextValue = String.valueOf(lastPlan.getId());
+					break;
+			}
+			nextId = lastPlan.getId();
+		}
+
+		// 5) DTO 변환
+		List<PlanSearchRes> plans = content.stream()
+			.map(PlanSearchRes::new)
+			.toList();
+
+		// 6) 응답 구성
+		PlanNoOffsetRes response = new PlanNoOffsetRes();
+		response.setPlans(plans);
+		response.setHasNext(hasNext);
+		response.setNextValue(nextValue);
+		response.setNextId(nextId);
+
+		return response;
 	}
 }

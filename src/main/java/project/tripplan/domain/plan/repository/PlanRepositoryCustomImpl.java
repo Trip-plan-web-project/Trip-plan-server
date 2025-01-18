@@ -3,10 +3,6 @@ package project.tripplan.domain.plan.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
@@ -19,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.category.placeCategory.entity.QPlaceCategory;
 import project.tripplan.domain.category.transportationCategory.entitiy.QTransportationCategory;
 import project.tripplan.domain.category.transportationCategory.enums.TransportationName;
-import project.tripplan.domain.plan.dto.PlanSearchReq;
+import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.plan.entity.QPlanPlaceCategory;
@@ -37,6 +33,7 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 	private final QPlanTransportationCategory planTransportationCategory = QPlanTransportationCategory.planTransportationCategory;
 	private final QTransportationCategory transportationCategory = QTransportationCategory.transportationCategory;
 	private final QPlanPlaceCategory planPlaceCategory = QPlanPlaceCategory.planPlaceCategory;
+	private final QPlanTransportationCategory planTransport = QPlanTransportationCategory.planTransportationCategory;
 
 	@Override
 	public Optional<Plan> findByPlanIdWithUser(Long planId) {
@@ -45,104 +42,132 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 			qf.selectFrom(plan)
 				.join(plan.user, user).fetchJoin()
 				.where(plan.id.eq(planId))
-				.fetchOne()
-		);
+				.fetchOne());
 	}
 
 	@Override
-	public Page<Plan> searchPlan(PlanSearchReq req, Pageable pageable) {
+	public List<Plan> searchPlanNoOffset(PlanNoOffsetReq req) {
+		// 1) size+1
+		int limit = req.getSize() + 1;
 
+		// 2) 검색 조건 (카테고리, day, people, transportCategoryName 등)
 		BooleanBuilder builder = buildSearchCondition(req);
 
-		// 조회용 쿼리
-		JPAQuery<Plan> contentQuery = qf
+		// 3) 쿼리 생성 + 필요한 JOIN
+		JPAQuery<Plan> query = qf
 			.selectFrom(plan)
-			.leftJoin(plan.planTransportationCategories, planTransportationCategory).fetchJoin()
-			.leftJoin(planTransportationCategory.transportationCategory, transportationCategory).fetchJoin()
 			.leftJoin(plan.planPlaceCategories, planPlaceCategory).fetchJoin()
 			.leftJoin(planPlaceCategory.placeCategory, QPlaceCategory.placeCategory).fetchJoin()
+			.leftJoin(plan.planTransportationCategories, planTransport).fetchJoin()
+			.leftJoin(planTransport.transportationCategory, transportationCategory).fetchJoin()
 			.where(builder);
 
-		// 정렬
-		applySorting(contentQuery, pageable);
+		// 4) 정렬/커서 처리
+		applyNoOffset(query, req);
 
-		// 페이징
-		List<Plan> content = contentQuery
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
+		// 5) limit
+		query.limit(limit);
 
-		// count 쿼리
-		long totalCount = qf
-			.select(plan.count())
-			.from(plan)
-			.leftJoin(plan.planTransportationCategories, planTransportationCategory)
-			.leftJoin(planTransportationCategory.transportationCategory, transportationCategory)
-			.leftJoin(plan.planPlaceCategories, planPlaceCategory)
-			.leftJoin(planPlaceCategory.placeCategory, QPlaceCategory.placeCategory)
-			.where(builder)
-			.fetchOne();
-
-		return new PageImpl<>(content, pageable, totalCount);
+		// 6) fetch
+		return query.fetch();
 	}
 
-	private BooleanBuilder buildSearchCondition(PlanSearchReq req) {
+	/**
+	 * 검색 조건 (카테고리, day, people, transportCategory)
+	 */
+	private BooleanBuilder buildSearchCondition(PlanNoOffsetReq req) {
 		BooleanBuilder builder = new BooleanBuilder();
-		categoryNameEq(req, builder);
-		dayEq(req, builder);
-		transportCategoryNameEq(req, builder);
-		peopleEq(req, builder);
-		return builder;
-	}
 
-	private void peopleEq(PlanSearchReq req, BooleanBuilder builder) {
-		if (req.getPeople() != null && req.getPeople() > 0) {
-			builder.and(plan.people.eq(req.getPeople()));
+		// 1) categoryIds 가 있다면
+		if (req.getCategoryIds() != null && !req.getCategoryIds().isEmpty()) {
+			builder.and(QPlaceCategory.placeCategory.id.in(req.getCategoryIds()));
 		}
-	}
 
-	private void transportCategoryNameEq(PlanSearchReq req, BooleanBuilder builder) {
-		if (req.getTransportCategoryName() != null && !req.getTransportCategoryName().isEmpty()) {
-			TransportationName enumValue = TransportationName.valueOf(req.getTransportCategoryName());
-			builder.and(transportationCategory.name.eq(enumValue));
-		}
-	}
-
-	private void dayEq(PlanSearchReq req, BooleanBuilder builder) {
+		// day
 		if (req.getDay() != null && req.getDay() > 0) {
+			// DATEDIFF(endDate, startDate)+1 = day
 			builder.and(
 				Expressions.numberTemplate(Integer.class, "DATEDIFF({0}, {1})", plan.endDate, plan.startDate)
 					.add(1)
 					.eq(req.getDay())
 			);
 		}
-	}
 
-	private static void categoryNameEq(PlanSearchReq req, BooleanBuilder builder) {
-		if (req.getCategoryNames() != null && !req.getCategoryNames().isEmpty()) {
-			builder.and(QPlaceCategory.placeCategory.name.in(req.getCategoryNames()));
+		// transportCategoryName
+		if (req.getTransportCategoryName() != null && !req.getTransportCategoryName().isEmpty()) {
+			TransportationName enumValue = TransportationName.valueOf(req.getTransportCategoryName());
+			builder.and(transportationCategory.name.eq(enumValue));
 		}
+
+		// people
+		if (req.getPeople() != null && req.getPeople() > 0) {
+			builder.and(plan.people.eq(req.getPeople()));
+		}
+
+		// ★ 여기에서는 lastId( plan.id < lastId )는 적용 X
+		//   -> 정렬이 id일 때는 applyNoOffset()에서 처리.
+
+		return builder;
 	}
 
-	private void applySorting(JPAQuery<Plan> contentQuery, Pageable pageable) {
-		for (Sort.Order order : pageable.getSort()) {
-			String property = order.getProperty();
-			boolean asc = order.isAscending();
+	/**
+	 * 정렬/커서(No-Offset) 로직
+	 */
+	private void applyNoOffset(JPAQuery<Plan> query, PlanNoOffsetReq req) {
+		String sortBy = req.getSortBy() != null ? req.getSortBy().toLowerCase() : "id";
+		String direction = req.getDirection() != null ? req.getDirection().toUpperCase() : "DESC";
+		String lastValue = req.getLastValue();
+		Long lastId = req.getLastId();
 
-			switch (property) {
-				case "title":
-					contentQuery.orderBy(asc ? plan.title.asc() : plan.title.desc());
-					break;
+		// (A) WHERE 커서 조건
+		if (lastValue != null && lastId != null) {
+			switch (sortBy) {
 				case "viewCount":
-					contentQuery.orderBy(asc ? plan.viewCount.asc() : plan.viewCount.desc());
+					long lastViewCount = Long.parseLong(lastValue);
+					if ("DESC".equals(direction)) {
+						query.where(
+							plan.viewCount.lt(lastViewCount)
+								.or(plan.viewCount.eq(lastViewCount)
+									.and(plan.id.lt(lastId)))
+						);
+					} else {
+						query.where(
+							plan.viewCount.gt(lastViewCount)
+								.or(plan.viewCount.eq(lastViewCount)
+									.and(plan.id.gt(lastId)))
+						);
+					}
 					break;
-				case "people":
-					contentQuery.orderBy(asc ? plan.people.asc() : plan.people.desc());
-					break;
+				case "id":
 				default:
-					contentQuery.orderBy(asc ? plan.id.asc() : plan.id.desc());
+					// id 정렬
+					long lastPk = Long.parseLong(lastValue);
+					if ("DESC".equals(direction)) {
+						query.where(plan.id.lt(lastPk));
+					} else {
+						query.where(plan.id.gt(lastPk));
+					}
 					break;
 			}
+		}
+
+		// (B) ORDER BY
+		switch (sortBy) {
+			case "viewCount":
+				if ("DESC".equals(direction)) {
+					query.orderBy(plan.viewCount.desc());
+				} else {
+					query.orderBy(plan.viewCount.asc());
+				}
+				break;
+			case "id":
+			default:
+				if ("DESC".equals(direction)) {
+					query.orderBy(plan.id.desc());
+				} else {
+					query.orderBy(plan.id.asc());
+				}
+				break;
 		}
 	}
 }

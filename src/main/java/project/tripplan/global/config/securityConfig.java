@@ -11,9 +11,6 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +54,7 @@ public class securityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/home", "/search/**", "/users/signin/**", "/login").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
+				.requestMatchers(("/plans/**")).permitAll()
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);

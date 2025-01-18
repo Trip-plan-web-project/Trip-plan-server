@@ -89,4 +89,10 @@ public class Plan extends BaseEntity {
 		this.status = status;
 	}
 
+	public String getFirstTransportCategoryName() {
+		return planTransportationCategories.stream()
+			.findFirst()  // Optional<PlanTransportationCategory>
+			.map(ptc -> ptc.getTransportationCategory().getName().toString())
+			.orElse(null); // 없으면 null
+	}
 }

@@ -24,10 +24,14 @@ public class PlanSearchRes {
 		this.planId = plan.getId();
 		this.title = plan.getTitle();
 		this.image = plan.getImageUrl();
+		this.transportCategoryName = plan.getFirstTransportCategoryName();
 		this.startDate = plan.getStartDate();
 		this.endDate = plan.getEndDate();
 		this.people = plan.getPeople();
 		this.totalCost = plan.getTotalCost();
+		this.category = plan.getPlanPlaceCategories().stream()
+			.map(ppc -> ppc.getPlaceCategory().getName())
+			.toList();
 	}
 
 }

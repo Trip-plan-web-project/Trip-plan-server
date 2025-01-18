@@ -2,7 +2,6 @@ package project.tripplan.domain.plan.controller;
 
 import java.io.IOException;
 
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,8 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
 import project.tripplan.domain.plan.dto.PlanDto;
-import project.tripplan.domain.plan.dto.PlanSearchReq;
-import project.tripplan.domain.plan.dto.PlanSearchRes;
+import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
+import project.tripplan.domain.plan.dto.PlanNoOffsetRes;
 import project.tripplan.domain.plan.dto.PlanStatusReq;
 import project.tripplan.domain.plan.service.PlanService;
 import project.tripplan.domain.user.entity.User;
@@ -57,11 +56,8 @@ public class PlanController {
 			planService.getPlanInfoDetails(user, planId));
 	}
 
-	@GetMapping("/plans/search")
-	public BaseResponse<Page<PlanSearchRes>> getPlanSearch(@RequestBody PlanSearchReq planSearchReq
-	) {
-		return new BaseResponse<>(BaseResponseCode.GET_PLAN_SEARCH_INFO_SUCCESS,
-			planService.getPlanSearch(planSearchReq));
+	@PostMapping("/plans/no-offset")
+	public PlanNoOffsetRes getPlans(@RequestBody PlanNoOffsetReq req) {
+		return planService.getPlanNoOffset(req);
 	}
-
 }
