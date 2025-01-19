@@ -57,7 +57,7 @@ public class OAuthAttributes {
 	private static OAuthAttributes ofNaver(String userNameAttributeName, Map<String, Object> attributes) {
 		return OAuthAttributes.builder()
 			.nameAttributeKey(userNameAttributeName)
-			.oauth2UserInfo(new KakaoOAuth2UserInfo(attributes))
+			.oauth2UserInfo(new NaverOAuth2UserInfo(attributes))
 			.build();
 	}
 
@@ -69,7 +69,6 @@ public class OAuthAttributes {
 		return User.builder()
 			.userRole(UserRole.NORMAL)
 			.socialId(oauth2UserInfo.getId())
-			.email(oauth2UserInfo.getEmail())
 			.nickname(oauth2UserInfo.getNickname())
 			.provider(provider)
 			.build();

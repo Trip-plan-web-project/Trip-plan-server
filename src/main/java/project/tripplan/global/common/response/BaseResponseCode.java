@@ -26,6 +26,7 @@ public enum BaseResponseCode {
 	ADD_PLAN_SUCCESS(true, 1401, "게시글이 생성되었습니다.", HttpStatus.OK),
 	UPDATE_PLAN_STATUS_SUCCESS(true, 1402, "게시글 상태가 변경되었습니다.", HttpStatus.OK),
 	GET_PLAN_DETAIL_INFO_SUCCESS(true, 1403, "계획글 상세페이지(여행정보) 불러오기에 성공했습니다.", HttpStatus.OK),
+	GET_PLAN_DETAIL_DAY_SUCCESS(true, 1404, "해당 일차 동선을 불러오는데 성공했습니다.", HttpStatus.OK),
 	GET_PLAN_SEARCH_INFO_SUCCESS(true, 1405, "계획글 검색 불러오기에 성공했습니다.", HttpStatus.OK),
 	GET_PLAN_SEARCH_CONDITION_SUCCESS(true, 1406, "계획글 조건 검색 불러오기에 성공했습니다.", HttpStatus.OK),
 
@@ -39,12 +40,10 @@ public enum BaseResponseCode {
 	REFRESHTOKEN_NOT_EXIST(false, 2002, "리프레시 토큰이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	INVALID_OAUTH2_REQUEST(false, 2003, "유효하지 않은 OAuth2 요청입니다.", HttpStatus.BAD_REQUEST),
 
-	//valid 2900 ~
-	VALIDATION_FAILED(false, 2900, "Bind Exception", HttpStatus.BAD_REQUEST),
-
-	//plan 2100 ~
+	//plan 2100 ~,
 	PLAN_NOT_EXIST(false, 2101, "존재하지 않는 게시글입니다.", HttpStatus.NOT_FOUND),
 	CATEGORY_NOT_EXIST(false, 2002, "존재하지 않는 카테고리입니다.", HttpStatus.NOT_FOUND),
+	PLAN_DAY_DETAIL_NOT_EXIST(false, 2003, "해당 일차의 상세정보가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 
 	//comment 2200 ~
 	COMMENT_NOT_EXIST(false, 2201, "존재하지 않는 댓글입니다.", HttpStatus.NOT_FOUND),
@@ -56,6 +55,9 @@ public enum BaseResponseCode {
 	//planPlace & planTrans & planCategory 2400 ~
 	GET_PLAN_PLACE_FAIL(false, 2401, "해당 게시글의 장소 카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	GET_PLAN_TRANS_FAIL(false, 2402, "해당 게시글의 교통수단을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+	//valid 2900 ~
+	VALIDATION_FAILED(false, 2900, "Bind Exception", HttpStatus.BAD_REQUEST),
 
 	/**
 	 * 3000 : response 오류

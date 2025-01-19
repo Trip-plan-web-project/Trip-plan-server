@@ -1,5 +1,7 @@
 package project.tripplan.global.config;
 
+import java.util.Collections;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +13,8 @@ import org.springframework.security.config.annotation.web.configurers.CsrfConfig
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +31,7 @@ import project.tripplan.global.oauth.OAuth2LoginSuccessHandler;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class securityConfig {
+public class SecurityConfig {
 	private final JWTService jwtService;
 	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
@@ -39,6 +43,7 @@ public class securityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
+			.cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
 			.csrf(CsrfConfigurer::disable)
 			.formLogin(auth -> auth.disable())
 			.httpBasic(auth -> auth.disable())
@@ -52,12 +57,23 @@ public class securityConfig {
 				.failureHandler(oAuth2LoginFailureHandler)
 			)
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/home", "/search/**", "/users/signin/**", "/login").permitAll()
+				.requestMatchers("/home", "/search/**", "/users/signin/**", "/login/**", "/test").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
+	}
+
+	CorsConfigurationSource corsConfigurationSource() {
+		return request -> {
+			CorsConfiguration config = new CorsConfiguration();
+			config.setAllowedHeaders(Collections.singletonList("*"));
+			config.setAllowedMethods(Collections.singletonList("*"));
+			config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); // 허용할 origin
+			config.setAllowCredentials(true);
+			return config;
+		};
 	}
 
 	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
