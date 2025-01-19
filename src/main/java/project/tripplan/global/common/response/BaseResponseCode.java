@@ -39,6 +39,7 @@ public enum BaseResponseCode {
 	USER_NOT_EXIST(false, 2001, "존재하지 않는 회원입니다.", HttpStatus.NOT_FOUND),
 	REFRESHTOKEN_NOT_EXIST(false, 2002, "리프레시 토큰이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	INVALID_OAUTH2_REQUEST(false, 2003, "유효하지 않은 OAuth2 요청입니다.", HttpStatus.BAD_REQUEST),
+	USER_GET_SUCCESS(false, 2004, "회원 정보 가져오기에 성공했습니다.", HttpStatus.BAD_REQUEST),
 
 	//plan 2100 ~,
 	PLAN_NOT_EXIST(false, 2101, "존재하지 않는 게시글입니다.", HttpStatus.NOT_FOUND),
