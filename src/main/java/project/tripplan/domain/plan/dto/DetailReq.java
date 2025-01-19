@@ -16,6 +16,6 @@ public class DetailReq {
 	private double latitude;
 	@NotNull
 	private double longitude;
-	@NotEmpty
-	private String planCategoryName;
+	@NotNull
+	private Long planCategoryNameId;
 }

@@ -4,6 +4,8 @@ import static project.tripplan.domain.plan.enums.PlanStatus.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.category.placeCategory.entity.PlaceCategory;
 import project.tripplan.domain.category.placeCategory.service.PlaceCategoryService;
+import project.tripplan.domain.category.planCategory.entity.PlanCategory;
 import project.tripplan.domain.category.planCategory.repository.PlanCategoryRepository;
 import project.tripplan.domain.category.transportationCategory.entitiy.TransportationCategory;
 import project.tripplan.domain.category.transportationCategory.enums.TransportationName;
@@ -130,10 +133,11 @@ public class PlanService {
 				// PlanDayDetail 생성 및 카테고리 이름 추가
 				if (dayPlanDto.getDetail() != null && !dayPlanDto.getDetail().isEmpty()) {
 					for (DetailReq detailDto : dayPlanDto.getDetail()) {
-						String categoryName = detailDto.getPlanCategoryName();
+						Optional<PlanCategory> planCategory = planCategoryRepository.findById(
+							detailDto.getPlanCategoryNameId());
 
 						// 카테고리 이름이 존재하는지 검증
-						if (!planCategoryRepository.existsById(categoryName)) {
+						if (planCategory.isEmpty()) {
 							throw new CustomException(BaseResponseCode.CATEGORY_NOT_EXIST);
 						}
 
@@ -141,12 +145,11 @@ public class PlanService {
 						PlanDayDetail planDayDetail = PlanDayDetail.builder()
 							.orderIndex(detailDto.getOrder())
 							.placeName(detailDto.getPlace())
-							.planCategoryName(detailDto.getPlanCategoryName())
 							.streetAddress(detailDto.getStreetAddress())
 							.latitude(detailDto.getLatitude())
 							.longitude(detailDto.getLongitude())
+							.planCategory(planCategory.get())
 							.build();
-
 						// PlanDay에 PlanDayDetail 추가
 						planDay.addPlanDayDetail(planDayDetail);
 					}
