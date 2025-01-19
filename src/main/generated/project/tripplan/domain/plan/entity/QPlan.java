@@ -37,6 +37,10 @@ public class QPlan extends EntityPathBase<Plan> {
 
     public final ListPath<project.tripplan.domain.planDay.entity.PlanDay, project.tripplan.domain.planDay.entity.QPlanDay> planDays = this.<project.tripplan.domain.planDay.entity.PlanDay, project.tripplan.domain.planDay.entity.QPlanDay>createList("planDays", project.tripplan.domain.planDay.entity.PlanDay.class, project.tripplan.domain.planDay.entity.QPlanDay.class, PathInits.DIRECT2);
 
+    public final SetPath<PlanPlaceCategory, QPlanPlaceCategory> planPlaceCategories = this.<PlanPlaceCategory, QPlanPlaceCategory>createSet("planPlaceCategories", PlanPlaceCategory.class, QPlanPlaceCategory.class, PathInits.DIRECT2);
+
+    public final SetPath<PlanTransportationCategory, QPlanTransportationCategory> planTransportationCategories = this.<PlanTransportationCategory, QPlanTransportationCategory>createSet("planTransportationCategories", PlanTransportationCategory.class, QPlanTransportationCategory.class, PathInits.DIRECT2);
+
     public final DatePath<java.time.LocalDate> startDate = createDate("startDate", java.time.LocalDate.class);
 
     public final EnumPath<project.tripplan.domain.plan.enums.PlanStatus> status = createEnum("status", project.tripplan.domain.plan.enums.PlanStatus.class);

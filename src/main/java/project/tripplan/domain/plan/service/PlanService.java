@@ -25,7 +25,10 @@ import project.tripplan.domain.plan.dto.DayPlanReq;
 import project.tripplan.domain.plan.dto.DetailReq;
 import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
+import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
+import project.tripplan.domain.plan.dto.PlanNoOffsetRes;
 import project.tripplan.domain.plan.dto.PlanReq;
+import project.tripplan.domain.plan.dto.PlanSearchRes;
 import project.tripplan.domain.plan.dto.PlanStatusReq;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
@@ -241,4 +244,63 @@ public class PlanService {
 				.build();
 		planTransportationCategoryRepository.save(planTransportationCategory);
 	}
+
+	@Transactional(readOnly = true)
+	public PlanNoOffsetRes getPlanNoOffset(PlanNoOffsetReq req) {
+
+		// 1) categoryNames가 있는 경우, 자식까지 포함한 categoryIds 구하기 (OR 조건)
+		if (req.getCategoryNames() != null && !req.getCategoryNames().isEmpty()) {
+			Set<Long> allIds = placeCategoryService.findAllDescendantCategoryIds(req.getCategoryNames());
+			// allIds는 "카테고리들의 합집합" => OR 조건에 사용
+			req.setCategoryIds(allIds);
+		}
+
+		// 2) DB 조회 (size+1 개)
+		List<Plan> rawList = planRepositoryCustom.searchPlanNoOffset(req);
+
+		// 3) hasNext (size 이상이면 다음 페이지 존재)
+		boolean hasNext = rawList.size() > req.getSize();
+
+		// 4) 실제 반환 목록 (size까지만)
+		List<Plan> content = hasNext
+			? rawList.subList(0, req.getSize())
+			: rawList;
+
+		// 5) nextValue, nextId 설정 (전통적 switch 문)
+		String nextValue = null;
+		Long nextId = null;
+		if (!content.isEmpty()) {
+			Plan lastPlan = content.get(content.size() - 1);
+
+			// 전통 switch
+			switch (req.getSortBy()) {
+				case "viewCount":
+					// null 안전 처리
+					long vc = (lastPlan.getViewCount() == null) ? 0L : lastPlan.getViewCount();
+					nextValue = String.valueOf(vc);
+					break;
+
+				case "id":
+				default:
+					nextValue = String.valueOf(lastPlan.getId());
+					break;
+			}
+			nextId = lastPlan.getId();
+		}
+
+		// 6) DTO 변환
+		List<PlanSearchRes> plans = content.stream()
+			.map(PlanSearchRes::new)
+			.toList();
+
+		// 7) 응답 구성
+		PlanNoOffsetRes response = new PlanNoOffsetRes();
+		response.setPlans(plans);
+		response.setHasNext(hasNext);
+		response.setNextValue(nextValue);
+		response.setNextId(nextId);
+
+		return response;
+	}
+
 }

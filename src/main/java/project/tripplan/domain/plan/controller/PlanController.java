@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.plan.dto.PlanConditionReq;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
+import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
+import project.tripplan.domain.plan.dto.PlanNoOffsetRes;
 import project.tripplan.domain.plan.dto.PlanReq;
 import project.tripplan.domain.plan.dto.PlanStatusReq;
 import project.tripplan.domain.plan.service.PlanService;
@@ -53,4 +57,22 @@ public class PlanController {
 		return new BaseResponse<>(BaseResponseCode.GET_PLAN_DETAIL_INFO_SUCCESS,
 			planService.getPlanInfoDetails(user, planId));
 	}
+
+	@GetMapping("/plans/search")
+	public BaseResponse<PlanNoOffsetRes> getPlans(@ModelAttribute PlanConditionReq queryParam) {
+
+		PlanNoOffsetReq req = new PlanNoOffsetReq();
+		req.setSize(queryParam.getSize() != null ? queryParam.getSize() : 10);
+		req.setSortBy(queryParam.getSortBy());
+		req.setDirection(queryParam.getDirection());
+		req.setLastValue(queryParam.getLastValue());
+		req.setLastId(queryParam.getLastId());
+		req.setDay(queryParam.getDay());
+		req.setTransportCategoryName(queryParam.getTransportCategoryName());
+		req.setPeople(queryParam.getPeople());
+		req.setCategoryNames(queryParam.toCategoryReqList());
+
+		return new BaseResponse<>(BaseResponseCode.GET_PLAN_SEARCH_CONDITION_SUCCESS, planService.getPlanNoOffset(req));
+	}
+
 }

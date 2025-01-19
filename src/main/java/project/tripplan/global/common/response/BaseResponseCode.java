@@ -1,9 +1,9 @@
 package project.tripplan.global.common.response;
 
+import org.springframework.http.HttpStatus;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
@@ -26,6 +26,8 @@ public enum BaseResponseCode {
 	ADD_PLAN_SUCCESS(true, 1401, "게시글이 생성되었습니다.", HttpStatus.OK),
 	UPDATE_PLAN_STATUS_SUCCESS(true, 1402, "게시글 상태가 변경되었습니다.", HttpStatus.OK),
 	GET_PLAN_DETAIL_INFO_SUCCESS(true, 1403, "계획글 상세페이지(여행정보) 불러오기에 성공했습니다.", HttpStatus.OK),
+	GET_PLAN_SEARCH_INFO_SUCCESS(true, 1405, "계획글 검색 불러오기에 성공했습니다.", HttpStatus.OK),
+	GET_PLAN_SEARCH_CONDITION_SUCCESS(true, 1406, "계획글 조건 검색 불러오기에 성공했습니다.", HttpStatus.OK),
 
 	/**
 	 * 2000 ~ 2899: request 오류

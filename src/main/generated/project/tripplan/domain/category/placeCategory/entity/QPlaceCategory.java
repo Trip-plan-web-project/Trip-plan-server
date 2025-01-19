@@ -24,6 +24,8 @@ public class QPlaceCategory extends EntityPathBase<PlaceCategory> {
 
     public final project.tripplan.global.common.entity.QBaseEntity _super = new project.tripplan.global.common.entity.QBaseEntity(this);
 
+    public final ListPath<PlaceCategory, QPlaceCategory> children = this.<PlaceCategory, QPlaceCategory>createList("children", PlaceCategory.class, QPlaceCategory.class, PathInits.DIRECT2);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
