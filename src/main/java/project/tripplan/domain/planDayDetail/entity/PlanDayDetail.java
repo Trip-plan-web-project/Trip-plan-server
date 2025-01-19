@@ -48,7 +48,7 @@ public class PlanDayDetail extends BaseEntity {
 	private Double longitude;
 
 	@ManyToOne
-	@JoinColumn(name = "PLAN_CATEGORY_ID")
+	@JoinColumn(name = "plan_category_id")
 	private PlanCategory planCategory;
 
 	public void setPlanDay(PlanDay planDay) {

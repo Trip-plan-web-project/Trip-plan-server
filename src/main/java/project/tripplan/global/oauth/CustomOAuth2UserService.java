@@ -109,12 +109,20 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 	/**
 	 * OAuthAttributes의 toEntity() 메소드를 통해 빌더로 Member 객체 생성 후 반환
-	 * 생성된 Member 객체를 DB에 저장 : Provider, socialId, email, role 값만 있는 상태
+	 * 생성된 Member 객체를 DB에 저장 : socialId, nickname, role 값만 있는 상태
 	 */
 	private User saveUser(OAuthAttributes attributes, Provider provider) {
-		User createdUser = attributes.toEntity(provider, attributes.getOauth2UserInfo());
+		// Oauth2UserInfo 객체 가져오기
+		OAuth2UserInfo userInfo = attributes.getOauth2UserInfo();
+
+		// User 엔티티 생성
+		User createdUser = attributes.toEntity(provider, userInfo);
+
+		// 저장 후 로그 출력
 		userRepository.save(createdUser);
-		log.info(" OAUTH 회원 저장 완료 ");
+		log.info("OAUTH 회원 저장 완료: {}", createdUser);
+
 		return createdUser;
 	}
+
 }
