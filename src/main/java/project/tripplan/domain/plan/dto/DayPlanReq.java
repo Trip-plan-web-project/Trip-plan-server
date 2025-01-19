@@ -5,9 +5,9 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class DayPlanReq {
 	private int day;
 	private int cost;

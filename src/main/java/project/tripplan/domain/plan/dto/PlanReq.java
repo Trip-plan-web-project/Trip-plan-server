@@ -25,10 +25,10 @@ public class PlanReq {
 	private int people;
 
 	@NotNull
-	private LocalDate startDate;
+	private LocalDate startDate; // 시작일 추가
 
 	@NotNull
-	private LocalDate endDate;
+	private LocalDate endDate;   // 종료일 추가
 
 	@Valid
 	private List<DayPlanReq> days;
