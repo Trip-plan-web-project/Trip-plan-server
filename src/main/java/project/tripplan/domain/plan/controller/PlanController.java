@@ -58,11 +58,6 @@ public class PlanController {
 			planService.getPlanInfoDetails(user, planId));
 	}
 
-	@PostMapping("/plans/no-offset")
-	public PlanNoOffsetRes getPlans(@RequestBody PlanNoOffsetReq req) {
-		return planService.getPlanNoOffset(req);
-	}
-
 	@GetMapping("/plans/search")
 	public BaseResponse<PlanNoOffsetRes> getPlans(@ModelAttribute PlanConditionReq queryParam) {
 
@@ -77,7 +72,7 @@ public class PlanController {
 		req.setPeople(queryParam.getPeople());
 		req.setCategoryNames(queryParam.toCategoryReqList());
 
-		return new BaseResponse<>(BaseResponseCode.GET_PLAN_DETAIL_INFO_SUCCESS, planService.getPlanNoOffset(req));
+		return new BaseResponse<>(BaseResponseCode.GET_PLAN_SEARCH_CONDITION_SUCCESS, planService.getPlanNoOffset(req));
 	}
 
 }
