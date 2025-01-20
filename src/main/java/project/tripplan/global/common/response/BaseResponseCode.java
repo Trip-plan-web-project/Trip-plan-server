@@ -13,6 +13,9 @@ public enum BaseResponseCode {
 	 * 1000 : 성공
 	 */
 
+	//user 1000~
+	USER_GET_SUCCESS(true, 1001, "회원 정보 가져오기에 성공했습니다.", HttpStatus.OK),
+
 	//comment 1200 ~
 	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),
 	DELETE_COMMENT_SUCCESS(true, 1202, "댓글을 삭제하였습니다.", HttpStatus.OK),
