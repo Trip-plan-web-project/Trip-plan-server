@@ -39,12 +39,12 @@ public class UserController {
 	}
 
 	@PatchMapping("/users/profile")
-	public BaseResponse<Void> userProfileUpdate(
+	public BaseResponse<Void> updateUserProfile(
 		@RequestPart("image") MultipartFile image,
 		@RequestPart("profile") UserProfileReq req,
 		@AuthenticationPrincipal User user
 	) {
-		userService.userProfileUpdate(user.getId(), req.getNickname(), image);
+		userService.updateUserProfile(user.getId(), req.getNickname(), image);
 		return new BaseResponse<>(BaseResponseCode.USER_UPDATE_SUCCESS);
 	}
 }

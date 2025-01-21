@@ -17,7 +17,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final S3Service s3Service;
 
-	public void userProfileUpdate(Long userId, String nickname, MultipartFile image) {
+	public void updateUserProfile(Long userId, String nickname, MultipartFile image) {
 		User user = userRepository.findById(userId).get();
 		if (nickname != null) {
 			user.setNickname(nickname);
