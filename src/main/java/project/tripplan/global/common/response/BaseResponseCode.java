@@ -15,6 +15,7 @@ public enum BaseResponseCode {
 
 	//user 1000~
 	USER_GET_SUCCESS(true, 1001, "회원 정보 가져오기에 성공했습니다.", HttpStatus.OK),
+	USER_UPDATE_SUCCESS(true, 1002, "회원 업데이트에 성공했습니다.", HttpStatus.OK),
 
 	//comment 1200 ~
 	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),
@@ -42,6 +43,7 @@ public enum BaseResponseCode {
 	USER_NOT_EXIST(false, 2001, "존재하지 않는 회원입니다.", HttpStatus.NOT_FOUND),
 	REFRESHTOKEN_NOT_EXIST(false, 2002, "리프레시 토큰이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	INVALID_OAUTH2_REQUEST(false, 2003, "유효하지 않은 OAuth2 요청입니다.", HttpStatus.BAD_REQUEST),
+	FILE_DELETE_ERROR(false, 2004, "S3 파일 삭제에 실패했습니다", HttpStatus.BAD_REQUEST),
 
 	//plan 2100 ~,
 	PLAN_NOT_EXIST(false, 2101, "존재하지 않는 게시글입니다.", HttpStatus.NOT_FOUND),
@@ -71,8 +73,7 @@ public enum BaseResponseCode {
 	 * 4000 : server 오류
 	 */
 	INTERNAL_SERVER_ERROR(false, 4001, "서버 오류입니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-	FILE_UPLOAD_ERROR(false, 4002, "파일 업로드에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-	;
+	FILE_UPLOAD_ERROR(false, 4002, "파일 업로드에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
 	private final Boolean status;
 	private final Integer code;
