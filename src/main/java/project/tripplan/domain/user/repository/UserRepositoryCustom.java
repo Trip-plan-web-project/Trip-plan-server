@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import project.tripplan.domain.user.dto.UserBookmarkRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.entity.User;
 
@@ -12,4 +13,6 @@ public interface UserRepositoryCustom {
 	Optional<User> findBySocialId(String socialId);
 
 	Page<UserPlanRes> findPlansByUserId(Long userId, Pageable pageable);
+
+	Page<UserBookmarkRes> findBookmarksByUserId(Long userId, Pageable pageable);
 }

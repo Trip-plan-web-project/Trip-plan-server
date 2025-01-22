@@ -5,26 +5,27 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class UserPlanRes {
+public class UserBookmarkRes {
 
+	private Long bookmarkId;
 	private Long planId;
 	private String title;
-	private String imageUrl;
-	private List<String> categories;
-	private String status;
 
-	// Projections.constructor() 생성자
-	public UserPlanRes(Long planId,
+	private String thumbnail;
+	private List<String> categories;
+
+	public UserBookmarkRes(
+		Long bookmarkId,
+		Long planId,
 		String title,
-		String imageUrl,
-		String categoryNames,
-		String status) {
+		String thumbnail,
+		String categoryNames) {
+		this.bookmarkId = bookmarkId;
 		this.planId = planId;
 		this.title = title;
-		this.imageUrl = imageUrl;
+		this.thumbnail = thumbnail;
 		this.categories = (categoryNames == null || categoryNames.isEmpty())
 			? List.of()
 			: List.of(categoryNames.split(","));
-		this.status = status;
 	}
 }
