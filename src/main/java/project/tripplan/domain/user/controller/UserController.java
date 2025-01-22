@@ -1,14 +1,19 @@
 package project.tripplan.domain.user.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
 import project.tripplan.domain.user.entity.User;
@@ -48,4 +53,16 @@ public class UserController {
 		return new BaseResponse<>(BaseResponseCode.USER_UPDATE_SUCCESS);
 	}
 
+	@GetMapping("/users/myplan")
+	public BaseResponse<Page<UserPlanRes>> getUserPlans(
+		@RequestParam int page,
+		@RequestParam int size,
+		@AuthenticationPrincipal User user
+	) {
+		Pageable pageable = PageRequest.of(page - 1, size);
+
+		return new BaseResponse<>(BaseResponseCode.USER_PLAN_GET_SUCCESS,
+			userService.getUserPlans(user.getId(), pageable)
+		);
+	}
 }
