@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
+import project.tripplan.domain.bookmark.repository.BookmarkRepositoryCustom;
 import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
@@ -20,6 +21,7 @@ public class UserService {
 
 	private final UserRepositoryCustom userRepositoryCustom;
 	private final UserRepository userRepository;
+	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
 	private final S3Service s3Service;
 
 	public void updateUserProfile(Long userId, String nickname, MultipartFile image) {
@@ -40,6 +42,6 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public Page<UserBookmarkRes> getUserBookmarks(Long userId, Pageable pageable) {
-		return userRepositoryCustom.findBookmarksByUserId(userId, pageable);
+		return bookmarkRepositoryCustom.findBookmarksByUserId(userId, pageable);
 	}
 }
