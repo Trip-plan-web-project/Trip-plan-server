@@ -3,8 +3,12 @@ package project.tripplan.domain.plan.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
 import project.tripplan.domain.plan.entity.Plan;
+import project.tripplan.domain.user.dto.UserPlanRes;
 
 public interface PlanRepositoryCustom {
 	Optional<Plan> findByPlanIdWithUser(Long planId);
@@ -16,4 +20,6 @@ public interface PlanRepositoryCustom {
 	List<Plan> findMostRecentPlans(int limit);
 
 	List<Plan> findHotPlacePlans(String placeName, int limit);
+
+	Page<UserPlanRes> findPlansByUserId(Long userId, Pageable pageable);
 }

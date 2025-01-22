@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 import project.tripplan.domain.plan.file.S3Service;
+import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
@@ -18,6 +19,8 @@ public class UserService {
 
 	private final UserRepositoryCustom userRepositoryCustom;
 	private final UserRepository userRepository;
+	private final PlanRepositoryCustom planRepositoryCustom;
+
 	private final S3Service s3Service;
 
 	public void updateUserProfile(Long userId, String nickname, MultipartFile image) {
@@ -32,6 +35,6 @@ public class UserService {
 	}
 
 	public Page<UserPlanRes> getUserPlans(Long userId, Pageable pageable) {
-		return userRepositoryCustom.findPlansByUserId(userId, pageable);
+		return planRepositoryCustom.findPlansByUserId(userId, pageable);
 	}
 }
