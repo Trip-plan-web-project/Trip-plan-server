@@ -18,6 +18,7 @@ public enum BaseResponseCode {
 	USER_UPDATE_SUCCESS(true, 1002, "회원 업데이트에 성공했습니다.", HttpStatus.OK),
 	LOGIN_SUCCESS(true, 1003, "로그인에 성공했습니다.", HttpStatus.OK),
 	REISSUE_TOKEN_SUCCESS(true, 1004, "토큰 재발급에 성공했습니다.", HttpStatus.OK),
+	USER_PLAN_GET_SUCCESS(true, 1005, "내 여행 일정 목록 조회에 성공했습니다.", HttpStatus.OK),
 
 	//comment 1200 ~
 	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),
