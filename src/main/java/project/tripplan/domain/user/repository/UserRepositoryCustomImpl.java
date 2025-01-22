@@ -44,7 +44,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 				plan.id,
 				plan.title,
 				plan.createdAt,
-				plan.imageUrl,
+				plan.imageUrl.as("thumbnail"),
 				Expressions.stringTemplate(
 					"group_concat(DISTINCT {0})",
 					placeCategory.placeCategory.name

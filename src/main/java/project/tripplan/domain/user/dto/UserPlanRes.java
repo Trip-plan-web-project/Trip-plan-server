@@ -15,7 +15,7 @@ public class UserPlanRes {
 	private Long planId;
 	private String title;
 	private LocalDateTime createdAt;
-	private String imageUrl;
+	private String thumbnail;
 	private List<String> categories;
 	private String status;
 
@@ -23,13 +23,13 @@ public class UserPlanRes {
 	public UserPlanRes(Long planId,
 		String title,
 		LocalDateTime createdAt,
-		String imageUrl,
+		String thumbnail,
 		String categoryNames,
 		String status) {
 		this.planId = planId;
 		this.title = title;
 		this.createdAt = createdAt;
-		this.imageUrl = imageUrl;
+		this.thumbnail = thumbnail;
 		this.categories = (categoryNames == null || categoryNames.isEmpty())
 			? List.of()
 			: List.of(categoryNames.split(","));
