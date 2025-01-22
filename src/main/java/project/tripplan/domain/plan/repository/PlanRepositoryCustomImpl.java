@@ -1,5 +1,6 @@
 package project.tripplan.domain.plan.repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -171,4 +172,20 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		}
 	}
 
+	@Override
+	public List<Plan> findMostViewedPlans(int limit) {
+		// return qf.selectFrom(plan)
+		// 	.join(plan.)
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Plan> findMostRecentPlans(int limit) {
+		return List.of();
+	}
+
+	@Override
+	public List<Plan> findHotPlacePlans(String placeName, int limit) {
+		return List.of();
+	}
 }

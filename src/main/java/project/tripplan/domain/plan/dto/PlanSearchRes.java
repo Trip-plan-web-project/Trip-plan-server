@@ -12,24 +12,24 @@ import project.tripplan.domain.plan.entity.Plan;
 public class PlanSearchRes {
 	private Long planId;
 	private String title;
-	private String thumbnail;
-	private List<String> placeCategory;
+	private String image;
+	private List<String> category;
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private int people;
-	private String transportation;
+	private String transportCategoryName;
 	private Long totalCost;
 
 	public PlanSearchRes(Plan plan) {
 		this.planId = plan.getId();
 		this.title = plan.getTitle();
-		this.thumbnail = plan.getImageUrl();
-		this.transportation = plan.getFirstTransportCategoryName();
+		this.image = plan.getImageUrl();
+		this.transportCategoryName = plan.getFirstTransportCategoryName();
 		this.startDate = plan.getStartDate();
 		this.endDate = plan.getEndDate();
 		this.people = plan.getPeople();
 		this.totalCost = plan.getTotalCost();
-		this.placeCategory = plan.getPlanPlaceCategories().stream()
+		this.category = plan.getPlanPlaceCategories().stream()
 			.map(ppc -> ppc.getPlaceCategory().getName())
 			.toList();
 	}

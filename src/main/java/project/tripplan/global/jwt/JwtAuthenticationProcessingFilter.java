@@ -30,10 +30,6 @@ import project.tripplan.global.common.response.BaseResponseCode;
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
-	private static final String NO_CHECK_URL = "/users/signin"; // "/signin"으로 들어오는 요청은 Filter 작동 X
-
-	private static final String LOGOUT_URL = "/auth/logout"; // 로그아웃 요청시 작동 X
-
 	private final JWTService jwtService;
 	private final UserRepositoryCustom userRepositoryCustom;
 	private final RefreshTokenRepositoryCustom refreshTokenRepositoryCustom;
@@ -45,15 +41,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws
 		ServletException, IOException {
-		if (request.getRequestURI().equals(NO_CHECK_URL)) {
-			filterChain.doFilter(request, response); // 로그인 요청이 들어오면, 다음 필터 호출
-			return; // return 으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
-		}
-
-		if (request.getRequestURI().equals(LOGOUT_URL)) {
-			return;
-		}
-
 		// 사용자 요청 헤더에서 RefreshToken 추출
 		// -> RefreshToken 이 없거나 유효하지 않다면(DB에 저장된 RefreshToken 과 다르다면) null 을 반환
 		// 사용자의 요청 헤더에 RefreshToken 이 있는 경우는, AccessToken 이 만료되어 요청한 경우밖에 없다.
@@ -62,14 +49,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 			.filter(jwtService::isTokenValid)
 			.orElse(null);
 
-		// 리프레시 토큰이 요청 헤더에 존재했다면, 사용자가 AccessToken 이 만료되어서
-		// RefreshToken 까지 보낸 것이므로 리프레시 토큰이 DB의 리프레시 토큰과 일치하는지 판단 후,
-		// 일치한다면 AccessToken 을 재발급해준다.
-		if (refreshToken != null) {
-			checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
-			return; // RefreshToken 을 보낸 경우에는 AccessToken 을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return 으로 필터 진행 막기
-		}
-
 		// RefreshToken 이 없거나 유효하지 않다면, AccessToken 을 검사하고 인증을 처리하는 로직 수행
 		// AccessToken 이 없거나 유효하지 않다면, 인증 객체가 담기지 않은 상태로 다음 필터로 넘어가기 때문에 403 에러 발생
 		// AccessToken 이 유효하다면, 인증 객체가 담긴 상태로 다음 필터로 넘어가기 때문에 인증 성공
@@ -77,56 +56,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	}
 
 	/**
-	 *  [리프레시 토큰으로 유저 정보 찾기 & 액세스 토큰/리프레시 토큰 재발급 메소드]
-	 *  파라미터로 들어온 헤더에서 추출한 리프레시 토큰으로 DB에서 유저를 찾고, 해당 유저가 있다면
-	 *  JwtService.createAccessToken()으로 AccessToken 생성,
-	 *  reIssueRefreshToken()로 리프레시 토큰 재발급 & DB에 리프레시 토큰 업데이트 메소드 호출
-	 *  그 후 JwtService.sendAccessTokenAndRefreshToken()으로 응답 헤더에 보내기
-	 */
-	public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-		// Refresh Token을 DB에서 조회
-		RefreshToken findRefreshToken = refreshTokenRepositoryCustom.findByRefreshToken(refreshToken)
-			.orElseThrow(() -> new CustomException(BaseResponseCode.REFRESHTOKEN_NOT_EXIST));
-
-		// 사용자 정보 가져오기
-		User user = findRefreshToken.getUser();
-
-		// Refresh Token 재발급
-		String reIssuedRefreshToken = reIssueRefreshToken(user);
-
-		// Access Token 생성
-		String accessToken = jwtService.createAccessToken(user.getSocialId());
-
-		// Access Token과 Refresh Token을 응답 헤더에 설정
-		jwtService.sendAccessAndRefreshToken(response, accessToken, reIssuedRefreshToken);
-
-		log.info("Access Token과 Refresh Token이 성공적으로 재발급되었습니다.");
-	}
-
-	/**
-	 * [리프레시 토큰 재발급 & DB에 리프레시 토큰 업데이트 메소드]
-	 * jwtService.createRefreshToken()으로 리프레시 토큰 재발급 후
-	 * DB에 재발급한 리프레시 토큰 업데이트 후 Flush
-	 */
-	private String reIssueRefreshToken(User user) {
-		if (user == null) {
-			// 로그아웃 처리
-			log.info("로그아웃 완료");
-			return "none";
-		}
-
-		String reIssuedRefreshToken = jwtService.createRefreshToken();
-		RefreshToken findRefreshToken = refreshTokenRepositoryCustom.findByUserId(user.getId())
-			.orElseThrow(() -> new CustomException(BaseResponseCode.REFRESHTOKEN_NOT_EXIST));
-		findRefreshToken.updateRefreshToken(reIssuedRefreshToken);
-		log.info("refreshToken 재발급 및 최신화");
-		return reIssuedRefreshToken;
-	}
-
-	/**
 	 * [액세스 토큰 체크 & 인증 처리 메소드]
 	 * request에서 extractAccessToken()으로 액세스 토큰 추출 후, isTokenValid()로 유효한 토큰인지 검증
-	 * 유효한 토큰이면, 액세스 토큰에서 extractEmail로 Email, Provider를 추출
+	 * 유효한 토큰이면, 액세스 토큰에서 extract로 추출
 	 * 그 유저 객체를 saveAuthentication()으로 인증 처리하여
 	 * 인증 허가 처리된 객체를 SecurityContextHolder에 담기
 	 * 그 후 다음 인증 필터로 진행
@@ -135,10 +67,11 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		log.info("checkAccessTokenAndAuthentication() 호출");
 
-		jwtService.extractAccessToken(request)
+		// Access Token 추출 및 유효성 검증
+		boolean isAccessTokenValid = jwtService.extractAccessToken(request)
 			.filter(jwtService::isTokenValid)
-			.ifPresent(accessToken -> jwtService.extractSocialId(accessToken)
-				.ifPresent(claims -> {
+			.map(accessToken -> {
+				jwtService.extractSocialId(accessToken).ifPresent(claims -> {
 					String socialId = (String)claims.get("social_id");
 					log.info("Extracted socialId : {}", socialId);
 
@@ -147,9 +80,21 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 					log.info("Found user for socialId : {}", socialId);
 					saveAuthentication(findUser);
-				})
-			);
+				});
+				return true;
+			})
+			.orElse(false);
 
+		if (!isAccessTokenValid) {
+			// Access Token이 없거나 유효하지 않으면 401 Unauthorized 반환
+			log.error("Access Token이 유효하지 않습니다. 401 반환");
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.getWriter().write("Access Token is expired or invalid");
+			response.getWriter().flush();
+			return; // 필터 체인 중단
+		}
+
+		// Access Token이 유효한 경우, 다음 필터로 진행
 		filterChain.doFilter(request, response);
 	}
 
@@ -187,9 +132,26 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 			)
 		);
 
-
 		// SecurityContextHolder에 인증 정보 설정
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		String requestURI = request.getRequestURI();
+
+		boolean isExcluded = requestURI.equals("/") ||
+			requestURI.equals("/login") ||
+			requestURI.equals("/home") ||
+			requestURI.startsWith("/search/") ||
+			requestURI.startsWith("/test") ||
+			requestURI.startsWith("/token/issue/") ||
+			requestURI.startsWith("/token/reissue/") ||
+			requestURI.startsWith("/index.html") ||
+			requestURI.startsWith("/favicon.ico");
+
+		log.info("Request URI: {} | Should not filter: {}", requestURI, isExcluded);
+
+		return isExcluded;
+	}
 }
