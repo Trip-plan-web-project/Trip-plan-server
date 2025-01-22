@@ -39,16 +39,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 	}
 
 	private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User, String provider) throws IOException {
-		String accessToken = jwtService.createAccessToken(oAuth2User.getSocialId());
-		String refreshToken = jwtService.createRefreshToken();
+		String redirectUrl = String.format("http://localhost:3000/oauth/%s?socialId=%s", provider, oAuth2User.getSocialId());
+		response.sendRedirect(redirectUrl);
 
-		jwtService.setAccessTokenHeader(response, accessToken);
-		jwtService.setRefreshTokenHeader(response, refreshToken);
-
-		// Refresh Token 저장
-		jwtService.updateRefreshToken(oAuth2User.getSocialId(), refreshToken);
-
-		response.sendRedirect("http://localhost:3000/oauth/" + provider);
-		log.info("토큰을 헤더에 담아서 홈페이지로 리다이렉트");
+		log.info("socialId를 포함하여 홈페이지로 리다이렉트: {}", redirectUrl);
 	}
 }
