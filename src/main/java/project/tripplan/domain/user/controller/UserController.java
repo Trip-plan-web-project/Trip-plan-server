@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.user.dto.UserBookmarkRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
@@ -63,6 +64,19 @@ public class UserController {
 
 		return new BaseResponse<>(BaseResponseCode.USER_PLAN_GET_SUCCESS,
 			userService.getUserPlans(user.getId(), pageable)
+		);
+	}
+
+	@GetMapping("/users/bookmarks")
+	public BaseResponse<Page<UserBookmarkRes>> getBookmarks(
+		@RequestParam int page,
+		@RequestParam int size,
+		@AuthenticationPrincipal User user
+	) {
+		Pageable pageable = PageRequest.of(page - 1, size);
+
+		return new BaseResponse<>(BaseResponseCode.USER_BOOKMARK_GET_SUCCESS,
+			userService.getUserBookmarks(user.getId(), pageable)
 		);
 	}
 }
