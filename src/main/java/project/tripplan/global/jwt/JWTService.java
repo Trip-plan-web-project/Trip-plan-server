@@ -104,6 +104,7 @@ public class JWTService {
 
 		setAccessTokenHeader(response, accessToken);
 		setRefreshTokenHeader(response, refreshToken);
+		log.info("발급된 accessToken : {}", accessToken);
 		log.info("발급된 refreshToken : {}", refreshToken);
 		log.info("Access Token, Refresh Token 헤더 설정 완료");
 	}
@@ -139,25 +140,20 @@ public class JWTService {
 	 * 유효하지 않다면 빈 Optional 객체 반환
 	 */
 	public Optional<Map<String, Object>> extractSocialId(String accessToken) {
-		try {
-			// JWT 검증 및 클레임 추출
-			var decodedJWT = JWT.require(Algorithm.HMAC512(secretKey))
-				.build() // JWT Verifier 생성
-				.verify(accessToken); // accessToken 검증
+		// JWT 검증 및 클레임 추출
+		var decodedJWT = JWT.require(Algorithm.HMAC512(secretKey))
+			.build() // JWT Verifier 생성
+			.verify(accessToken); // accessToken 검증
 
-			// socialId 추출
-			String socialId = decodedJWT.getClaim("social_id").asString();
+		// socialId 추출
+		String socialId = decodedJWT.getClaim("social_id").asString();
 
-			if (socialId != null) {
-				Map<String, Object> claims = new HashMap<>();
-				claims.put("social_id", socialId); // socialId를 클레임에 추가
-				return Optional.of(claims);
-			} else {
-				log.error("social_id 클레임이 존재하지 않습니다.");
-				return Optional.empty();
-			}
-		} catch (Exception e) {
-			log.error("액세스 토큰이 유효하지 않습니다.", e);
+		if (socialId != null) {
+			Map<String, Object> claims = new HashMap<>();
+			claims.put("social_id", socialId); // socialId를 클레임에 추가
+			return Optional.of(claims);
+		} else {
+			log.error("social_id 클레임이 존재하지 않습니다.");
 			return Optional.empty();
 		}
 	}
@@ -182,27 +178,23 @@ public class JWTService {
 	/**
 	 * RefreshToken DB 저장(업데이트)
 	 */
-	public void updateRefreshToken(String socialId, String refreshToken) {
-		// 사용자 조회
-		User findUser = userRepositoryCustom.findBySocialId(socialId)
-			.orElseThrow(() -> new CustomException(BaseResponseCode.USER_NOT_EXIST));
-
+	public void updateRefreshToken(User user, String socialId, String refreshToken) {
 		// 기존 RefreshToken 조회
-		Optional<RefreshToken> findRefreshToken = refreshTokenRepositoryCustom.findByUserId(findUser.getId());
+		Optional<RefreshToken> findRefreshToken = refreshTokenRepositoryCustom.findByUserId(user.getId());
 
 		if (findRefreshToken.isPresent()) {
 			// RefreshToken이 존재하면 업데이트
 			findRefreshToken.get().updateRefreshToken(refreshToken);
-			log.info("사용자 {}의 Refresh Token이 업데이트되었습니다.", findUser.getNickname());
+			log.info("사용자 {}의 Refresh Token이 업데이트되었습니다.", user.getNickname());
 		} else {
 			// RefreshToken이 존재하지 않으면 새로 생성 후 저장
 			RefreshToken newRefreshToken = RefreshToken.builder()
-				.user(findUser)
+				.user(user)
 				.refreshToken(refreshToken)
 				.build();
 
 			refreshTokenRepository.save(newRefreshToken);
-			log.info("사용자 {}의 Refresh Token이 새로 생성되었습니다.", findUser.getNickname());
+			log.info("사용자 {}의 Refresh Token이 새로 생성되었습니다.", user.getNickname());
 		}
 	}
 

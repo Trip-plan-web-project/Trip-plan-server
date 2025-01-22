@@ -9,5 +9,11 @@ import project.tripplan.domain.plan.entity.Plan;
 public interface PlanRepositoryCustom {
 	Optional<Plan> findByPlanIdWithUser(Long planId);
 
-	public List<Plan> searchPlanNoOffset(PlanNoOffsetReq req);
+	List<Plan> searchPlanNoOffset(PlanNoOffsetReq req);
+
+	List<Plan> findMostViewedPlans(int limit);
+
+	List<Plan> findMostRecentPlans(int limit);
+
+	List<Plan> findHotPlacePlans(String placeName, int limit);
 }
