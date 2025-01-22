@@ -9,19 +9,22 @@ public class UserPlanRes {
 
 	private Long planId;
 	private String title;
-	private String imageUrl;
+	private LocalDateTime createdAt;
+	private String thumbnail;
 	private List<String> categories;
 	private String status;
 
 	// Projections.constructor() 생성자
 	public UserPlanRes(Long planId,
 		String title,
-		String imageUrl,
+		LocalDateTime createdAt,
+		String thumbnail,
 		String categoryNames,
 		String status) {
 		this.planId = planId;
 		this.title = title;
-		this.imageUrl = imageUrl;
+		this.createdAt = createdAt;
+		this.thumbnail = thumbnail;
 		this.categories = (categoryNames == null || categoryNames.isEmpty())
 			? List.of()
 			: List.of(categoryNames.split(","));
