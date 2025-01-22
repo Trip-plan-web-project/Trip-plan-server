@@ -47,4 +47,5 @@ public class UserController {
 		userService.updateUserProfile(user.getId(), req.getNickname(), image);
 		return new BaseResponse<>(BaseResponseCode.USER_UPDATE_SUCCESS);
 	}
+	
 }
