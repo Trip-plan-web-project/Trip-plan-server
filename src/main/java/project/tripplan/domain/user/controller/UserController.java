@@ -2,10 +2,14 @@ package project.tripplan.domain.user.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.service.UserService;
@@ -32,5 +36,15 @@ public class UserController {
 				.build()
 		);
 
+	}
+
+	@PatchMapping("/users/profile")
+	public BaseResponse<Void> updateUserProfile(
+		@RequestPart("image") MultipartFile image,
+		@RequestPart("profile") UserProfileReq req,
+		@AuthenticationPrincipal User user
+	) {
+		userService.updateUserProfile(user.getId(), req.getNickname(), image);
+		return new BaseResponse<>(BaseResponseCode.USER_UPDATE_SUCCESS);
 	}
 }

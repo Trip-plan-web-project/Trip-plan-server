@@ -1,8 +1,12 @@
 package project.tripplan.domain.user.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
+import project.tripplan.domain.plan.file.S3Service;
+import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
 
 @Service
@@ -10,4 +14,18 @@ import project.tripplan.domain.user.repository.UserRepositoryCustom;
 public class UserService {
 
 	private final UserRepositoryCustom userRepositoryCustom;
+	private final UserRepository userRepository;
+	private final S3Service s3Service;
+
+	public void updateUserProfile(Long userId, String nickname, MultipartFile image) {
+		User user = userRepository.findById(userId).get();
+		if (nickname != null) {
+			user.setNickname(nickname);
+		}
+		if (user.getImage() != null) {
+			s3Service.deleteFile(user.getImage());
+		}
+		s3Service.uploadFile(image);
+	}
+
 }
