@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum BaseResponseCode {
+public enum 	BaseResponseCode {
 
 	/**
 	 * 1000 : 성공

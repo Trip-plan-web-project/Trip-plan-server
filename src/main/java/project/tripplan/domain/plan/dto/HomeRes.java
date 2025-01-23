@@ -1,5 +1,6 @@
 package project.tripplan.domain.plan.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -24,8 +25,8 @@ public class HomeRes {
 		private Long planId;
 		private String title;
 		private List<String> placeCategory;
-		private String startDate;
-		private String endDate;
+		private LocalDate startDate;
+		private LocalDate endDate;
 		private Integer people;
 		private String transportation;
 		private Integer totalCost;

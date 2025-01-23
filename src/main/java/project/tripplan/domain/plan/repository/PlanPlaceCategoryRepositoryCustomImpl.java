@@ -8,9 +8,13 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import project.tripplan.domain.category.placeCategory.entity.QPlaceCategory;
+import project.tripplan.domain.category.transportationCategory.entitiy.QTransportationCategory;
+import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.plan.entity.QPlanPlaceCategory;
+import project.tripplan.domain.plan.entity.QPlanTransportationCategory;
+import project.tripplan.domain.plan.enums.PlanStatus;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,11 +27,31 @@ public class PlanPlaceCategoryRepositoryCustomImpl implements PlanPlaceCategoryR
 
 	@Override
 	public List<PlanPlaceCategory> findAllByPlanIdWithPlanAndPlace(Long planId) {
-		return qf.select(planPlaceCategory)
-			.from(planPlaceCategory)
+		return qf.selectFrom(planPlaceCategory)
 			.join(planPlaceCategory.plan, plan).fetchJoin()
 			.join(planPlaceCategory.placeCategory, placeCategory).fetchJoin()
 			.where(planPlaceCategory.plan.id.eq(planId))
+			.fetch();
+	}
+
+	@Override
+	public List<PlanPlaceCategory> findAllByPlanIds(List<Long> planIds) {
+		return qf.selectFrom(planPlaceCategory)
+			.join(planPlaceCategory.placeCategory, placeCategory).fetchJoin()
+			.join(planPlaceCategory.plan, plan).fetchJoin()
+			.where(plan.id.in(planIds))
+			.fetch();
+	}
+
+	@Override
+	public List<PlanPlaceCategory> findHotPlacesByPlaceName(String placeName, int limit) {
+		return qf.selectFrom(planPlaceCategory)
+			.join(planPlaceCategory.placeCategory, placeCategory).fetchJoin()
+			.join(planPlaceCategory.plan, plan).fetchJoin()
+			.where(placeCategory.name.eq(placeName)
+				.and(planPlaceCategory.plan.status.eq(PlanStatus.PUBLIC)))
+			.orderBy(plan.createdAt.desc(),plan.createdAt.desc())
+			.limit(limit)
 			.fetch();
 	}
 }

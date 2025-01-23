@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.user.dto.UserPlanRes;
+import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 
 public interface PlanRepositoryCustom {
 	Optional<Plan> findByPlanIdWithUser(Long planId);
@@ -18,8 +19,6 @@ public interface PlanRepositoryCustom {
 	List<Plan> findMostViewedPlans(int limit);
 
 	List<Plan> findMostRecentPlans(int limit);
-
-	List<Plan> findHotPlacePlans(String placeName, int limit);
 
 	Page<UserPlanRes> findPlansByUserId(Long userId, Pageable pageable);
 }

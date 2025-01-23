@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.plan.dto.HomeRes;
 import project.tripplan.domain.plan.dto.PlanConditionReq;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
 import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
@@ -74,10 +75,9 @@ public class PlanController {
 
 		return new BaseResponse<>(BaseResponseCode.GET_PLAN_SEARCH_CONDITION_SUCCESS, planService.getPlanNoOffset(req));
 	}
-	//
-	// @GetMapping("/home")
-	// public BaseResponse<HomeRes> getHome() {
-	// 	return new BaseResponse<>(BaseResponseCode.GET_HOME_SUCCESS, planService.getHome());
-	// }
 
+	@GetMapping("/home")
+	public BaseResponse<HomeRes> getHome() {
+		return new BaseResponse<>(BaseResponseCode.GET_HOME_SUCCESS, planService.getHome());
+	}
 }

@@ -1,5 +1,6 @@
 package project.tripplan.domain.plan.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -9,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import project.tripplan.domain.category.transportationCategory.entitiy.QTransportationCategory;
 import project.tripplan.domain.plan.entity.PlanTransportationCategory;
+import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.plan.entity.QPlanTransportationCategory;
 
 @Repository
@@ -18,6 +20,7 @@ public class PlanTransCategoryRepositoryCustomImpl implements PlanTransCategoryR
 	private final JPAQueryFactory qf;
 	private final QPlanTransportationCategory planTransCategory = QPlanTransportationCategory.planTransportationCategory;
 	private final QTransportationCategory transCategory = QTransportationCategory.transportationCategory;
+	private final QPlan plan = QPlan.plan;
 
 	@Override
 	public Optional<PlanTransportationCategory> findByPlanIdWithPlanTransCategory(Long planId) {
@@ -27,5 +30,14 @@ public class PlanTransCategoryRepositoryCustomImpl implements PlanTransCategoryR
 				.where(planTransCategory.plan.id.eq(planId))
 				.fetchOne()
 		);
+	}
+
+	@Override
+	public List<PlanTransportationCategory> findAllByPlanIds(List<Long> planIds) {
+		return qf.selectFrom(planTransCategory)
+			.join(planTransCategory.plan,plan).fetchJoin()
+			.join(planTransCategory.transportationCategory, transCategory).fetchJoin()
+			.where(plan.id.in(planIds))
+			.fetch();
 	}
 }

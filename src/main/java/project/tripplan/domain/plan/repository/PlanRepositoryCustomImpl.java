@@ -26,6 +26,7 @@ import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.plan.entity.QPlanPlaceCategory;
 import project.tripplan.domain.plan.entity.QPlanTransportationCategory;
 import project.tripplan.domain.user.dto.UserPlanRes;
+import project.tripplan.domain.plan.enums.PlanStatus;
 import project.tripplan.domain.user.entity.QUser;
 
 @Slf4j
@@ -178,20 +179,21 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 	}
 
 	@Override
-	public List<Plan> findMostViewedPlans(int limit) {
-		// return qf.selectFrom(plan)
-		// 	.join(plan.)
-		return Collections.emptyList();
-	}
-
-	@Override
 	public List<Plan> findMostRecentPlans(int limit) {
-		return List.of();
+		return qf.selectFrom(plan)
+			.where(plan.status.eq(PlanStatus.PUBLIC))
+			.orderBy(plan.createdAt.desc(), plan.id.desc())
+			.limit(limit)
+			.fetch();
 	}
 
 	@Override
-	public List<Plan> findHotPlacePlans(String placeName, int limit) {
-		return List.of();
+	public List<Plan> findMostViewedPlans(int limit) {
+		return qf.selectFrom(plan)
+			.where(plan.status.eq(PlanStatus.PUBLIC))
+			.orderBy(plan.viewCount.desc(), plan.id.asc())
+			.limit(limit)
+			.fetch();
 	}
 
 	@Override
@@ -219,13 +221,11 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 			.limit(pageable.getPageSize())
 			.fetch();
 
-		long total = qf
-			.select(plan.count())
+		long total = qf.select(plan.count())
 			.from(plan)
 			.where(plan.user.id.eq(userId))
 			.fetchOne();
 
 		return new PageImpl<>(content, pageable, total);
 	}
-
 }
