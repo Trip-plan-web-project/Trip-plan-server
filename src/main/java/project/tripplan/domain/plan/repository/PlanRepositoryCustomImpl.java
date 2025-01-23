@@ -1,11 +1,16 @@
 package project.tripplan.domain.plan.repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,11 +25,8 @@ import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.plan.entity.QPlanPlaceCategory;
 import project.tripplan.domain.plan.entity.QPlanTransportationCategory;
-<<<<<<< Updated upstream
-=======
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.plan.enums.PlanStatus;
->>>>>>> Stashed changes
 import project.tripplan.domain.user.entity.QUser;
 
 @Slf4j
@@ -176,8 +178,6 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		}
 	}
 
-<<<<<<< Updated upstream
-=======
 	@Override
 	public List<Plan> findMostRecentPlans(int limit) {
 		return qf.selectFrom(plan)
@@ -228,6 +228,4 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 
 		return new PageImpl<>(content, pageable, total);
 	}
-
->>>>>>> Stashed changes
 }

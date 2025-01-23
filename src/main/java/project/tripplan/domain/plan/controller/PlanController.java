@@ -75,13 +75,9 @@ public class PlanController {
 
 		return new BaseResponse<>(BaseResponseCode.GET_PLAN_SEARCH_CONDITION_SUCCESS, planService.getPlanNoOffset(req));
 	}
-<<<<<<< Updated upstream
-=======
 
 	@GetMapping("/home")
 	public BaseResponse<HomeRes> getHome() {
 		return new BaseResponse<>(BaseResponseCode.GET_HOME_SUCCESS, planService.getHome());
 	}
->>>>>>> Stashed changes
-
 }

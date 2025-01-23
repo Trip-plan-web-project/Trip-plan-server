@@ -19,7 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepositoryCustom;
-import project.tripplan.domain.auth.service.SocialLoginService;
+import project.tripplan.domain.auth.service.AuthService;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
 import project.tripplan.global.jwt.JWTService;
 import project.tripplan.global.jwt.JwtAuthenticationProcessingFilter;
@@ -38,7 +38,7 @@ public class SecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final UserRepositoryCustom userRepositoryCustom;
 	private final RefreshTokenRepositoryCustom refreshTokenRepositoryCustom;
-	private final SocialLoginService socialLoginService;
+	private final AuthService authService;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -50,6 +50,7 @@ public class SecurityConfig {
 			.sessionManagement(
 				sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.oauth2Login(oauth2 -> oauth2
+				.loginPage("/")
 				.userInfoEndpoint(userInfo -> userInfo
 					.userService(customOAuth2UserService)
 				)
@@ -57,9 +58,10 @@ public class SecurityConfig {
 				.failureHandler(oAuth2LoginFailureHandler)
 			)
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/home", "/search/**", "/users/signin/**", "/login/**", "/test").permitAll()
+				.requestMatchers("/home", "/search/**", "/login", "/test", "/token/issue/**","/token/reissue/**","/","/index.html","/favicon.ico").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
-				.anyRequest().authenticated()
+				.anyRequest()
+				.authenticated()
 			)
 			.addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
@@ -84,7 +86,7 @@ public class SecurityConfig {
 	@Bean
 	public AuthenticationManager authenticationManager() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setUserDetailsService(socialLoginService);
+		provider.setUserDetailsService(authService);
 		return new ProviderManager(provider);
 	}
 }

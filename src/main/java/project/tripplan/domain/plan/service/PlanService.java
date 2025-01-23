@@ -25,6 +25,7 @@ import project.tripplan.domain.category.transportationCategory.enums.Transportat
 import project.tripplan.domain.category.transportationCategory.repository.TransportationCategoryRepository;
 import project.tripplan.domain.plan.dto.DayPlanReq;
 import project.tripplan.domain.plan.dto.DetailReq;
+import project.tripplan.domain.plan.dto.HomeRes;
 import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
 import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
@@ -197,6 +198,9 @@ public class PlanService {
 		Plan findPlan = planRepositoryCustom.findByPlanIdWithUser(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
 
+		//조회수 증가
+		findPlan.increaseViewCount();
+
 		PlanTransportationCategory findPlanTrans = planTransCategoryRepositoryCustom.findByPlanIdWithPlanTransCategory(
 				planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.GET_PLAN_TRANS_FAIL));
@@ -305,9 +309,6 @@ public class PlanService {
 		return response;
 	}
 
-<<<<<<< Updated upstream
-}
-=======
 	@Transactional(readOnly = true)
 	public HomeRes getHome() {
 		List<Plan> findMostViewed = planRepositoryCustom.findMostViewedPlans(10);
@@ -417,4 +418,3 @@ public class PlanService {
 			.toList();
 	}
 }
->>>>>>> Stashed changes

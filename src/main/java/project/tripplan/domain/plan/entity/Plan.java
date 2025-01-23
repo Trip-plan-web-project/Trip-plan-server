@@ -89,6 +89,10 @@ public class Plan extends BaseEntity {
 		this.status = status;
 	}
 
+	public void increaseViewCount() {
+		this.viewCount = this.viewCount + 1;
+	}
+
 	public String getFirstTransportCategoryName() {
 		return planTransportationCategories.stream()
 			.findFirst()  // Optional<PlanTransportationCategory>
