@@ -20,6 +20,11 @@ import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.plan.entity.QPlanPlaceCategory;
 import project.tripplan.domain.plan.entity.QPlanTransportationCategory;
+<<<<<<< Updated upstream
+=======
+import project.tripplan.domain.user.dto.UserPlanRes;
+import project.tripplan.domain.plan.enums.PlanStatus;
+>>>>>>> Stashed changes
 import project.tripplan.domain.user.entity.QUser;
 
 @Slf4j
@@ -171,4 +176,58 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		}
 	}
 
+<<<<<<< Updated upstream
+=======
+	@Override
+	public List<Plan> findMostRecentPlans(int limit) {
+		return qf.selectFrom(plan)
+			.where(plan.status.eq(PlanStatus.PUBLIC))
+			.orderBy(plan.createdAt.desc(), plan.id.desc())
+			.limit(limit)
+			.fetch();
+	}
+
+	@Override
+	public List<Plan> findMostViewedPlans(int limit) {
+		return qf.selectFrom(plan)
+			.where(plan.status.eq(PlanStatus.PUBLIC))
+			.orderBy(plan.viewCount.desc(), plan.id.asc())
+			.limit(limit)
+			.fetch();
+	}
+
+	@Override
+	public Page<UserPlanRes> findPlansByUserId(Long userId, Pageable pageable) {
+		List<UserPlanRes> content = qf
+			.select(Projections.constructor(
+				UserPlanRes.class,
+				plan.id,
+				plan.title,
+				plan.createdAt,
+				plan.imageUrl.as("thumbnail"),
+				Expressions.stringTemplate(
+					"group_concat(DISTINCT {0})",
+					planPlaceCategory.placeCategory.name
+				)
+				,
+				plan.status.stringValue()
+			))
+			.from(plan)
+			.leftJoin(plan.planPlaceCategories, planPlaceCategory)
+			.where(plan.user.id.eq(userId))
+			.orderBy(plan.createdAt.desc())
+			.groupBy(plan.id)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		long total = qf.select(plan.count())
+			.from(plan)
+			.where(plan.user.id.eq(userId))
+			.fetchOne();
+
+		return new PageImpl<>(content, pageable, total);
+	}
+
+>>>>>>> Stashed changes
 }

@@ -4,8 +4,10 @@ import static project.tripplan.domain.plan.enums.PlanStatus.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -303,4 +305,116 @@ public class PlanService {
 		return response;
 	}
 
+<<<<<<< Updated upstream
 }
+=======
+	@Transactional(readOnly = true)
+	public HomeRes getHome() {
+		List<Plan> findMostViewed = planRepositoryCustom.findMostViewedPlans(10);
+		List<Plan> findMostRecent = planRepositoryCustom.findMostRecentPlans(10);
+		List<PlanPlaceCategory> findHotPlaces = planPlaceCategoryRepositoryCustom.findHotPlacesByPlaceName("강남", 10);
+
+		// planId 추출
+		List<Long> mostViewedPlanIds = findMostViewed.stream()
+			.map(Plan::getId)
+			.toList();
+
+		List<Long> mostRecentPlanIds = findMostRecent.stream()
+			.map(Plan::getId)
+			.toList();
+
+		// PlaceCategory와 TransportationCategory 데이터 조회
+		List<PlanPlaceCategory> mostViewedPlaces = planPlaceCategoryRepositoryCustom.findAllByPlanIds(
+			mostViewedPlanIds);
+		List<PlanPlaceCategory> mostRecentPlaces = planPlaceCategoryRepositoryCustom.findAllByPlanIds(
+			mostRecentPlanIds);
+
+		List<PlanTransportationCategory> mostViewedTrans = planTransCategoryRepositoryCustom.findAllByPlanIds(
+			mostViewedPlanIds);
+		List<PlanTransportationCategory> mostRecentTrans = planTransCategoryRepositoryCustom.findAllByPlanIds(
+			mostRecentPlanIds);
+
+		// 핫플레이스에 필요한 데이터 조회
+		List<Long> hotPlacePlanIds = findHotPlaces.stream()
+			.map(planPlaceCategory -> planPlaceCategory.getPlan().getId())
+			.toList();
+
+		List<PlanTransportationCategory> hotPlacesTrans = planTransCategoryRepositoryCustom.findAllByPlanIds(
+			hotPlacePlanIds);
+
+		// DTO 변환
+		List<HomeRes.PlanInfo> mostViewedPlans = convertToPlanInfo(findMostViewed, mostViewedPlaces, mostViewedTrans);
+		List<HomeRes.PlanInfo> mostRecentPlans = convertToPlanInfo(findMostRecent, mostRecentPlaces, mostRecentTrans);
+		List<HomeRes.PlanInfo> hotPlacePlans = convertHotPlacesToPlanInfo(findHotPlaces, hotPlacesTrans);
+
+		// 결과 반환
+		return new HomeRes(mostViewedPlans, mostRecentPlans, hotPlacePlans);
+	}
+
+	private List<HomeRes.PlanInfo> convertToPlanInfo(
+		List<Plan> plans,
+		List<PlanPlaceCategory> placeCategories,
+		List<PlanTransportationCategory> transCategories
+	) {
+		// PlaceCategory와 TransportationCategory를 Plan ID 기준으로 그룹화
+		Map<Long, List<String>> placeCategoryMap = placeCategories.stream()
+			.collect(Collectors.groupingBy(
+				p -> p.getPlan().getId(),
+				Collectors.mapping(p -> p.getPlaceCategory().getName(), Collectors.toList())
+			));
+
+		Map<Long, String> transCategoryMap = transCategories.stream()
+			.collect(Collectors.toMap(
+				t -> t.getPlan().getId(),
+				t -> t.getTransportationCategory().getName().toString(), // Enum 타입을 String으로 변환
+				(existing, replacement) -> existing // 중복 발생 시 첫 번째 값 유지
+			));
+
+		// Plan 데이터를 기반으로 DTO 생성
+		return plans.stream()
+			.map(plan -> new HomeRes.PlanInfo(
+				plan.getId(),
+				plan.getTitle(),
+				placeCategoryMap.getOrDefault(plan.getId(), List.of()), // PlaceCategory가 없으면 빈 리스트 반환
+				plan.getStartDate(),
+				plan.getEndDate(),
+				plan.getPeople(),
+				transCategoryMap.getOrDefault(plan.getId(), null), // TransportationCategory가 없으면 null 반환
+				plan.getTotalCost().intValue(),
+				plan.getImageUrl()
+			))
+			.toList();
+	}
+
+	private List<HomeRes.PlanInfo> convertHotPlacesToPlanInfo(
+		List<PlanPlaceCategory> placeCategories,
+		List<PlanTransportationCategory> transCategories
+	) {
+		// TransportationCategory를 Plan ID 기준으로 그룹화
+		Map<Long, String> transCategoryMap = transCategories.stream()
+			.collect(Collectors.toMap(
+				t -> t.getPlan().getId(),
+				t -> t.getTransportationCategory().getName().toString(), // Enum 타입을 String으로 변환
+				(existing, replacement) -> existing // 중복 발생 시 첫 번째 값 유지
+			));
+
+		// PlanPlaceCategory 데이터를 기반으로 DTO 생성
+		return placeCategories.stream()
+			.map(placeCategory -> {
+				Plan plan = placeCategory.getPlan();
+				return new HomeRes.PlanInfo(
+					plan.getId(),
+					plan.getTitle(),
+					List.of(placeCategory.getPlaceCategory().getName()), // 단일 PlaceCategory만 포함
+					plan.getStartDate(),
+					plan.getEndDate(),
+					plan.getPeople(),
+					transCategoryMap.getOrDefault(plan.getId(), null), // TransportationCategory가 없으면 null 반환
+					plan.getTotalCost().intValue(),
+					plan.getImageUrl()
+				);
+			})
+			.toList();
+	}
+}
+>>>>>>> Stashed changes
