@@ -5,10 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import project.tripplan.domain.comment.entity.Comment;
 
-<<<<<<< Updated upstream
-=======
 @Repository
->>>>>>> Stashed changes
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
 }

@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum 	BaseResponseCode {
+public enum BaseResponseCode {
 
 	/**
 	 * 1000 : 성공
@@ -20,6 +20,7 @@ public enum 	BaseResponseCode {
 	REISSUE_TOKEN_SUCCESS(true, 1004, "토큰 재발급에 성공했습니다.", HttpStatus.OK),
 	USER_PLAN_GET_SUCCESS(true, 1005, "내 여행 일정 목록 조회에 성공했습니다.", HttpStatus.OK),
 	USER_BOOKMARK_GET_SUCCESS(true, 1006, "찜한 게시물 목록 조회에 성공했습니다.", HttpStatus.OK),
+	USER_COMMENTS_GET_SUCCESS(true, 1007, "댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
 
 	//comment 1200 ~
 	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),

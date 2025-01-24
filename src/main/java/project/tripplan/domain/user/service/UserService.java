@@ -1,6 +1,11 @@
 package project.tripplan.domain.user.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,16 +13,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
 import project.tripplan.domain.bookmark.repository.BookmarkRepositoryCustom;
-<<<<<<< Updated upstream
-=======
 import project.tripplan.domain.comment.entity.Comment;
 import project.tripplan.domain.comment.repository.CommentRepository;
 import project.tripplan.domain.comment.repository.CommentRepositoryCustom;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
->>>>>>> Stashed changes
+import project.tripplan.domain.comment.entity.Comment;
+import project.tripplan.domain.comment.repository.CommentRepository;
+import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 import project.tripplan.domain.plan.file.S3Service;
+import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
+import project.tripplan.domain.user.dto.UserCommentRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
@@ -31,12 +38,8 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PlanRepositoryCustom planRepositoryCustom;
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
-<<<<<<< Updated upstream
-=======
 	private final CommentRepositoryCustom commentRepositoryCustom;
 	private final PlanPlaceCategoryRepositoryCustom planPlaceCategoryRepositoryCustom;
->>>>>>> Stashed changes
-
 	private final S3Service s3Service;
 
 	public void updateUserProfile(Long userId, String nickname, MultipartFile image) {
@@ -59,9 +62,6 @@ public class UserService {
 	public Page<UserBookmarkRes> getUserBookmarks(Long userId, Pageable pageable) {
 		return bookmarkRepositoryCustom.findBookmarksByUserId(userId, pageable);
 	}
-<<<<<<< Updated upstream
-}
-=======
 
 	@Transactional(readOnly = true)
 	public Page<UserCommentRes> getUserComments(Long userId, Pageable pageable) {
@@ -108,4 +108,4 @@ public class UserService {
 		return new PageImpl<>(dtoList, pageable, commentPage.getTotalElements());
 	}
 }
->>>>>>> Stashed changes
+

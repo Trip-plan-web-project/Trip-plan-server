@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import project.tripplan.domain.comment.entity.Comment;
 
 public interface CommentRepositoryCustom {
+  
 	Optional<Comment> findByIdWithUser(Long commentId);
 
 	Page<Comment> findAllByPlanIdWithUser(Long planId, Pageable pageable);
