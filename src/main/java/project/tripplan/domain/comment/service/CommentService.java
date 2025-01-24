@@ -1,5 +1,6 @@
 package project.tripplan.domain.comment.service;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.comment.dto.CommentReq;
 import project.tripplan.domain.comment.entity.Comment;
 import project.tripplan.domain.comment.repository.CommentRepository;
+import project.tripplan.domain.comment.repository.CommentRepositoryCustom;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.user.entity.User;
@@ -21,6 +23,7 @@ public class CommentService {
 
 	private final CommentRepository commentRepository;
 	private final PlanRepository planRepository;
+	private final CommentRepositoryCustom commentRepositoryCustom;
 
 	@Transactional
 	public Long addComment(User user, Long planId, CommentReq commentReq) {
@@ -38,16 +41,24 @@ public class CommentService {
 
 	@Transactional
 	public void deleteComment(User user, Long commentId) {
-		Comment findComment = commentRepository.findById(commentId)
+		Comment findComment = commentRepositoryCustom.findByIdWithUser(commentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
+
+		if(findComment.getUser().getId() != user.getId()) {
+			throw new CustomException(BaseResponseCode.UNAUTHORIZED_DELETE_COMMENT);
+		}
 
 		commentRepository.delete(findComment);
 	}
 
 	@Transactional
 	public void updateComment(User user, Long commentId, CommentReq commentReq) {
-		Comment findComment = commentRepository.findById(commentId)
+		Comment findComment = commentRepositoryCustom.findByIdWithUser(commentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
+
+		if(findComment.getUser().getId() != user.getId()) {
+			throw new CustomException(BaseResponseCode.UNAUTHORIZED_UPDATE_COMMENT);
+		}
 
 		findComment.updateComment(commentReq.getContent());
 	}

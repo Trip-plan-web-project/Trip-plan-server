@@ -37,7 +37,8 @@ public enum 	BaseResponseCode {
 	GET_PLAN_DETAIL_DAY_SUCCESS(true, 1404, "해당 일차 동선을 불러오는데 성공했습니다.", HttpStatus.OK),
 	GET_PLAN_SEARCH_INFO_SUCCESS(true, 1405, "계획글 검색 불러오기에 성공했습니다.", HttpStatus.OK),
 	GET_PLAN_SEARCH_CONDITION_SUCCESS(true, 1406, "계획글 조건 검색 불러오기에 성공했습니다.", HttpStatus.OK),
-	GET_HOME_SUCCESS(true, 1207, "홈화면 불러오기에 성공했습니다.", HttpStatus.OK),
+	GET_HOME_SUCCESS(true, 1407, "홈화면 불러오기에 성공했습니다.", HttpStatus.OK),
+	GET_PLAN_COMMENTS_LIST_SUCCESS(true, 1408, "게시글 댓글 목록 불러오기에 성공했습니다.", HttpStatus.OK),
 
 	/**
 	 * 2000 ~ 2899: request 오류
@@ -52,11 +53,14 @@ public enum 	BaseResponseCode {
 
 	//plan 2100 ~,
 	PLAN_NOT_EXIST(false, 2101, "존재하지 않는 게시글입니다.", HttpStatus.NOT_FOUND),
-	CATEGORY_NOT_EXIST(false, 2002, "존재하지 않는 카테고리입니다.", HttpStatus.NOT_FOUND),
-	PLAN_DAY_DETAIL_NOT_EXIST(false, 2003, "해당 일차의 상세정보가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+	CATEGORY_NOT_EXIST(false, 2102, "존재하지 않는 카테고리입니다.", HttpStatus.NOT_FOUND),
+	PLAN_DAY_DETAIL_NOT_EXIST(false, 2103, "해당 일차의 상세정보가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+	UNAUTHORIZED_POST_UPDATE_STATUS(false, 2104, "본인의 게시글상태만 수정할 수 있습니다.", HttpStatus.FORBIDDEN),
 
 	//comment 2200 ~
 	COMMENT_NOT_EXIST(false, 2201, "존재하지 않는 댓글입니다.", HttpStatus.NOT_FOUND),
+	UNAUTHORIZED_DELETE_COMMENT(false, 2202, "본인 댓글만 삭제 가능합니다.", HttpStatus.FORBIDDEN),
+	UNAUTHORIZED_UPDATE_COMMENT(false, 2203, "본인 댓글만 수정 가능합니다.", HttpStatus.FORBIDDEN),
 
 	//bookmark 2300 ~
 	BOOKMARK_NOT_EXIST(false, 2301, "존재하지 않는 즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
