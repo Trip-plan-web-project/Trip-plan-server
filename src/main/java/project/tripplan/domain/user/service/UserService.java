@@ -15,6 +15,10 @@ import lombok.AllArgsConstructor;
 import project.tripplan.domain.bookmark.repository.BookmarkRepositoryCustom;
 import project.tripplan.domain.comment.entity.Comment;
 import project.tripplan.domain.comment.repository.CommentRepository;
+import project.tripplan.domain.comment.repository.CommentRepositoryCustom;
+import project.tripplan.domain.plan.entity.PlanPlaceCategory;
+import project.tripplan.domain.comment.entity.Comment;
+import project.tripplan.domain.comment.repository.CommentRepository;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
@@ -34,9 +38,8 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PlanRepositoryCustom planRepositoryCustom;
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
-	private final CommentRepository commentRepository;
+	private final CommentRepositoryCustom commentRepositoryCustom;
 	private final PlanPlaceCategoryRepositoryCustom planPlaceCategoryRepositoryCustom;
-
 	private final S3Service s3Service;
 
 	public void updateUserProfile(Long userId, String nickname, MultipartFile image) {
@@ -62,7 +65,7 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public Page<UserCommentRes> getUserComments(Long userId, Pageable pageable) {
-		Page<Comment> commentPage = commentRepository.findCommentsByUser(userId, pageable);
+		Page<Comment> commentPage = commentRepositoryCustom.findCommentsByUser(userId, pageable);
 
 		// 1) 댓글에 연결된 planId 모으기 (중복제거)
 		List<Long> planIds = commentPage
@@ -105,3 +108,4 @@ public class UserService {
 		return new PageImpl<>(dtoList, pageable, commentPage.getTotalElements());
 	}
 }
+

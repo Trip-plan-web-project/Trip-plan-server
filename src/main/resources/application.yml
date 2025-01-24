@@ -62,26 +62,15 @@ spring:
       hibernate:
         format_sql: true
 
-#jwt:
-#  secretKey: ${JWT_KEY}
-#
-#  access:
-#    expiration: 3600000 # 1시간 (1000ms * 60s * 60m)
-#    header: Authorization
-#
-#  refresh:
-#    expiration: 604800000 # 1주일 (1000ms * 60s * 60m * 24h * 7일)
-#    header: Authorization_refresh
-
 jwt:
   secretKey: ${JWT_KEY}
 
   access:
-    expiration: 20000 # 1시간 (1000ms * 60s * 60m)
+    expiration: 3600000 # 1시간 (1000ms * 60s * 60m)
     header: Authorization
 
   refresh:
-    expiration: 40000 # 1주일 (1000ms * 60s * 60m * 24h * 7일)
+    expiration: 604800000 # 1주일 (1000ms * 60s * 60m * 24h * 7일)
     header: Authorization_refresh
 
 cloud:

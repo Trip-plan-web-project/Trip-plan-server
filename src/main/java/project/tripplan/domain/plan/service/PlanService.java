@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,10 +26,13 @@ import project.tripplan.domain.category.planCategory.repository.PlanCategoryRepo
 import project.tripplan.domain.category.transportationCategory.entitiy.TransportationCategory;
 import project.tripplan.domain.category.transportationCategory.enums.TransportationName;
 import project.tripplan.domain.category.transportationCategory.repository.TransportationCategoryRepository;
+import project.tripplan.domain.comment.entity.Comment;
+import project.tripplan.domain.comment.repository.CommentRepositoryCustom;
 import project.tripplan.domain.plan.dto.DayPlanReq;
 import project.tripplan.domain.plan.dto.DetailReq;
 import project.tripplan.domain.plan.dto.HomeRes;
 import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
+import project.tripplan.domain.plan.dto.PlanCommentsRes;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
 import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
 import project.tripplan.domain.plan.dto.PlanNoOffsetRes;
@@ -67,6 +73,7 @@ public class PlanService {
 	private final PlaceCategoryService placeCategoryService;
 	private final TransportationCategoryRepository transportationCategoryRepository;
 	private final PlanTransportationCategoryRepository planTransportationCategoryRepository;
+	private final CommentRepositoryCustom commentRepositoryCustom;
 
 	/**
 	 * 계획 저장 메서드
@@ -184,8 +191,12 @@ public class PlanService {
 
 	@Transactional
 	public void updatePlanStatus(User user, Long planId, @Valid PlanStatusReq planStatusReq) {
-		Plan findPlan = planRepository.findById(planId)
+		Plan findPlan = planRepositoryCustom.findByPlanIdWithUser(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
+
+		if(findPlan.getUser().getId() != user.getId()) {
+			throw new CustomException(BaseResponseCode.UNAUTHORIZED_POST_UPDATE_STATUS);
+		}
 
 		findPlan.updateStatus(planStatusReq.getStatus());
 	}
@@ -416,5 +427,19 @@ public class PlanService {
 				);
 			})
 			.toList();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<PlanCommentsRes> getPlanComments(Long planId, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Comment> findCommentsPage = commentRepositoryCustom.findAllByPlanIdWithUser(planId, pageable);
+
+		return findCommentsPage.map(comment -> new PlanCommentsRes(
+			comment.getUser().getSocialId(),
+			comment.getId(),
+			comment.getUser().getNickname(),
+			comment.getCreatedAt(),
+			comment.getContent()
+		));
 	}
 }
