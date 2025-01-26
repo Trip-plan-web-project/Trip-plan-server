@@ -41,6 +41,10 @@ public enum BaseResponseCode {
 	GET_HOME_SUCCESS(true, 1407, "홈화면 불러오기에 성공했습니다.", HttpStatus.OK),
 	GET_PLAN_COMMENTS_LIST_SUCCESS(true, 1408, "게시글 댓글 목록 불러오기에 성공했습니다.", HttpStatus.OK),
 
+	// planLike 1500 ~
+	ADD_PLAN_LIKE_SUCCESS(true, 1501, "게시글 좋아요가 추가되었습니다.", HttpStatus.OK),
+	DELETE_PLAN_LIKE_SUCCESS(true, 1502, "게시글 좋아요가 취소되었습니다.", HttpStatus.OK),
+
 	/**
 	 * 2000 ~ 2899: request 오류
 	 * 2900 ~ 3000: validation 오류
@@ -70,6 +74,10 @@ public enum BaseResponseCode {
 	//planPlace & planTrans & planCategory 2400 ~
 	GET_PLAN_PLACE_FAIL(false, 2401, "해당 게시글의 장소 카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	GET_PLAN_TRANS_FAIL(false, 2402, "해당 게시글의 교통수단을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+	//planLike 2500 ~
+	PLANLIKE_NOT_EXIST(false, 2501, "게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+	UNAUTHORIZED_PLANLIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
 
 	//valid 2900 ~
 	VALIDATION_FAILED(false, 2900, "Bind Exception", HttpStatus.BAD_REQUEST),

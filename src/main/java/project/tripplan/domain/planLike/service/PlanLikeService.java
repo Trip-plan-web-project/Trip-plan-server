@@ -1,0 +1,50 @@
+package project.tripplan.domain.planLike.service;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.plan.entity.Plan;
+import project.tripplan.domain.plan.repository.PlanRepository;
+import project.tripplan.domain.planLike.entity.PlanLike;
+import project.tripplan.domain.planLike.repository.PlanLikeRepository;
+import project.tripplan.domain.planLike.repository.PlanLikeRepositoryCustom;
+import project.tripplan.domain.user.entity.User;
+import project.tripplan.global.common.exception.CustomException;
+import project.tripplan.global.common.response.BaseResponseCode;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class PlanLikeService {
+
+	private final PlanLikeRepositoryCustom planLikeRepositoryCustom;
+	private final PlanLikeRepository planLikeRepository;
+	private final PlanRepository planRepository;
+
+	public Long addPlanLike(User user, Long planId) {
+		Plan findPlan = planRepository.findById(planId)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
+
+		PlanLike planLike = PlanLike.builder()
+			.user(user)
+			.plan(findPlan)
+			.build();
+
+		planLikeRepository.save(planLike);
+
+		return planLike.getId();
+	}
+
+	public void deletePlanLike(User user, Long planLikeId) {
+		PlanLike findPlanLike = planLikeRepositoryCustom.findPlanLikeWithUser(planLikeId)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.PLANLIKE_NOT_EXIST));
+
+		if(findPlanLike.getUser().getId() != user.getId()) {
+			throw new CustomException(BaseResponseCode.UNAUTHORIZED_PLANLIKE_DELETE);
+		}
+
+		planLikeRepository.delete(findPlanLike);
+	}
+}
