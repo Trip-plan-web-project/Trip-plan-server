@@ -28,6 +28,7 @@ import project.tripplan.domain.user.repository.UserRepositoryCustom;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class UserService {
 
 	private final UserRepositoryCustom userRepositoryCustom;
