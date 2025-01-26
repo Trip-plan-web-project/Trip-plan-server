@@ -26,6 +26,7 @@ import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
 import project.tripplan.domain.user.dto.UserCommentRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
+import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
@@ -43,10 +44,10 @@ public class UserService {
 	private final PlanPlaceCategoryRepositoryCustom planPlaceCategoryRepositoryCustom;
 	private final S3Service s3Service;
 
-	public void updateUserProfile(Long userId, String nickname, MultipartFile image) {
+	public void updateUserProfile(Long userId, UserProfileReq req, MultipartFile image) {
 		User user = userRepository.findById(userId).get();
-		if (nickname != null) {
-			user.setNickname(nickname);
+		if (req.getNickname() != null) {
+			user.setNickname(req.getNickname());
 		}
 		if (user.getImage() != null) {
 			s3Service.deleteFile(user.getImage());
