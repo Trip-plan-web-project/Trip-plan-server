@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
@@ -20,6 +22,7 @@ import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.service.UserService;
+import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponse;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -47,11 +50,19 @@ public class UserController {
 
 	@PatchMapping("/users/profile")
 	public BaseResponse<Void> updateUserProfile(
-		@RequestPart("image") MultipartFile image,
-		@RequestPart("profile") UserProfileReq req,
+		@RequestPart(value = "image", required = false) MultipartFile image,
+		@RequestPart("profile") String profile,
 		@AuthenticationPrincipal User user
 	) {
-		userService.updateUserProfile(user.getId(), req.getNickname(), image);
+		ObjectMapper objectMapper = new ObjectMapper();
+		UserProfileReq req = null;
+		try {
+			// Parse JSON string to Profile object
+			req = objectMapper.readValue(profile, UserProfileReq.class);
+		} catch (Exception e) {
+			throw new CustomException(BaseResponseCode.JSON_PARSING_ERROR);
+		}
+		userService.updateUserProfile(user.getId(), req, image);
 		return new BaseResponse<>(BaseResponseCode.USER_UPDATE_SUCCESS);
 	}
 
