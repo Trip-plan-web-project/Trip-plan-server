@@ -10,4 +10,6 @@ public class PlanNoOffsetRes {
 	private Boolean hasNext;           // 다음 페이지 존재 여부
 	private String nextValue;          // 다음 페이지 커서 값
 	private Long nextId;               // 다음 페이지 커서 pk
+	private long totalCount;           // 전체 카운트
+
 }

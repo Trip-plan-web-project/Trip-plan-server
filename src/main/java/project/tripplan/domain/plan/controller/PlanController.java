@@ -1,7 +1,6 @@
 package project.tripplan.domain.plan.controller;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -67,6 +66,7 @@ public class PlanController {
 	public BaseResponse<PlanNoOffsetRes> getPlans(@ModelAttribute PlanConditionReq queryParam) {
 
 		PlanNoOffsetReq req = new PlanNoOffsetReq();
+		req.setTitle(queryParam.getTitle());
 		req.setSize(queryParam.getSize() != null ? queryParam.getSize() : 10);
 		req.setSortBy(queryParam.getSortBy());
 		req.setDirection(queryParam.getDirection());

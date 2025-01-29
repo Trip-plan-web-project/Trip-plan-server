@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class PlanNoOffsetReq {
 
+	private String title;
 	private int size;                  // 페이지 크기
 	private String sortBy;             // 정렬 기준 (예: "viewCount", "id")
 	private String direction;          // 정렬 방향 (예: "ASC", "DESC")
