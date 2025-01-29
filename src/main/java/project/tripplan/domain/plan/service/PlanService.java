@@ -33,6 +33,7 @@ import project.tripplan.domain.plan.dto.DetailReq;
 import project.tripplan.domain.plan.dto.HomeRes;
 import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
 import project.tripplan.domain.plan.dto.PlanCommentsRes;
+import project.tripplan.domain.plan.dto.PlanContentAndTotalCountRes;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
 import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
 import project.tripplan.domain.plan.dto.PlanNoOffsetRes;
@@ -194,7 +195,7 @@ public class PlanService {
 		Plan findPlan = planRepositoryCustom.findByPlanIdWithUser(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
 
-		if(findPlan.getUser().getId() != user.getId()) {
+		if (findPlan.getUser().getId() != user.getId()) {
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_POST_UPDATE_STATUS);
 		}
 
@@ -268,20 +269,19 @@ public class PlanService {
 		// 1) categoryNames가 있는 경우, 자식까지 포함한 categoryIds 구하기 (OR 조건)
 		if (req.getCategoryNames() != null && !req.getCategoryNames().isEmpty()) {
 			Set<Long> allIds = placeCategoryService.findAllDescendantCategoryIds(req.getCategoryNames());
-			// allIds는 "카테고리들의 합집합" => OR 조건에 사용
 			req.setCategoryIds(allIds);
 		}
 
 		// 2) DB 조회 (size+1 개)
-		List<Plan> rawList = planRepositoryCustom.searchPlanNoOffset(req);
+		PlanContentAndTotalCountRes rawList = planRepositoryCustom.searchPlanNoOffset(req);
 
 		// 3) hasNext (size 이상이면 다음 페이지 존재)
-		boolean hasNext = rawList.size() > req.getSize();
+		boolean hasNext = rawList.getContent().size() > req.getSize();
 
 		// 4) 실제 반환 목록 (size까지만)
 		List<Plan> content = hasNext
-			? rawList.subList(0, req.getSize())
-			: rawList;
+			? rawList.getContent().subList(0, req.getSize())
+			: rawList.getContent();
 
 		// 5) nextValue, nextId 설정 (전통적 switch 문)
 		String nextValue = null;
@@ -316,6 +316,7 @@ public class PlanService {
 		response.setHasNext(hasNext);
 		response.setNextValue(nextValue);
 		response.setNextId(nextId);
+		response.setTotalCount(rawList.getTotalCount());
 
 		return response;
 	}

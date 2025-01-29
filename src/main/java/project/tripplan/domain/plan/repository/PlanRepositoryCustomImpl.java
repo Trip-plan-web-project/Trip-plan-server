@@ -1,6 +1,5 @@
 package project.tripplan.domain.plan.repository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,13 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.category.placeCategory.entity.QPlaceCategory;
 import project.tripplan.domain.category.transportationCategory.entitiy.QTransportationCategory;
 import project.tripplan.domain.category.transportationCategory.enums.TransportationName;
+import project.tripplan.domain.plan.dto.PlanContentAndTotalCountRes;
 import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.plan.entity.QPlanPlaceCategory;
 import project.tripplan.domain.plan.entity.QPlanTransportationCategory;
-import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.plan.enums.PlanStatus;
+import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.entity.QUser;
 
 @Slf4j
@@ -53,7 +53,13 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 	}
 
 	@Override
-	public List<Plan> searchPlanNoOffset(PlanNoOffsetReq req) {
+	public PlanContentAndTotalCountRes searchPlanNoOffset(PlanNoOffsetReq req) {
+		List<Plan> content = getContent(req);
+		long totalCount = getTotalCount(req);
+		return new PlanContentAndTotalCountRes(content, totalCount);
+	}
+
+	private List<Plan> getContent(PlanNoOffsetReq req) {
 		// (A) limit
 		int limit = req.getSize() + 1;
 
@@ -82,6 +88,11 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 
 	private BooleanBuilder buildSearchCondition(PlanNoOffsetReq req) {
 		BooleanBuilder builder = new BooleanBuilder();
+
+		// title검색 조건
+		if (req.getTitle() != null && !req.getTitle().isBlank()) {
+			builder.and(plan.title.likeIgnoreCase("%" + req.getTitle() + "%"));
+		}
 
 		// 1) 카테고리 ID in (OR 조건)
 		if (req.getCategoryIds() != null && !req.getCategoryIds().isEmpty()) {
@@ -176,6 +187,22 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 				}
 				break;
 		}
+	}
+
+	private long getTotalCount(PlanNoOffsetReq req) {
+		BooleanBuilder builder = buildSearchCondition(req);
+
+		Long countResult = qf
+			.select(plan.countDistinct())
+			.from(plan)
+			.leftJoin(plan.planPlaceCategories, planPlaceCategory)
+			.leftJoin(planPlaceCategory.placeCategory, placeCategory)
+			.leftJoin(plan.planTransportationCategories, planTransport)
+			.leftJoin(planTransport.transportationCategory, transportationCategory)
+			.where(builder)
+			.fetchOne();
+
+		return (countResult != null) ? countResult : 0;
 	}
 
 	@Override
