@@ -40,6 +40,7 @@ public enum BaseResponseCode {
 	GET_PLAN_SEARCH_CONDITION_SUCCESS(true, 1406, "계획글 조건 검색 불러오기에 성공했습니다.", HttpStatus.OK),
 	GET_HOME_SUCCESS(true, 1407, "홈화면 불러오기에 성공했습니다.", HttpStatus.OK),
 	GET_PLAN_COMMENTS_LIST_SUCCESS(true, 1408, "게시글 댓글 목록 불러오기에 성공했습니다.", HttpStatus.OK),
+	DELETE_PLAN_SUCCESS(true, 1409, "게시글 삭제에 성공했습니다..", HttpStatus.OK),
 
 	// planLike 1500 ~
 	ADD_PLAN_LIKE_SUCCESS(true, 1501, "게시글 좋아요가 추가되었습니다.", HttpStatus.OK),
@@ -61,6 +62,7 @@ public enum BaseResponseCode {
 	CATEGORY_NOT_EXIST(false, 2102, "존재하지 않는 카테고리입니다.", HttpStatus.NOT_FOUND),
 	PLAN_DAY_DETAIL_NOT_EXIST(false, 2103, "해당 일차의 상세정보가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_POST_UPDATE_STATUS(false, 2104, "본인의 게시글상태만 수정할 수 있습니다.", HttpStatus.FORBIDDEN),
+	UNAUTHORIZED_POST_DELETE_STATUS(false, 2105, "본인의 게시글만 삭제할 수 있습니다.", HttpStatus.FORBIDDEN),
 
 	//comment 2200 ~
 	COMMENT_NOT_EXIST(false, 2201, "존재하지 않는 댓글입니다.", HttpStatus.NOT_FOUND),

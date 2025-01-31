@@ -80,7 +80,8 @@ public class PlanService {
 	 * 계획 저장 메서드
 	 */
 	public Boolean savePlan(User user, PlanReq planReq, MultipartFile thumbnail) throws IOException {
-
+		log.info("user");
+		log.info("user = {}", user.getId());
 		// 1) 총 비용 계산
 		long totalCost = calculateTotalCost(planReq);
 
@@ -443,5 +444,15 @@ public class PlanService {
 			comment.getCreatedAt(),
 			comment.getContent()
 		));
+	}
+
+	public void deletePlan(Long planId, Long userId) {
+		Plan plan = planRepository.findById(planId)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
+		log.info("userId = {}", plan.getUser().getId());
+		if (plan.getUser().getId() != userId) {
+			throw new CustomException(BaseResponseCode.UNAUTHORIZED_POST_DELETE_STATUS);
+		}
+		planRepository.delete(plan);
 	}
 }
