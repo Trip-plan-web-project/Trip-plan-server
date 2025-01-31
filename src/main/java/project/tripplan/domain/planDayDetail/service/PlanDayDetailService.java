@@ -35,8 +35,7 @@ public class PlanDayDetailService {
 				planDayDetail.getOrderIndex(),
 				planDayDetail.getPlaceName(),
 				planDayDetail.getStreetAddress(),
-				planDayDetail.getPlanCategory().getName(),
-				planDayDetail.getPlanCategory().getImage(),
+				planDayDetail.getPlanCategory().getCode(),
 				planDayDetail.getLatitude(),
 				planDayDetail.getLongitude()
 			))

@@ -42,7 +42,7 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 			.join(comment.plan, plan).fetchJoin()
 			.join(comment.user, user).fetchJoin()
 			.where(plan.id.eq(planId))
-			.orderBy(comment.createdAt.desc())
+			.orderBy(comment.createdAt.desc(), comment.id.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();

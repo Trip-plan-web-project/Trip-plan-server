@@ -26,8 +26,7 @@ public class PlanDetailDayRes {
 		private Integer order;
 		private String placeName;
 		private String streetAddress;
-		private String planCategory;
-		private String image;
+		private String code;
 		private Double latitude;
 		private Double longitude;
 	}

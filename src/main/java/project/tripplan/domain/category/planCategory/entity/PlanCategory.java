@@ -28,9 +28,6 @@ public class PlanCategory extends BaseEntity {
 	@Column(unique = true, nullable = false)
 	private String name;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
-	private String image;
-
 	@Column(unique = true, nullable = false)
 	private String code;
 }

@@ -45,8 +45,6 @@ public class QPlan extends EntityPathBase<Plan> {
 
     public final EnumPath<project.tripplan.domain.plan.enums.PlanStatus> status = createEnum("status", project.tripplan.domain.plan.enums.PlanStatus.class);
 
-    public final StringPath subtitle = createString("subtitle");
-
     public final StringPath title = createString("title");
 
     public final NumberPath<Long> totalCost = createNumber("totalCost", Long.class);

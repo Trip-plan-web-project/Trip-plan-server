@@ -47,9 +47,6 @@ public class Plan extends BaseEntity {
 
 	private Long viewCount;
 
-	@Column(nullable = false)
-	private String subtitle;
-
 	private int people;
 
 	private String imageUrl;

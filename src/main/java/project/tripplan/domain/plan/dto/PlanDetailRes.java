@@ -18,9 +18,11 @@ import project.tripplan.domain.plan.enums.PlanStatus;
 @NoArgsConstructor
 public class PlanDetailRes {
 	private String title;
+	private String socialId;
 	List<String> placeCategory = new ArrayList<>();
 	private String author;
 	private String profileImage;
+	private String thumbnail;
 	private LocalDateTime createdAt;
 	private LocalDate startDate;
 	private LocalDate endDate;
