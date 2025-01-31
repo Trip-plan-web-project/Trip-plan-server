@@ -24,6 +24,8 @@ public class QPlan extends EntityPathBase<Plan> {
 
     public final project.tripplan.global.common.entity.QBaseEntity _super = new project.tripplan.global.common.entity.QBaseEntity(this);
 
+    public final ListPath<project.tripplan.domain.comment.entity.Comment, project.tripplan.domain.comment.entity.QComment> comments = this.<project.tripplan.domain.comment.entity.Comment, project.tripplan.domain.comment.entity.QComment>createList("comments", project.tripplan.domain.comment.entity.Comment.class, project.tripplan.domain.comment.entity.QComment.class, PathInits.DIRECT2);
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
 
@@ -36,6 +38,8 @@ public class QPlan extends EntityPathBase<Plan> {
     public final NumberPath<Integer> people = createNumber("people", Integer.class);
 
     public final ListPath<project.tripplan.domain.planDay.entity.PlanDay, project.tripplan.domain.planDay.entity.QPlanDay> planDays = this.<project.tripplan.domain.planDay.entity.PlanDay, project.tripplan.domain.planDay.entity.QPlanDay>createList("planDays", project.tripplan.domain.planDay.entity.PlanDay.class, project.tripplan.domain.planDay.entity.QPlanDay.class, PathInits.DIRECT2);
+
+    public final ListPath<project.tripplan.domain.planLike.entity.PlanLike, project.tripplan.domain.planLike.entity.QPlanLike> planLikes = this.<project.tripplan.domain.planLike.entity.PlanLike, project.tripplan.domain.planLike.entity.QPlanLike>createList("planLikes", project.tripplan.domain.planLike.entity.PlanLike.class, project.tripplan.domain.planLike.entity.QPlanLike.class, PathInits.DIRECT2);
 
     public final SetPath<PlanPlaceCategory, QPlanPlaceCategory> planPlaceCategories = this.<PlanPlaceCategory, QPlanPlaceCategory>createSet("planPlaceCategories", PlanPlaceCategory.class, QPlanPlaceCategory.class, PathInits.DIRECT2);
 

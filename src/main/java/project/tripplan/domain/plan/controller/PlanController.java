@@ -3,7 +3,9 @@ package project.tripplan.domain.plan.controller;
 import java.io.IOException;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -38,9 +40,9 @@ public class PlanController {
 
 	private final PlanService planService;
 
-	@PostMapping("/plans")
+	@PostMapping(value = "/plans", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public BaseResponse<?> createPlan(
-		@RequestPart("thumbnail") MultipartFile thumbnail,
+		@RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
 		@Valid @RequestPart("plan") PlanReq planDto,
 		@AuthenticationPrincipal User user
 	) throws IOException {
@@ -93,5 +95,13 @@ public class PlanController {
 		@RequestParam(defaultValue = "4") int size) {
 		return new BaseResponse<>(BaseResponseCode.GET_PLAN_COMMENTS_LIST_SUCCESS,
 			planService.getPlanComments(planId, page, size));
+	}
+
+	@DeleteMapping("/plans/{planId}")
+	public BaseResponse<Void> deletePlan(
+		@AuthenticationPrincipal User user,
+		@PathVariable Long planId) {
+		planService.deletePlan(planId, user.getId());
+		return new BaseResponse<>(BaseResponseCode.DELETE_PLAN_SUCCESS);
 	}
 }
