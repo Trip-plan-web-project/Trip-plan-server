@@ -10,6 +10,5 @@ import lombok.Getter;
 public class UserProfileRes {
 	private Long userId;
 	private String nickname;
-	private String email;
 	private String image;
 }

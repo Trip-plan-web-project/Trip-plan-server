@@ -30,9 +30,6 @@ public class User extends BaseEntity {
 	@Column(nullable = false)
 	private String socialId;
 
-	@Column
-	private String email;
-
 	@Column(nullable = false)
 	private String nickname;
 

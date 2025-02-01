@@ -42,7 +42,6 @@ public class UserController {
 				.userId(user.getId())
 				.nickname(user.getNickname())
 				.image(user.getImage())
-				.email(user.getEmail())
 				.build()
 		);
 
