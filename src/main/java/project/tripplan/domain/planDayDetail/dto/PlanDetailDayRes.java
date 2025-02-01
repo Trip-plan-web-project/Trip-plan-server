@@ -16,7 +16,8 @@ public class PlanDetailDayRes {
 
 	private LocalDate date;
 	private Integer cost;
-	private List<PlaceDetail> places;
+	private Integer day;
+	private List<PlaceDetail> detail;
 
 	@Getter
 	@Setter

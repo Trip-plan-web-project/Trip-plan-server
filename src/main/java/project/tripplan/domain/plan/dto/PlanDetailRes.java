@@ -19,6 +19,7 @@ import project.tripplan.domain.plan.enums.PlanStatus;
 public class PlanDetailRes {
 	private String title;
 	private String socialId;
+	private Long likeId;
 	List<String> placeCategory = new ArrayList<>();
 	private String author;
 	private String profileImage;
