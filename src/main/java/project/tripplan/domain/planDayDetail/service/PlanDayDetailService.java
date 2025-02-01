@@ -24,7 +24,7 @@ public class PlanDayDetailService {
 	@Transactional(readOnly = true)
 	public PlanDetailDayRes getPlanDayDetail(Integer day, Long planId) {
 		List<PlanDayDetail> findAllPlanDayDetail = planDayDetailRepositoryCustom.findAllByPlanIdWithPlanCategory(
-			planId);
+			planId, day);
 
 		if (findAllPlanDayDetail.isEmpty()) {
 			throw new CustomException(BaseResponseCode.PLAN_DAY_DETAIL_NOT_EXIST);
@@ -43,6 +43,7 @@ public class PlanDayDetailService {
 
 		PlanDayDetail planDayDetail = findAllPlanDayDetail.get(0);
 
-		return new PlanDetailDayRes(planDayDetail.getPlanDay().getDate(), planDayDetail.getPlanDay().getCost(), places);
+		return new PlanDetailDayRes(planDayDetail.getPlanDay().getDate(), planDayDetail.getPlanDay().getCost(), day,
+			places);
 	}
 }

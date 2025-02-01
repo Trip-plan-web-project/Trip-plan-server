@@ -25,12 +25,12 @@ public class PlanDayDetailRepositoryCustomImpl implements PlanDayDetailRepositor
 	private final QPlan plan = QPlan.plan;
 
 	@Override
-	public List<PlanDayDetail> findAllByPlanIdWithPlanCategory(Long planId) {
+	public List<PlanDayDetail> findAllByPlanIdWithPlanCategory(Long planId, Integer day) {
 		return qf.selectFrom(planDayDetail)
 			.join(planDayDetail.planDay, planDay).fetchJoin()
 			.join(planDay.plan, plan).fetchJoin()
 			.join(planDayDetail.planCategory, planCategory).fetchJoin()
-			.where(planDayDetail.planDay.plan.id.eq(planId))
+			.where(planDayDetail.planDay.plan.id.eq(planId).and(planDayDetail.planDay.day.eq(day)))
 			.fetch();
 	}
 }

@@ -204,7 +204,7 @@ public class PlanService {
 		findPlan.updateStatus(planStatusReq.getStatus());
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	public PlanDetailRes getPlanInfoDetails(User user, Long planId) {
 		List<PlanPlaceCategory> findPlanPlaceCategories = planPlaceCategoryRepositoryCustom.findAllByPlanIdWithPlanAndPlace(
 			planId);
