@@ -28,4 +28,8 @@ public class UserBookmarkRes {
 			? List.of()
 			: List.of(categoryNames.split(","));
 	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
 }

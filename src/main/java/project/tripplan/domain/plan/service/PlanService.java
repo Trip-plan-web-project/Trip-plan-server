@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -63,6 +64,9 @@ import project.tripplan.global.common.response.BaseResponseCode;
 @Slf4j
 public class PlanService {
 
+	@Value("${cloud.prefix}")
+	private String prefix;
+
 	private final PlanRepository planRepository;
 	private final PlanCategoryRepository planCategoryRepository;
 	private final PlanPlaceCategoryRepository planPlaceCategoryRepository;
@@ -80,8 +84,6 @@ public class PlanService {
 	 * 계획 저장 메서드
 	 */
 	public Boolean savePlan(User user, PlanReq planReq, MultipartFile thumbnail) throws IOException {
-		log.info("user");
-		log.info("user = {}", user.getId());
 		// 1) 총 비용 계산
 		long totalCost = calculateTotalCost(planReq);
 
@@ -309,7 +311,7 @@ public class PlanService {
 
 		// 6) DTO 변환
 		List<PlanSearchRes> plans = content.stream()
-			.map(PlanSearchRes::new)
+			.map(plan -> new PlanSearchRes(plan, prefix))
 			.toList();
 
 		// 7) 응답 구성

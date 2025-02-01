@@ -1,5 +1,6 @@
 package project.tripplan.domain.user.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,9 @@ import project.tripplan.global.common.response.BaseResponseCode;
 @RequiredArgsConstructor
 public class UserController {
 
+	@Value("${cloud.prefix}")
+	private String prefix;
+
 	private final UserService userService;
 
 	@GetMapping("/users/profile")
@@ -41,7 +45,7 @@ public class UserController {
 			UserProfileRes.builder()
 				.userId(user.getId())
 				.nickname(user.getNickname())
-				.image(user.getImage())
+				.image(prefix + "/" + user.getImage())
 				.build()
 		);
 
