@@ -90,7 +90,6 @@ public class PlanService {
 		Plan plan = Plan.builder()
 			.user(user)
 			.title(planReq.getTitle())
-			.subtitle(planReq.getSubtitle())
 			.people(planReq.getPeople())
 			.status(PUBLIC)
 			.totalCost(totalCost)
@@ -234,9 +233,11 @@ public class PlanService {
 		// PlanDetailRes DTO 생성
 		PlanDetailRes planDetailRes = new PlanDetailRes();
 		planDetailRes.setTitle(placeCategory.getPlan().getTitle());
+		planDetailRes.setSocialId(findPlan.getUser().getSocialId());
 		planDetailRes.setPlaceCategory(categoryNames);
 		planDetailRes.setAuthor(findPlan.getUser().getNickname());
 		planDetailRes.setProfileImage(findPlan.getUser().getImage());
+		planDetailRes.setThumbnail(findPlan.getImageUrl());
 		planDetailRes.setCreatedAt(placeCategory.getPlan().getCreatedAt());
 		planDetailRes.setStartDate(placeCategory.getPlan().getStartDate());
 		planDetailRes.setEndDate(placeCategory.getPlan().getEndDate());

@@ -16,6 +16,7 @@ import project.tripplan.global.common.response.BaseResponseCode;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class PlanLikeService {
 
