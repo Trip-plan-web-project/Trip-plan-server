@@ -238,8 +238,8 @@ public class PlanService {
 		planDetailRes.setSocialId(findPlan.getUser().getSocialId());
 		planDetailRes.setPlaceCategory(categoryNames);
 		planDetailRes.setAuthor(findPlan.getUser().getNickname());
-		planDetailRes.setProfileImage(findPlan.getUser().getImage());
-		planDetailRes.setThumbnail(findPlan.getImageUrl());
+		planDetailRes.setProfileImage(prefix + "/" + findPlan.getUser().getImage());
+		planDetailRes.setThumbnail(prefix + "/" + findPlan.getImageUrl());
 		planDetailRes.setCreatedAt(placeCategory.getPlan().getCreatedAt());
 		planDetailRes.setStartDate(placeCategory.getPlan().getStartDate());
 		planDetailRes.setEndDate(placeCategory.getPlan().getEndDate());
@@ -398,7 +398,7 @@ public class PlanService {
 				plan.getPeople(),
 				transCategoryMap.getOrDefault(plan.getId(), null), // TransportationCategory가 없으면 null 반환
 				plan.getTotalCost().intValue(),
-				plan.getImageUrl()
+				prefix + "/" + plan.getImageUrl()
 			))
 			.toList();
 	}
@@ -428,7 +428,7 @@ public class PlanService {
 					plan.getPeople(),
 					transCategoryMap.getOrDefault(plan.getId(), null), // TransportationCategory가 없으면 null 반환
 					plan.getTotalCost().intValue(),
-					plan.getImageUrl()
+					prefix + "/" + plan.getImageUrl()
 				);
 			})
 			.toList();
