@@ -31,4 +31,8 @@ public class UserPlanRes {
 			: List.of(categoryNames.split(","));
 		this.status = status;
 	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
 }

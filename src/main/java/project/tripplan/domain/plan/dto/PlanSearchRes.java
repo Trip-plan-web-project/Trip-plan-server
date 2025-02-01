@@ -20,10 +20,10 @@ public class PlanSearchRes {
 	private String transportCategoryName;
 	private Long totalCost;
 
-	public PlanSearchRes(Plan plan) {
+	public PlanSearchRes(Plan plan, String prefix) {
 		this.planId = plan.getId();
 		this.title = plan.getTitle();
-		this.image = plan.getImageUrl();
+		this.image = prefix + "/" + plan.getImageUrl();
 		this.transportCategoryName = plan.getFirstTransportCategoryName();
 		this.startDate = plan.getStartDate();
 		this.endDate = plan.getEndDate();

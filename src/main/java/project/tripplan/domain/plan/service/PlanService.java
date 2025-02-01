@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -62,6 +63,9 @@ import project.tripplan.global.common.response.BaseResponseCode;
 @Transactional
 @Slf4j
 public class PlanService {
+
+	@Value("${cloud.prefix}")
+	private String prefix;
 
 	private final PlanRepository planRepository;
 	private final PlanCategoryRepository planCategoryRepository;
@@ -307,7 +311,7 @@ public class PlanService {
 
 		// 6) DTO 변환
 		List<PlanSearchRes> plans = content.stream()
-			.map(PlanSearchRes::new)
+			.map(plan -> new PlanSearchRes(plan, prefix))
 			.toList();
 
 		// 7) 응답 구성

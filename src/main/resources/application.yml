@@ -85,3 +85,4 @@ cloud:
       auto: false
     stack:
       auto: false
+  prefix: ${URL_PREFIX}
