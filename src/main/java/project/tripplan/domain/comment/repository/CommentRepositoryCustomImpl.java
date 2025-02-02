@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -61,24 +62,32 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 	}
 
 	@Override
-	public Page<Comment> findCommentsByUser(Long userId, Pageable pageable) {
-		List<Comment> content = qf
-			.selectFrom(comment)
-			.join(comment.plan, plan).fetchJoin()
-			.where(comment.user.id.eq(userId))
-			.orderBy(comment.createdAt.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
+	public List<Comment> findCommentsByUserNoOffset(Long userId, Long lastCommentId, int size) {
+		QComment comment = QComment.comment;
 
-		Long totalCount = qf
+		BooleanBuilder builder = new BooleanBuilder();
+		builder.and(comment.user.id.eq(userId));
+		if (lastCommentId != null) {
+			builder.and(comment.id.lt(lastCommentId));
+		}
+
+		return qf
+			.selectFrom(comment)
+			.where(builder)
+			.orderBy(comment.id.desc())
+			.limit(size)
+			.fetch();
+	}
+
+	@Override
+	public long countByUserId(Long userId) {
+		QComment comment = QComment.comment;
+
+		return qf
 			.select(comment.count())
 			.from(comment)
 			.where(comment.user.id.eq(userId))
 			.fetchOne();
-
-		long total = (totalCount == null) ? 0 : totalCount;
-
-		return new PageImpl<>(content, pageable, total);
 	}
+
 }

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
-import project.tripplan.domain.user.dto.UserCommentRes;
+import project.tripplan.domain.user.dto.UserCommentsRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
@@ -96,14 +96,17 @@ public class UserController {
 	}
 
 	@GetMapping("/users/comments")
-	public BaseResponse<Page<UserCommentRes>> getUserComments(
-		@RequestParam int page,
+	public BaseResponse<UserCommentsRes> getUserComments(
+		@RequestParam(required = false) Long lastCommentId,
 		@RequestParam int size,
 		@AuthenticationPrincipal User user
 	) {
-		Pageable pageable = PageRequest.of(page - 1, size);
+		if (lastCommentId == 0) {
+			lastCommentId = null;
+		}
+
 		return new BaseResponse<>(BaseResponseCode.USER_COMMENTS_GET_SUCCESS,
-			userService.getUserComments(user.getId(), pageable)
+			userService.getUserCommentsNoOffset(user.getId(), lastCommentId, size)
 		);
 	}
 }
