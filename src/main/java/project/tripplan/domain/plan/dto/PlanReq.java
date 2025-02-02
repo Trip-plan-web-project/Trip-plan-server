@@ -14,9 +14,6 @@ public class PlanReq {
 	private String title;
 
 	@NotEmpty
-	private String subtitle;
-
-	@NotEmpty
 	private String transportation;
 
 	@NotEmpty
