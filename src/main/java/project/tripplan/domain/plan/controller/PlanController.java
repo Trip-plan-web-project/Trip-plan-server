@@ -65,15 +65,26 @@ public class PlanController {
 	}
 
 	@GetMapping("/plans/search")
-	public BaseResponse<PlanNoOffsetRes> getPlans(@ModelAttribute PlanConditionReq queryParam) {
+	public BaseResponse<PlanNoOffsetRes> getPlans(@Valid @ModelAttribute PlanConditionReq queryParam) {
 
 		PlanNoOffsetReq req = new PlanNoOffsetReq();
+
+		if (queryParam.getLastValue().equals("null")) {
+			req.setLastValue(null);
+		} else {
+			req.setLastValue(queryParam.getLastValue());
+		}
+
+		if (queryParam.getLastId() == 0) {
+			req.setLastId(null);
+		} else {
+			req.setLastId(queryParam.getLastId());
+		}
+
 		req.setTitle(queryParam.getTitle());
 		req.setSize(queryParam.getSize() != null ? queryParam.getSize() : 10);
 		req.setSortBy(queryParam.getSortBy());
 		req.setDirection(queryParam.getDirection());
-		req.setLastValue(queryParam.getLastValue());
-		req.setLastId(queryParam.getLastId());
 		req.setDay(queryParam.getDay());
 		req.setTransportCategoryName(queryParam.getTransportCategoryName());
 		req.setPeople(queryParam.getPeople());
