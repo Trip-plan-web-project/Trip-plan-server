@@ -19,10 +19,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.tripplan.domain.auth.refreshToken.entity.RefreshToken;
 import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
-import project.tripplan.domain.user.enums.Provider;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
@@ -143,7 +141,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		boolean isExcluded = requestURI.equals("/") ||
 			requestURI.equals("/login") ||
 			requestURI.equals("/home") ||
-			requestURI.startsWith("/search/") ||
+			requestURI.startsWith("/plans/search") ||
 			requestURI.startsWith("/test") ||
 			requestURI.startsWith("/token/issue/") ||
 			requestURI.startsWith("/token/reissue/") ||
