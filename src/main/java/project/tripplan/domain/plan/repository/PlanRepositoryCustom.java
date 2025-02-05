@@ -21,4 +21,6 @@ public interface PlanRepositoryCustom {
 	List<Plan> findMostRecentPlans(int limit);
 
 	Page<UserPlanRes> findPlansByUserId(Long userId, Pageable pageable);
+
+	Optional<Plan> findPlanWithAllChildren(Long planId);
 }

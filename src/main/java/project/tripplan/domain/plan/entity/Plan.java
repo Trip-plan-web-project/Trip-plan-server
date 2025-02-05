@@ -75,7 +75,7 @@ public class Plan extends BaseEntity {
 
 	@Builder.Default
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PlanDay> planDays = new ArrayList<>();
+	private Set<PlanDay> planDays = new HashSet<>();
 
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PlanLike> planLikes = new ArrayList<>();

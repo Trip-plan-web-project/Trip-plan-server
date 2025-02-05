@@ -3,6 +3,8 @@ package project.tripplan.domain.plan.service;
 import static project.tripplan.domain.plan.enums.PlanStatus.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,6 +46,7 @@ import project.tripplan.domain.plan.dto.PlanStatusReq;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 import project.tripplan.domain.plan.entity.PlanTransportationCategory;
+import project.tripplan.domain.plan.enums.PlanStatus;
 import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepository;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
@@ -55,6 +58,7 @@ import project.tripplan.domain.planDay.entity.PlanDay;
 import project.tripplan.domain.planDayDetail.entity.PlanDayDetail;
 import project.tripplan.domain.planLike.repository.PlanLikeRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -79,6 +83,7 @@ public class PlanService {
 	private final TransportationCategoryRepository transportationCategoryRepository;
 	private final PlanTransportationCategoryRepository planTransportationCategoryRepository;
 	private final CommentRepositoryCustom commentRepositoryCustom;
+	private final UserRepository userRepository;
 
 	/**
 	 * 계획 저장 메서드
@@ -456,5 +461,86 @@ public class PlanService {
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_POST_DELETE_STATUS);
 		}
 		planRepository.delete(plan);
+	}
+
+	public void copyPlan(Long planId, Long userId) {
+		Plan plan = planRepositoryCustom.findPlanWithAllChildren(planId)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.USER_NOT_EXIST));
+
+		Plan copyPlan = Plan.builder()
+			.user(user)
+			.title(plan.getTitle())
+			.viewCount(0L)
+			.people(plan.getPeople())
+			.status(PlanStatus.PRIVATE)
+			.totalCost(plan.getTotalCost())
+			.startDate(plan.getStartDate())
+			.endDate(plan.getEndDate())
+			.planTransportationCategories(new HashSet<>())
+			.planPlaceCategories(new HashSet<>())
+			.planDays(new HashSet<>())
+			.planLikes(new ArrayList<>())
+			.comments(new ArrayList<>())
+			.build();
+
+		planRepository.save(copyPlan);
+		copyRelatedEntities(plan, copyPlan);
+		copyPlan.setImageUrl(s3Service.copyFile(plan.getImageUrl()));
+	}
+
+	private void copyRelatedEntities(Plan plan, Plan copyPlan) {
+		// 1) PlanPlaceCategory copy
+		for (PlanPlaceCategory ppc : plan.getPlanPlaceCategories()) {
+			PlanPlaceCategory cppc = PlanPlaceCategory.builder()
+				.plan(copyPlan)
+				.placeCategory(ppc.getPlaceCategory())
+				.build();
+
+			copyPlan.getPlanPlaceCategories().add(cppc);
+		}
+
+		// 2) PlanTransportationCategory copy
+		for (PlanTransportationCategory ptc : plan.getPlanTransportationCategories()) {
+			PlanTransportationCategory cptc = PlanTransportationCategory.builder()
+				.plan(copyPlan)
+				.transportationCategory(ptc.getTransportationCategory())
+				.build();
+
+			copyPlan.getPlanTransportationCategories().add(cptc);
+		}
+
+		// 3) PlanDay + PlanDayDetail copy
+		for (PlanDay pd : plan.getPlanDays()) {
+			PlanDay cpd = PlanDay.builder()
+				.plan(copyPlan)
+				.day(pd.getDay())
+				.date(pd.getDate())
+				.cost(pd.getCost())
+				.planDayDetails(new HashSet<>())
+				.build();
+
+			// PlanDayDetail copy
+			copyPlanDayDetails(pd, cpd);
+
+			copyPlan.getPlanDays().add(cpd);
+		}
+	}
+
+	private void copyPlanDayDetails(PlanDay planDay, PlanDay copyPlanDay) {
+		for (PlanDayDetail pdd : planDay.getPlanDayDetails()) {
+			PlanDayDetail cpdd = PlanDayDetail.builder()
+				.planDay(copyPlanDay)
+				.orderIndex(pdd.getOrderIndex())
+				.placeName(pdd.getPlaceName())
+				.streetAddress(pdd.getStreetAddress())
+				.latitude(pdd.getLatitude())
+				.longitude(pdd.getLongitude())
+				.planCategory(pdd.getPlanCategory())
+				.build();
+
+			copyPlanDay.getPlanDayDetails().add(cpdd);
+		}
 	}
 }

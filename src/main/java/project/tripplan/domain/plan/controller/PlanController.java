@@ -115,4 +115,13 @@ public class PlanController {
 		planService.deletePlan(planId, user.getId());
 		return new BaseResponse<>(BaseResponseCode.DELETE_PLAN_SUCCESS);
 	}
+
+	@PostMapping("/plans/{planId}/copy")
+	public BaseResponse<Void> copyPlan(
+		@AuthenticationPrincipal User user,
+		@PathVariable Long planId
+	) {
+		planService.copyPlan(planId, user.getId());
+		return new BaseResponse<>(BaseResponseCode.COPY_PLAN_SUCCESS);
+	}
 }

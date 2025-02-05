@@ -37,7 +37,7 @@ public class QPlan extends EntityPathBase<Plan> {
 
     public final NumberPath<Integer> people = createNumber("people", Integer.class);
 
-    public final ListPath<project.tripplan.domain.planDay.entity.PlanDay, project.tripplan.domain.planDay.entity.QPlanDay> planDays = this.<project.tripplan.domain.planDay.entity.PlanDay, project.tripplan.domain.planDay.entity.QPlanDay>createList("planDays", project.tripplan.domain.planDay.entity.PlanDay.class, project.tripplan.domain.planDay.entity.QPlanDay.class, PathInits.DIRECT2);
+    public final SetPath<project.tripplan.domain.planDay.entity.PlanDay, project.tripplan.domain.planDay.entity.QPlanDay> planDays = this.<project.tripplan.domain.planDay.entity.PlanDay, project.tripplan.domain.planDay.entity.QPlanDay>createSet("planDays", project.tripplan.domain.planDay.entity.PlanDay.class, project.tripplan.domain.planDay.entity.QPlanDay.class, PathInits.DIRECT2);
 
     public final ListPath<project.tripplan.domain.planLike.entity.PlanLike, project.tripplan.domain.planLike.entity.QPlanLike> planLikes = this.<project.tripplan.domain.planLike.entity.PlanLike, project.tripplan.domain.planLike.entity.QPlanLike>createList("planLikes", project.tripplan.domain.planLike.entity.PlanLike.class, project.tripplan.domain.planLike.entity.QPlanLike.class, PathInits.DIRECT2);
 

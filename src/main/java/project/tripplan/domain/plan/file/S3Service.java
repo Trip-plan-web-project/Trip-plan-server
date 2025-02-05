@@ -74,4 +74,19 @@ public class S3Service {
 			throw new CustomException(BaseResponseCode.FILE_DELETE_ERROR);
 		}
 	}
+
+	public String copyFile(String fileName) {
+		if (fileName == null || fileName.isBlank()) {
+			return null;
+		}
+
+		String destKey = createFileName(fileName);
+
+		amazonS3.copyObject(bucket, fileName, bucket, destKey);
+
+		amazonS3.setObjectAcl(bucket, destKey, CannedAccessControlList.PublicRead);
+
+		return destKey;
+	}
+
 }
