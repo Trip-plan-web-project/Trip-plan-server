@@ -37,7 +37,7 @@ public class QPlanDay extends EntityPathBase<PlanDay> {
 
     public final project.tripplan.domain.plan.entity.QPlan plan;
 
-    public final ListPath<project.tripplan.domain.planDayDetail.entity.PlanDayDetail, project.tripplan.domain.planDayDetail.entity.QPlanDayDetail> planDayDetails = this.<project.tripplan.domain.planDayDetail.entity.PlanDayDetail, project.tripplan.domain.planDayDetail.entity.QPlanDayDetail>createList("planDayDetails", project.tripplan.domain.planDayDetail.entity.PlanDayDetail.class, project.tripplan.domain.planDayDetail.entity.QPlanDayDetail.class, PathInits.DIRECT2);
+    public final SetPath<project.tripplan.domain.planDayDetail.entity.PlanDayDetail, project.tripplan.domain.planDayDetail.entity.QPlanDayDetail> planDayDetails = this.<project.tripplan.domain.planDayDetail.entity.PlanDayDetail, project.tripplan.domain.planDayDetail.entity.QPlanDayDetail>createSet("planDayDetails", project.tripplan.domain.planDayDetail.entity.PlanDayDetail.class, project.tripplan.domain.planDayDetail.entity.QPlanDayDetail.class, PathInits.DIRECT2);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

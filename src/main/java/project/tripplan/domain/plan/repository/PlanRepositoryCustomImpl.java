@@ -26,6 +26,8 @@ import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.plan.entity.QPlanPlaceCategory;
 import project.tripplan.domain.plan.entity.QPlanTransportationCategory;
 import project.tripplan.domain.plan.enums.PlanStatus;
+import project.tripplan.domain.planDay.entity.QPlanDay;
+import project.tripplan.domain.planDayDetail.entity.QPlanDayDetail;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.entity.QUser;
 
@@ -41,6 +43,8 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 	private final QPlanPlaceCategory planPlaceCategory = QPlanPlaceCategory.planPlaceCategory;
 	private final QPlanTransportationCategory planTransport = QPlanTransportationCategory.planTransportationCategory;
 	private final QPlaceCategory placeCategory = QPlaceCategory.placeCategory;
+	private final QPlanDay planDay = QPlanDay.planDay;
+	private final QPlanDayDetail planDayDetail = QPlanDayDetail.planDayDetail;
 
 	@Override
 	public Optional<Plan> findByPlanIdWithUser(Long planId) {
@@ -254,5 +258,21 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 			.fetchOne();
 
 		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
+	public Optional<Plan> findPlanWithAllChildren(Long planId) {
+
+		Plan result = qf
+			.select(plan)
+			.from(plan)
+			.leftJoin(plan.planDays, planDay).fetchJoin()
+			.leftJoin(planDay.planDayDetails, planDayDetail).fetchJoin()
+			.leftJoin(plan.planPlaceCategories, planPlaceCategory).fetchJoin()
+			.leftJoin(plan.planTransportationCategories, planTransport).fetchJoin()
+			.where(plan.id.eq(planId))
+			.fetchOne();
+
+		return Optional.ofNullable(result);
 	}
 }
