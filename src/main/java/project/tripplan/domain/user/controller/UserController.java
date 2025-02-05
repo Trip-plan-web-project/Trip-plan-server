@@ -17,11 +17,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
-import project.tripplan.domain.user.dto.UserCommentsRes;
+import project.tripplan.domain.user.dto.UserCommentRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.domain.user.service.UserService;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponse;
@@ -37,15 +38,16 @@ public class UserController {
 
 	private final UserService userService;
 
+	private final UserRepository userRepository;
+
 	@GetMapping("/users/profile")
 	public BaseResponse<UserProfileRes> getUserProFile(@AuthenticationPrincipal User user) {
-
 		return new BaseResponse<>(
 			BaseResponseCode.USER_GET_SUCCESS,
 			UserProfileRes.builder()
 				.userId(user.getId())
 				.nickname(user.getNickname())
-				.image(prefix + "/" + user.getImage())
+				.image((user.getImage() == null) ? null : prefix + "/" + user.getImage())
 				.build()
 		);
 
@@ -60,7 +62,6 @@ public class UserController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		UserProfileReq req = null;
 		try {
-			// Parse JSON string to Profile object
 			req = objectMapper.readValue(profile, UserProfileReq.class);
 		} catch (Exception e) {
 			throw new CustomException(BaseResponseCode.JSON_PARSING_ERROR);
@@ -96,17 +97,14 @@ public class UserController {
 	}
 
 	@GetMapping("/users/comments")
-	public BaseResponse<UserCommentsRes> getUserComments(
-		@RequestParam(required = false) Long lastCommentId,
+	public BaseResponse<Page<UserCommentRes>> getUserComments(
+		@RequestParam int page,
 		@RequestParam int size,
 		@AuthenticationPrincipal User user
 	) {
-		if (lastCommentId == 0) {
-			lastCommentId = null;
-		}
-
+		Pageable pageable = PageRequest.of(page - 1, size);
 		return new BaseResponse<>(BaseResponseCode.USER_COMMENTS_GET_SUCCESS,
-			userService.getUserCommentsNoOffset(user.getId(), lastCommentId, size)
+			userService.getUserComments(user.getId(), pageable)
 		);
 	}
 }

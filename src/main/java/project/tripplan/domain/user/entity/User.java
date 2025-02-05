@@ -47,4 +47,8 @@ public class User extends BaseEntity {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
 }

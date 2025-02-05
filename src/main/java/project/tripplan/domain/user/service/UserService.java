@@ -21,7 +21,7 @@ import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
-import project.tripplan.domain.user.dto.UserCommentsRes;
+import project.tripplan.domain.user.dto.UserCommentRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.entity.User;
@@ -52,7 +52,7 @@ public class UserService {
 		if (user.getImage() != null) {
 			s3Service.deleteFile(user.getImage());
 		}
-		s3Service.uploadFile(image);
+		user.setImage(s3Service.uploadFile(image));
 	}
 
 	@Transactional(readOnly = true)
@@ -61,10 +61,7 @@ public class UserService {
 		List<UserPlanRes> content = findPlans.getContent();
 
 		for (UserPlanRes userPlan : content) {
-			String thumb = userPlan.getThumbnail();
-			if (thumb != null && !thumb.isBlank()) {
-				userPlan.setThumbnail(prefix + "/" + thumb);
-			}
+			userPlan.setThumbnail((userPlan.getThumbnail() == null) ? null : prefix + "/" + userPlan.getThumbnail());
 		}
 		return new PageImpl<>(content, pageable, findPlans.getTotalElements());
 	}
@@ -76,42 +73,27 @@ public class UserService {
 		List<UserBookmarkRes> content = findBookmarks.getContent();
 
 		for (UserBookmarkRes userBookmark : content) {
-			String thumb = userBookmark.getThumbnail();
-			if (thumb != null && !thumb.isBlank()) {
-				userBookmark.setThumbnail(prefix + "/" + thumb);
-			}
+			userBookmark.setThumbnail(
+				(userBookmark.getThumbnail() == null) ? null : prefix + "/" + userBookmark.getThumbnail());
 		}
 		return new PageImpl<>(content, pageable, findBookmarks.getTotalElements());
 	}
 
-	public UserCommentsRes getUserCommentsNoOffset(Long userId, Long lastCommentId, int size) {
-		long totalCount = commentRepositoryCustom.countByUserId(userId);
+	@Transactional(readOnly = true)
+	public Page<UserCommentRes> getUserComments(Long userId, Pageable pageable) {
+		Page<Comment> commentPage = commentRepositoryCustom.findCommentsByUser(userId, pageable);
 
-		List<Comment> commentList = commentRepositoryCustom.findCommentsByUserNoOffset(
-			userId,
-			lastCommentId,
-			size + 1
-		);
-
-		boolean hasNext = false;
-		if (commentList.size() > size) {
-			hasNext = true;
-			commentList.remove(commentList.size() - 1);
-		}
-
-		Long nextId = null;
-		if (!commentList.isEmpty()) {
-			nextId = commentList.get(commentList.size() - 1).getId();
-		}
-
-		List<Long> planIds = commentList.stream()
+		// 1) 댓글에 연결된 planId 모으기 (중복제거)
+		List<Long> planIds = commentPage
+			.stream()
 			.map(comment -> comment.getPlan().getId())
 			.distinct()
 			.toList();
 
-		List<PlanPlaceCategory> planPlaceCategories =
-			planPlaceCategoryRepositoryCustom.findAllByPlanIds(planIds);
+		// 2) planIds에 해당하는 PlanPlaceCategory 전부 조회
+		List<PlanPlaceCategory> planPlaceCategories = planPlaceCategoryRepositoryCustom.findAllByPlanIds(planIds);
 
+		// 3) planId -> 카테고리명들
 		Map<Long, List<String>> planCategoryMap = planPlaceCategories.stream()
 			.collect(Collectors.groupingBy(
 				ppc -> ppc.getPlan().getId(),
@@ -121,11 +103,13 @@ public class UserService {
 				)
 			));
 
-		List<UserCommentsRes.UserCommentsNoOffsetDto> commentResList = commentList.stream()
+		// 4) Page<Comment> -> Page<UserCommentRes> 변환
+		List<UserCommentRes> dtoList = commentPage.getContent().stream()
 			.map(c -> {
 				Long planId = c.getPlan().getId();
 				List<String> categories = planCategoryMap.getOrDefault(planId, List.of());
-				return new UserCommentsRes.UserCommentsNoOffsetDto(
+
+				return new UserCommentRes(
 					planId,
 					c.getId(),
 					c.getPlan().getTitle(),
@@ -136,12 +120,8 @@ public class UserService {
 			})
 			.toList();
 
-		return new UserCommentsRes(
-			commentResList,
-			hasNext,
-			nextId,
-			totalCount
-		);
+		// Page<UserCommentRes> 생성
+		return new PageImpl<>(dtoList, pageable, commentPage.getTotalElements());
 	}
 }
 
