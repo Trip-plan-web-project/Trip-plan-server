@@ -58,7 +58,9 @@ public class SecurityConfig {
 				.failureHandler(oAuth2LoginFailureHandler)
 			)
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/home", "/search/**", "/login", "/test", "/token/issue/**","/token/reissue/**","/","/index.html","/favicon.ico").permitAll()
+				.requestMatchers("/home", "/plans/search", "/login", "/test", "/token/issue/**", "/token/reissue/**",
+					"/",
+					"/index.html", "/favicon.ico").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest()
 				.authenticated()
