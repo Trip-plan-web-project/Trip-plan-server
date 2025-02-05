@@ -52,7 +52,7 @@ public class UserService {
 		if (user.getImage() != null) {
 			s3Service.deleteFile(user.getImage());
 		}
-		s3Service.uploadFile(image);
+		user.setImage(s3Service.uploadFile(image));
 	}
 
 	@Transactional(readOnly = true)
@@ -61,10 +61,7 @@ public class UserService {
 		List<UserPlanRes> content = findPlans.getContent();
 
 		for (UserPlanRes userPlan : content) {
-			String thumb = userPlan.getThumbnail();
-			if (thumb != null && !thumb.isBlank()) {
-				userPlan.setThumbnail(prefix + "/" + thumb);
-			}
+			userPlan.setThumbnail((userPlan.getThumbnail() == null) ? null : prefix + "/" + userPlan.getThumbnail());
 		}
 		return new PageImpl<>(content, pageable, findPlans.getTotalElements());
 	}
@@ -76,10 +73,8 @@ public class UserService {
 		List<UserBookmarkRes> content = findBookmarks.getContent();
 
 		for (UserBookmarkRes userBookmark : content) {
-			String thumb = userBookmark.getThumbnail();
-			if (thumb != null && !thumb.isBlank()) {
-				userBookmark.setThumbnail(prefix + "/" + thumb);
-			}
+			userBookmark.setThumbnail(
+				(userBookmark.getThumbnail() == null) ? null : prefix + "/" + userBookmark.getThumbnail());
 		}
 		return new PageImpl<>(content, pageable, findBookmarks.getTotalElements());
 	}

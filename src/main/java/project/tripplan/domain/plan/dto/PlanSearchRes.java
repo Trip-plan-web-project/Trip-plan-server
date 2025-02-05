@@ -12,7 +12,7 @@ import project.tripplan.domain.plan.entity.Plan;
 public class PlanSearchRes {
 	private Long planId;
 	private String title;
-	private String image;
+	private String thumbnail;
 	private List<String> category;
 	private LocalDate startDate;
 	private LocalDate endDate;
@@ -23,7 +23,7 @@ public class PlanSearchRes {
 	public PlanSearchRes(Plan plan, String prefix) {
 		this.planId = plan.getId();
 		this.title = plan.getTitle();
-		this.image = prefix + "/" + plan.getImageUrl();
+		this.thumbnail = prefix + "/" + plan.getImageUrl();
 		this.transportCategoryName = plan.getFirstTransportCategoryName();
 		this.startDate = plan.getStartDate();
 		this.endDate = plan.getEndDate();

@@ -22,6 +22,7 @@ import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.domain.user.service.UserService;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponse;
@@ -37,15 +38,16 @@ public class UserController {
 
 	private final UserService userService;
 
+	private final UserRepository userRepository;
+
 	@GetMapping("/users/profile")
 	public BaseResponse<UserProfileRes> getUserProFile(@AuthenticationPrincipal User user) {
-
 		return new BaseResponse<>(
 			BaseResponseCode.USER_GET_SUCCESS,
 			UserProfileRes.builder()
 				.userId(user.getId())
 				.nickname(user.getNickname())
-				.image(prefix + "/" + user.getImage())
+				.image((user.getImage() == null) ? null : prefix + "/" + user.getImage())
 				.build()
 		);
 
@@ -60,7 +62,6 @@ public class UserController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		UserProfileReq req = null;
 		try {
-			// Parse JSON string to Profile object
 			req = objectMapper.readValue(profile, UserProfileReq.class);
 		} catch (Exception e) {
 			throw new CustomException(BaseResponseCode.JSON_PARSING_ERROR);
