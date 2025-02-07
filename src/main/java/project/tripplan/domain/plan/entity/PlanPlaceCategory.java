@@ -14,7 +14,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tripplan.domain.category.placeCategory.entity.PlaceCategory;
-
 import project.tripplan.global.common.entity.BaseEntity;
 
 @AllArgsConstructor
@@ -36,4 +35,7 @@ public class PlanPlaceCategory extends BaseEntity {
 	@JoinColumn(name = "place_category_id")
 	private PlaceCategory placeCategory;
 
+	public void setPlan(Plan plan) {
+		this.plan = plan;
+	}
 }

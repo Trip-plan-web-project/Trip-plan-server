@@ -42,6 +42,7 @@ public enum BaseResponseCode {
 	GET_PLAN_COMMENTS_LIST_SUCCESS(true, 1408, "게시글 댓글 목록 불러오기에 성공했습니다.", HttpStatus.OK),
 	DELETE_PLAN_SUCCESS(true, 1409, "게시글 삭제에 성공했습니다..", HttpStatus.OK),
 	COPY_PLAN_SUCCESS(true, 1410, "게시글 복사에 성공했습니다..", HttpStatus.OK),
+	UPDATE_PLAN_SUCCESS(true, 1411, "게시글 수정에 성공했습니다..", HttpStatus.OK),
 
 	// planLike 1500 ~
 	ADD_PLAN_LIKE_SUCCESS(true, 1501, "게시글 좋아요가 추가되었습니다.", HttpStatus.OK),
