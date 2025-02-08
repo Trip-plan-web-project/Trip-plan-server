@@ -28,8 +28,10 @@ import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
 import project.tripplan.domain.plan.dto.PlanNoOffsetRes;
 import project.tripplan.domain.plan.dto.PlanReq;
 import project.tripplan.domain.plan.dto.PlanStatusReq;
+import project.tripplan.domain.plan.dto.PlanUpdateReq;
 import project.tripplan.domain.plan.service.PlanService;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.global.common.response.BaseResponse;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -39,6 +41,7 @@ import project.tripplan.global.common.response.BaseResponseCode;
 public class PlanController {
 
 	private final PlanService planService;
+	private final UserRepository userRepository;
 
 	@PostMapping(value = "/plans", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public BaseResponse<?> createPlan(
@@ -123,5 +126,15 @@ public class PlanController {
 	) {
 		planService.copyPlan(planId, user.getId());
 		return new BaseResponse<>(BaseResponseCode.COPY_PLAN_SUCCESS);
+	}
+
+	@PatchMapping(value = "/plans", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	public BaseResponse<?> updatePlan(
+		@RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
+		@Valid @RequestPart("plan") PlanUpdateReq planDto,
+		@AuthenticationPrincipal User user
+	) throws IOException {
+		return new BaseResponse<>(BaseResponseCode.UPDATE_PLAN_SUCCESS,
+			planService.updatePlan(user, planDto, thumbnail));
 	}
 }
