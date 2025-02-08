@@ -21,6 +21,7 @@ public enum BaseResponseCode {
 	USER_PLAN_GET_SUCCESS(true, 1005, "내 여행 일정 목록 조회에 성공했습니다.", HttpStatus.OK),
 	USER_BOOKMARK_GET_SUCCESS(true, 1006, "찜한 게시물 목록 조회에 성공했습니다.", HttpStatus.OK),
 	USER_COMMENTS_GET_SUCCESS(true, 1007, "댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
+	LOGOUT_SUCCESS(true, 1008, "로그아웃에 성공했습니다.", HttpStatus.OK),
 
 	//comment 1200 ~
 	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),
@@ -83,8 +84,11 @@ public enum BaseResponseCode {
 	PLANLIKE_NOT_EXIST(false, 2501, "게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_PLANLIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
 
-	//valid 2900 ~
+	//valid && Token 2900 ~
 	VALIDATION_FAILED(false, 2900, "Bind Exception", HttpStatus.BAD_REQUEST),
+	EXTRACT_EXPIRATION_FAILED(false, 2901, "토큰 만료시간 추출 실패", HttpStatus.INTERNAL_SERVER_ERROR),
+	EXTRACT_ACCESSTOKEN_FAILED(false, 2902, "헤더에서 accessToken 추출 실패", HttpStatus.INTERNAL_SERVER_ERROR),
+	EXTRACT_REFRESHTOKEN_FAILED(false, 2903, "헤더에서 refreshToken 추출 실패", HttpStatus.INTERNAL_SERVER_ERROR),
 
 	/**
 	 * 3000 : response 오류

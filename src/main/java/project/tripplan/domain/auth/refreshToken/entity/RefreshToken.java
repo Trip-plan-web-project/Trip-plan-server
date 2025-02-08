@@ -1,40 +1,38 @@
 package project.tripplan.domain.auth.refreshToken.entity;
 
-import java.time.LocalDateTime;
+import java.util.Random;
+import java.util.UUID;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import project.tripplan.domain.user.entity.User;
-import project.tripplan.global.common.entity.BaseEntity;
+import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
 @Getter
-@Entity
-@Builder
-public class RefreshToken extends BaseEntity {
+@RedisHash(value = "RefreshToken")
+public class RefreshToken {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "refresh_token_id")
-	private Long id;
+	private String id;
 
-	@Column(columnDefinition = "TEXT", nullable = false, unique = true)
+	@Indexed
 	private String refreshToken;
 
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private User user;
+	@TimeToLive
+	private Long expiration;
+
+	@Indexed
+	private String socialId;
+
+	public RefreshToken(String socialId, String refreshToken, Long expiration) {
+		this.id = UUID.randomUUID().toString();
+		this.refreshToken = refreshToken;
+		this.expiration = expiration;
+		this.socialId = socialId;
+	}
 
 	public void updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;

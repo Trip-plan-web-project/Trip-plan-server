@@ -8,4 +8,6 @@ public interface PlanLikeRepositoryCustom {
 	Long countLikesByPlanId(Long planId);
 
 	Optional<PlanLike> findPlanLikeWithUser(Long planLikeId);
+
+	Optional<PlanLike> findPlanLikeWithUserAndPlan(Long userId, Long planId);
 }

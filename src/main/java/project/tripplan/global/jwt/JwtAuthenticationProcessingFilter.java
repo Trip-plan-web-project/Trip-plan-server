@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
 import project.tripplan.global.common.exception.CustomException;
@@ -30,7 +29,6 @@ import project.tripplan.global.common.response.BaseResponseCode;
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	private final JWTService jwtService;
 	private final UserRepositoryCustom userRepositoryCustom;
-	private final RefreshTokenRepositoryCustom refreshTokenRepositoryCustom;
 
 	private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
@@ -67,6 +65,20 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 		// Access Token 추출 및 유효성 검증
 		boolean isAccessTokenValid = jwtService.extractAccessToken(request)
+			.filter(accessToken -> {
+				// 2️⃣ AccessToken이 블랙리스트에 있는지 확인
+				if (jwtService.isAccessTokenBlacklisted(accessToken)) {
+					log.warn("블랙리스트에 등록된 AccessToken 사용 시도 - {}", accessToken);
+					try {
+						sendUnauthorizedResponse(response, "Access Token is blacklisted");
+					} catch (IOException e) {
+						log.error("IOException 발생: {}", e.getMessage());
+						throw new RuntimeException("Failed to send unauthorized response");
+					}
+					return false;
+				}
+				return true;
+			})
 			.filter(jwtService::isTokenValid)
 			.map(accessToken -> {
 				jwtService.extractSocialId(accessToken).ifPresent(claims -> {
@@ -85,7 +97,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 		if (!isAccessTokenValid) {
 			// Access Token이 없거나 유효하지 않으면 401 Unauthorized 반환
-			log.error("Access Token이 유효하지 않습니다. 401 반환");
+			log.error("Access Token이 유효하지 않습니다");
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			response.getWriter().write("Access Token is expired or invalid");
 			response.getWriter().flush();
@@ -132,6 +144,16 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
 		// SecurityContextHolder에 인증 정보 설정
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+	}
+
+	/**
+	 * [401 Unauthorized 응답을 전송하는 메서드]
+	 */
+	private void sendUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
+		log.error(message);
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		response.getWriter().write(message);
+		response.getWriter().flush();
 	}
 
 	@Override
