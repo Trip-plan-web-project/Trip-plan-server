@@ -1,5 +1,5 @@
 package project.tripplan.domain.plan.enums;
 
 public enum PlanStatus {
-    PRIVATE, PUBLIC
+	PRIVATE, PUBLIC, TEMPORARY_STORAGE
 }

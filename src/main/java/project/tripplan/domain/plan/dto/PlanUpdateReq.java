@@ -7,9 +7,17 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import project.tripplan.domain.plan.enums.PlanStatus;
 
 @Getter
-public class PlanReq implements PlanDataReq {
+public class PlanUpdateReq implements PlanDataReq {
+
+	@NotNull
+	private Long planId;
+
+	@NotNull
+	private PlanStatus status;
+
 	@NotEmpty
 	private String title;
 
@@ -22,12 +30,11 @@ public class PlanReq implements PlanDataReq {
 	private Integer people;
 
 	@NotNull
-	private LocalDate startDate; // 시작일 추가
+	private LocalDate startDate;
 
 	@NotNull
-	private LocalDate endDate;   // 종료일 추가
+	private LocalDate endDate;
 
 	@Valid
 	private List<PlanDayReq> days;
-
 }

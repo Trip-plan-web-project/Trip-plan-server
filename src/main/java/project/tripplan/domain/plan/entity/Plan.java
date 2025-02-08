@@ -67,9 +67,11 @@ public class Plan extends BaseEntity {
 	@Column(nullable = false)
 	private LocalDate endDate;
 
+	@Builder.Default
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<PlanTransportationCategory> planTransportationCategories = new HashSet<>();
 
+	@Builder.Default
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<PlanPlaceCategory> planPlaceCategories = new HashSet<>();
 
@@ -105,5 +107,50 @@ public class Plan extends BaseEntity {
 			.findFirst()  // Optional<PlanTransportationCategory>
 			.map(ptc -> ptc.getTransportationCategory().getName().toString())
 			.orElse(null); // 없으면 null
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setPeople(int people) {
+		this.people = people;
+	}
+
+	public void setStatus(PlanStatus status) {
+		this.status = status;
+	}
+
+	public void setTotalCost(Long totalCost) {
+		this.totalCost = totalCost;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public void clearAllPlanDays() {
+		for (PlanDay planDay : this.planDays) {
+			planDay.setPlan(null);
+		}
+		this.planDays.clear();
+	}
+
+	public void clearAllPlanPlaceCategories() {
+		for (PlanPlaceCategory ppc : this.planPlaceCategories) {
+			ppc.setPlan(null);
+		}
+		this.planPlaceCategories.clear();
+	}
+
+	public void clearAllTransportationCategories() {
+		for (PlanTransportationCategory ptc : this.planTransportationCategories) {
+			ptc.setPlan(null);
+		}
+		this.planTransportationCategories.clear();
 	}
 }

@@ -16,14 +16,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.auth.refreshToken.entity.BlackList;
 import project.tripplan.domain.auth.refreshToken.entity.RefreshToken;
+import project.tripplan.domain.auth.refreshToken.repository.BlackListRepository;
 import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepository;
-import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
-import project.tripplan.domain.user.enums.Provider;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
-import project.tripplan.global.common.exception.CustomException;
-import project.tripplan.global.common.response.BaseResponseCode;
 
 @Service
 @RequiredArgsConstructor
@@ -54,8 +52,8 @@ public class JWTService {
 	private static final String BEARER = "Bearer ";
 
 	private final UserRepositoryCustom userRepositoryCustom;
-	private final RefreshTokenRepositoryCustom refreshTokenRepositoryCustom;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final BlackListRepository blackListRepository;
 
 	/**
 	 * AccessToken 생성 메소드
@@ -180,7 +178,7 @@ public class JWTService {
 	 */
 	public void updateRefreshToken(User user, String socialId, String refreshToken) {
 		// 기존 RefreshToken 조회
-		Optional<RefreshToken> findRefreshToken = refreshTokenRepositoryCustom.findByUserId(user.getId());
+		Optional<RefreshToken> findRefreshToken = refreshTokenRepository.findById(socialId);
 
 		if (findRefreshToken.isPresent()) {
 			// RefreshToken이 존재하면 업데이트
@@ -188,16 +186,33 @@ public class JWTService {
 			log.info("사용자 {}의 Refresh Token이 업데이트되었습니다.", user.getNickname());
 		} else {
 			// RefreshToken이 존재하지 않으면 새로 생성 후 저장
-			RefreshToken newRefreshToken = RefreshToken.builder()
-				.user(user)
-				.refreshToken(refreshToken)
-				.build();
-
+			RefreshToken newRefreshToken = new RefreshToken(user.getSocialId(), refreshToken,
+				refreshTokenExpirationPeriod);
 			refreshTokenRepository.save(newRefreshToken);
 			log.info("사용자 {}의 Refresh Token이 새로 생성되었습니다.", user.getNickname());
 		}
 	}
 
+	/**
+	 * AccessToken에서 만료 시간 추출
+	 */
+	public Optional<Long> extractAccessExpiration(String accessToken) {
+		try {
+			// JWT 검증 및 클레임 추출
+			var decodedJWT = JWT.require(Algorithm.HMAC512(secretKey))
+				.build() // JWT Verifier 생성
+				.verify(accessToken); // accessToken 검증
+
+			// 만료 시간 추출 (밀리초 단위)
+			Date expirationDate = decodedJWT.getExpiresAt();
+
+			// 밀리초를 초 단위로 변환하여 반환
+			return Optional.of(expirationDate.getTime() / 1000);
+		} catch (Exception e) {
+			log.error("만료 시간을 추출하는 데 실패했습니다: {}", e.getMessage());
+			return Optional.empty();
+		}
+	}
 
 	public boolean isTokenValid(String token) { // Token 유효성 검증
 		try {
@@ -209,4 +224,10 @@ public class JWTService {
 			return false;
 		}
 	}
+
+	public boolean isAccessTokenBlacklisted(String accessToken) {
+		Optional<BlackList> findAccessToken = blackListRepository.findById(accessToken);
+		return findAccessToken.isPresent();
+	}
+
 }

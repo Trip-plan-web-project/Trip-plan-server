@@ -1,6 +1,5 @@
 package project.tripplan.domain.auth.service;
 
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,13 +8,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.auth.dto.LoginRes;
+import project.tripplan.domain.auth.refreshToken.entity.BlackList;
 import project.tripplan.domain.auth.refreshToken.entity.RefreshToken;
+import project.tripplan.domain.auth.refreshToken.repository.BlackListRepository;
 import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepository;
-import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
 import project.tripplan.global.common.exception.CustomException;
@@ -28,7 +29,8 @@ import project.tripplan.global.jwt.JWTService;
 public class AuthService implements UserDetailsService {
 	private final UserRepositoryCustom userRepositoryCustom;
 	private final JWTService jwtService;
-	private final RefreshTokenRepositoryCustom refreshTokenRepositoryCustom;
+	private final RefreshTokenRepository refreshTokenRepository;
+	private final BlackListRepository blackListRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String socialId) throws UsernameNotFoundException {
@@ -64,7 +66,7 @@ public class AuthService implements UserDetailsService {
 		String refreshToken = refresh.replace("Bearer", "").replace(" ", "");
 
 		// Refresh Token을 DB에서 조회
-		RefreshToken findRefreshToken = refreshTokenRepositoryCustom.findByRefreshToken(refreshToken)
+		RefreshToken findRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.REFRESHTOKEN_NOT_EXIST));
 
 		// Refresh Token 유효성 검사
@@ -85,18 +87,37 @@ public class AuthService implements UserDetailsService {
 		}
 	}
 
-	private String reIssueRefreshToken(User user) {
-		if (user == null) {
-			// 로그아웃 처리
-			log.info("로그아웃 완료");
-			return "none";
-		}
+	@Transactional
+	public void logout(HttpServletRequest request) {
+		// 헤더에서 AccessToken, RefreshToken 추출
+		String accessToken = jwtService.extractAccessToken(request)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.EXTRACT_ACCESSTOKEN_FAILED));
+		String refreshToken = jwtService.extractRefreshToken(request)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.EXTRACT_REFRESHTOKEN_FAILED));
 
+		RefreshToken findRefreshToken = refreshTokenRepository.findByRefreshToken(refreshToken)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.REFRESHTOKEN_NOT_EXIST));
+
+		// 기존 사용하던 refreshToken 제거
+		refreshTokenRepository.delete(findRefreshToken);
+
+		Long expiration = jwtService.extractAccessExpiration(accessToken)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.EXTRACT_EXPIRATION_FAILED));
+
+		BlackList blackList = new BlackList(accessToken, expiration);
+
+		// 사용하던 accessToken 블랙리스트에 추가
+		blackListRepository.save(blackList);
+		log.info("accessToken: {} 블랙리스트 추가", accessToken);
+	}
+
+	private String reIssueRefreshToken(User user) {
 		String reIssuedRefreshToken = jwtService.createRefreshToken();
-		RefreshToken findRefreshToken = refreshTokenRepositoryCustom.findByUserId(user.getId())
+		RefreshToken findRefreshToken = refreshTokenRepository.findByUserId(user.getId())
 			.orElseThrow(() -> new CustomException(BaseResponseCode.REFRESHTOKEN_NOT_EXIST));
 		findRefreshToken.updateRefreshToken(reIssuedRefreshToken);
 		log.info("refreshToken 재발급 및 최신화");
 		return reIssuedRefreshToken;
 	}
+
 }
