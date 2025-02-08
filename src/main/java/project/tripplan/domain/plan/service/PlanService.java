@@ -479,7 +479,11 @@ public class PlanService {
 	private void applyPlanData(Plan plan, PlanDataReq dto) {
 
 		//plan
-		planSet(plan, dto);
+		plan.applyPlanBasicFields(dto.getTitle(),
+			dto.getPeople(),
+			dto.getStartDate(),
+			dto.getEndDate(),
+			calculateTotalCostFromDays(dto.getDays()));
 
 		//planDay
 		if (dto.getDays() != null) {
@@ -542,14 +546,6 @@ public class PlanService {
 				.build();
 			plan.getPlanTransportationCategories().add(ptc);
 		}
-	}
-
-	private void planSet(Plan plan, PlanDataReq dto) {
-		plan.setTitle(dto.getTitle() == null ? plan.getTitle() : dto.getTitle());
-		plan.setPeople(dto.getPeople() == null ? plan.getPeople() : dto.getPeople());
-		plan.setStartDate(dto.getStartDate() == null ? plan.getStartDate() : dto.getStartDate());
-		plan.setEndDate(dto.getEndDate() == null ? plan.getEndDate() : dto.getEndDate());
-		plan.setTotalCost(calculateTotalCostFromDays(dto.getDays()));
 	}
 
 	private long calculateTotalCostFromDays(List<PlanDayReq> days) {
