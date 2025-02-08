@@ -56,6 +56,7 @@ import project.tripplan.domain.plan.repository.PlanTransCategoryRepositoryCustom
 import project.tripplan.domain.plan.repository.PlanTransportationCategoryRepository;
 import project.tripplan.domain.planDay.entity.PlanDay;
 import project.tripplan.domain.planDayDetail.entity.PlanDayDetail;
+import project.tripplan.domain.planLike.entity.PlanLike;
 import project.tripplan.domain.planLike.repository.PlanLikeRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
@@ -217,6 +218,11 @@ public class PlanService {
 		Plan findPlan = planRepositoryCustom.findByPlanIdWithUser(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
 
+		Optional<PlanLike> findPlanLike = planLikeRepositoryCustom.findPlanLikeWithUserAndPlan(user.getId(),
+			planId);
+
+		Long likesCount = planLikeRepositoryCustom.countLikesByPlanId(planId);
+
 		//조회수 증가
 		findPlan.increaseViewCount();
 
@@ -224,7 +230,6 @@ public class PlanService {
 				planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.GET_PLAN_TRANS_FAIL));
 
-		Long likesCount = planLikeRepositoryCustom.countLikesByPlanId(planId);
 
 		if (findPlanPlaceCategories.isEmpty()) {
 			throw new CustomException(BaseResponseCode.GET_PLAN_PLACE_FAIL);
@@ -241,6 +246,7 @@ public class PlanService {
 		PlanDetailRes planDetailRes = new PlanDetailRes();
 		planDetailRes.setTitle(placeCategory.getPlan().getTitle());
 		planDetailRes.setSocialId(findPlan.getUser().getSocialId());
+		planDetailRes.setLikeId(findPlanLike.orElse(null) != null ? findPlanLike.get().getId() : null);
 		planDetailRes.setPlaceCategory(categoryNames);
 		planDetailRes.setAuthor(findPlan.getUser().getNickname());
 		planDetailRes.setProfileImage(prefix + "/" + findPlan.getUser().getImage());

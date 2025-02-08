@@ -1,15 +1,19 @@
 package project.tripplan.domain.auth.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.auth.dto.LoginRes;
 import project.tripplan.domain.auth.service.AuthService;
+import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.response.BaseResponse;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -31,5 +35,11 @@ public class AuthController {
 		HttpServletResponse response) {
 		authService.reissueToken(socialId, accessToken, refreshToken, response);
 		return new BaseResponse<>(BaseResponseCode.REISSUE_TOKEN_SUCCESS);
+	}
+
+	@PostMapping("/users/logout")
+	public BaseResponse<Void> logout(HttpServletRequest request) {
+		authService.logout(request);
+		return new BaseResponse<>(BaseResponseCode.LOGOUT_SUCCESS);
 	}
 }

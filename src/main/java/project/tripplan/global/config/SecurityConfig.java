@@ -1,5 +1,6 @@
 package project.tripplan.global.config;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepositoryCustom;
+import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepository;
 import project.tripplan.domain.auth.service.AuthService;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
 import project.tripplan.global.jwt.JWTService;
@@ -37,7 +38,6 @@ public class SecurityConfig {
 	private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private final UserRepositoryCustom userRepositoryCustom;
-	private final RefreshTokenRepositoryCustom refreshTokenRepositoryCustom;
 	private final AuthService authService;
 
 	@Bean
@@ -69,20 +69,27 @@ public class SecurityConfig {
 		return http.build();
 	}
 
+	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		return request -> {
 			CorsConfiguration config = new CorsConfiguration();
-			config.setAllowedHeaders(Collections.singletonList("*"));
-			config.setAllowedMethods(Collections.singletonList("*"));
-			config.setAllowedOriginPatterns(Collections.singletonList("http://localhost:3000")); // 허용할 origin
+
+			config.setAllowedHeaders(Collections.singletonList("*")); // 모든 헤더 허용
+			config.setAllowedMethods(Collections.singletonList("*")); // 모든 HTTP 메서드 허용
+			config.setAllowedOriginPatterns(Arrays.asList(
+				"http://localhost:3000",
+				"https://trip-plan-frontend.vercel.app"
+			)); // 허용할 Origin 리스트
 			config.setAllowCredentials(true);
+
 			return config;
 		};
 	}
 
+
 	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
 		return new JwtAuthenticationProcessingFilter(jwtService,
-			userRepositoryCustom, refreshTokenRepositoryCustom);
+			userRepositoryCustom);
 	}
 
 	@Bean

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.planLike.entity.PlanLike;
 import project.tripplan.domain.planLike.entity.QPlanLike;
 import project.tripplan.domain.user.entity.QUser;
@@ -18,6 +19,7 @@ public class PlanLikeRepositoryCustomImpl implements PlanLikeRepositoryCustom {
 	private final JPAQueryFactory qf;
 	private final QPlanLike planLike = QPlanLike.planLike;
 	private final QUser user = QUser.user;
+	private final QPlan plan = QPlan.plan;
 
 	@Override
 	public Long countLikesByPlanId(Long planId) {
@@ -33,6 +35,17 @@ public class PlanLikeRepositoryCustomImpl implements PlanLikeRepositoryCustom {
 			qf.selectFrom(planLike)
 				.join(planLike.user, user).fetchJoin()
 				.where(planLike.id.eq(planLikeId))
+				.fetchOne()
+		);
+	}
+
+	@Override
+	public Optional<PlanLike> findPlanLikeWithUserAndPlan(Long userId, Long planId) {
+		return Optional.ofNullable(
+			qf.selectFrom(planLike)
+				.join(planLike.user, user).fetchJoin()
+				.join(planLike.plan, plan).fetchJoin()
+				.where(planLike.user.id.eq(userId).and(planLike.plan.id.eq(planId)))
 				.fetchOne()
 		);
 	}
