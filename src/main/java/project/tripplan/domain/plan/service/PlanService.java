@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,18 +30,20 @@ import project.tripplan.domain.category.transportationCategory.enums.Transportat
 import project.tripplan.domain.category.transportationCategory.repository.TransportationCategoryRepository;
 import project.tripplan.domain.comment.entity.Comment;
 import project.tripplan.domain.comment.repository.CommentRepositoryCustom;
-import project.tripplan.domain.plan.dto.DayPlanReq;
-import project.tripplan.domain.plan.dto.DetailReq;
 import project.tripplan.domain.plan.dto.HomeRes;
 import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
 import project.tripplan.domain.plan.dto.PlanCommentsRes;
 import project.tripplan.domain.plan.dto.PlanContentAndTotalCountRes;
+import project.tripplan.domain.plan.dto.PlanDataReq;
+import project.tripplan.domain.plan.dto.PlanDayDetailReq;
+import project.tripplan.domain.plan.dto.PlanDayReq;
 import project.tripplan.domain.plan.dto.PlanDetailRes;
 import project.tripplan.domain.plan.dto.PlanNoOffsetReq;
 import project.tripplan.domain.plan.dto.PlanNoOffsetRes;
 import project.tripplan.domain.plan.dto.PlanReq;
 import project.tripplan.domain.plan.dto.PlanSearchRes;
 import project.tripplan.domain.plan.dto.PlanStatusReq;
+import project.tripplan.domain.plan.dto.PlanUpdateReq;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 import project.tripplan.domain.plan.entity.PlanTransportationCategory;
@@ -88,113 +89,23 @@ public class PlanService {
 	/**
 	 * 계획 저장 메서드
 	 */
+	@Transactional
 	public Boolean savePlan(User user, PlanReq planReq, MultipartFile thumbnail) throws IOException {
-		// 1) 총 비용 계산
-		long totalCost = calculateTotalCost(planReq);
-
-		// 2) 우선 Plan 엔티티를 생성하되, imageUrl은 아직 null(또는 빈 값)로
-		// 이미지는 마지막에 추가할 예정.
 		Plan plan = Plan.builder()
 			.user(user)
-			.title(planReq.getTitle())
-			.people(planReq.getPeople())
 			.status(PUBLIC)
-			.totalCost(totalCost)
-			.startDate(planReq.getStartDate())
-			.endDate(planReq.getEndDate())
 			.build();
 
-		// 3) DB에 먼저 저장(영속화). 이 시점부터 plan은 영속 상태
-		Plan savedPlan = planRepository.save(plan);
+		applyPlanData(plan, planReq);
 
-		// 4) PlanDay + PlanDayDetail 저장
-		savePlanDayAndPlanDayDetail(planReq, savedPlan);
-
-		// 5) PlaceCategory / PlanPlaceCategory 저장
-		savePlaceCategory(planReq, plan);
-
-		// 6) TransportationCategory / PlanTransportationCategory 저장
-		saveTransportationCategory(planReq, savedPlan);
-
-		// 7) 마지막에 파일(썸네일) 저장
 		if (thumbnail != null && !thumbnail.isEmpty()) {
 			String savedThumbnail = s3Service.uploadFile(thumbnail);
-			savedPlan.setImageUrl(savedThumbnail);
+			plan.setImageUrl(savedThumbnail);
 		}
+
+		planRepository.save(plan);
 
 		return true;
-	}
-
-	private void savePlaceCategory(PlanReq planReq, Plan plan) {
-		for (PlaceCategoryNamesReq categoryReq : planReq.getCategory()) {
-			// 부모/자식 카테고리 찾거나 생성
-			PlaceCategory finalCategory = placeCategoryService.searchPlaceCategory(categoryReq);
-
-			// Plan + Category 연결
-			if (finalCategory != null) {
-				PlanPlaceCategory planPlaceCategory = PlanPlaceCategory.builder()
-					.plan(plan)
-					.placeCategory(finalCategory)
-					.build();
-				planPlaceCategoryRepository.save(planPlaceCategory);
-			}
-		}
-	}
-
-	private void savePlanDayAndPlanDayDetail(PlanReq planDto, Plan plan) {
-		// PlanDay 및 PlanDayDetail 엔티티 생성 및 연관관계 설정
-		if (planDto.getDays() != null && !planDto.getDays().isEmpty()) {
-			for (DayPlanReq dayPlanDto : planDto.getDays()) {
-				PlanDay planDay = PlanDay.builder()
-					.day(dayPlanDto.getDay())
-					.cost(dayPlanDto.getCost())
-					.date(dayPlanDto.getDate())
-					.build();
-
-				// PlanDayDetail 생성 및 카테고리 이름 추가
-				if (dayPlanDto.getDetail() != null && !dayPlanDto.getDetail().isEmpty()) {
-					for (DetailReq detailDto : dayPlanDto.getDetail()) {
-						Optional<PlanCategory> planCategory = planCategoryRepository.findById(
-							detailDto.getPlanCategoryNameId());
-
-						// 카테고리 이름이 존재하는지 검증
-						if (planCategory.isEmpty()) {
-							throw new CustomException(BaseResponseCode.CATEGORY_NOT_EXIST);
-						}
-
-						// PlanDayDetail 엔티티 생성
-						PlanDayDetail planDayDetail = PlanDayDetail.builder()
-							.orderIndex(detailDto.getOrder())
-							.placeName(detailDto.getPlace())
-							.streetAddress(detailDto.getStreetAddress())
-							.latitude(detailDto.getLatitude())
-							.longitude(detailDto.getLongitude())
-							.planCategory(planCategory.get())
-							.build();
-						// PlanDay에 PlanDayDetail 추가
-						planDay.addPlanDayDetail(planDayDetail);
-					}
-				}
-
-				// Plan에 PlanDay 추가
-				plan.addPlanDay(planDay);
-			}
-		}
-	}
-
-	/**
-	 * 총 비용을 계산하는 메서드
-	 */
-	private long calculateTotalCost(PlanReq planDto) {
-		long totalCost = 0;
-		if (planDto.getDays() != null && !planDto.getDays().isEmpty()) {
-			for (DayPlanReq dayPlan : planDto.getDays()) {
-				totalCost += dayPlan.getCost();
-			}
-		} else {
-			log.info("dto에 days 비어있음.");
-		}
-		return totalCost;
 	}
 
 	@Transactional
@@ -256,20 +167,6 @@ public class PlanService {
 		planDetailRes.setTotalCost(placeCategory.getPlan().getTotalCost());
 
 		return planDetailRes;
-	}
-
-	private void saveTransportationCategory(PlanReq planReq, Plan plan) {
-		String transportationNameStr = planReq.getTransportation();
-		TransportationName transportationName = TransportationName.valueOf(transportationNameStr);
-		TransportationCategory transportationCategory =
-			transportationCategoryRepository.findByName(transportationName).get();
-
-		PlanTransportationCategory planTransportationCategory =
-			PlanTransportationCategory.builder()
-				.transportationCategory(transportationCategory)
-				.plan(plan)
-				.build();
-		planTransportationCategoryRepository.save(planTransportationCategory);
 	}
 
 	@Transactional(readOnly = true)
@@ -543,4 +440,125 @@ public class PlanService {
 			copyPlanDay.getPlanDayDetails().add(cpdd);
 		}
 	}
+
+	@Transactional
+	public Boolean updatePlan(User user, PlanUpdateReq planUpdateReq, MultipartFile thumbnail) throws IOException {
+		Plan plan = planRepository.findById(planUpdateReq.getPlanId())
+			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
+
+		if (!plan.getUser().getId().equals(user.getId())) {
+			throw new CustomException(BaseResponseCode.UNAUTHORIZED_POST_UPDATE_STATUS);
+		}
+
+		//plan에 연결된 planDay, planPlaceCategory, transportation 삭제
+		plan.clearAllPlanDays();
+		plan.clearAllPlanPlaceCategories();
+		plan.clearAllTransportationCategories();
+
+		if (planUpdateReq.getStatus() != null) {
+			plan.setStatus(planUpdateReq.getStatus());
+		}
+
+		/**
+		 * plan 정보 input
+		 */
+		applyPlanData(plan, planUpdateReq);
+
+		//이미지 변경시 삭제 후 재 생성
+		if (thumbnail != null && !thumbnail.isEmpty()) {
+			s3Service.deleteFile(plan.getImageUrl());
+			plan.setImageUrl(s3Service.uploadFile(thumbnail));
+		}
+
+		return true;
+	}
+
+	/**
+	 * savePlan, updatePlan 공통 로직
+	 */
+	private void applyPlanData(Plan plan, PlanDataReq dto) {
+
+		//plan
+		planSet(plan, dto);
+
+		//planDay
+		if (dto.getDays() != null) {
+			for (PlanDayReq dayReq : dto.getDays()) {
+				PlanDay planDay = PlanDay.builder()
+					.day(dayReq.getDay())
+					.cost(dayReq.getCost())
+					.date(dayReq.getDate())
+					.plan(plan)
+					.build();
+
+				//planDayDetail
+				if (dayReq.getDetail() != null) {
+					for (PlanDayDetailReq detailReq : dayReq.getDetail()) {
+						PlanCategory planCategory = planCategoryRepository.findById(detailReq.getPlanCategoryNameId())
+							.orElseThrow(() -> new CustomException(BaseResponseCode.CATEGORY_NOT_EXIST));
+
+						PlanDayDetail planDayDetail = PlanDayDetail.builder()
+							.orderIndex(detailReq.getOrder())
+							.placeName(detailReq.getPlace())
+							.streetAddress(detailReq.getStreetAddress())
+							.latitude(detailReq.getLatitude())
+							.longitude(detailReq.getLongitude())
+							.planCategory(planCategory)
+							.planDay(planDay)
+							.build();
+
+						planDay.getPlanDayDetails().add(planDayDetail);
+					}
+				}
+
+				plan.getPlanDays().add(planDay);
+			}
+		}
+
+		//PlaceCategory 연결
+		if (dto.getCategory() != null) {
+			for (PlaceCategoryNamesReq categoryReq : dto.getCategory()) {
+				PlaceCategory finalCategory = placeCategoryService.searchPlaceCategory(categoryReq);
+				if (finalCategory != null) {
+					PlanPlaceCategory planPlaceCategory = PlanPlaceCategory.builder()
+						.plan(plan)
+						.placeCategory(finalCategory)
+						.build();
+					plan.getPlanPlaceCategories().add(planPlaceCategory);
+				}
+			}
+		}
+
+		//TransportationCategory 연결
+		if (dto.getTransportation() != null) {
+			TransportationName name = TransportationName.valueOf(dto.getTransportation());
+			TransportationCategory transportationCategory =
+				transportationCategoryRepository.findByName(name)
+					.orElseThrow(() -> new CustomException(BaseResponseCode.GET_PLAN_TRANS_FAIL));
+
+			PlanTransportationCategory ptc = PlanTransportationCategory.builder()
+				.plan(plan)
+				.transportationCategory(transportationCategory)
+				.build();
+			plan.getPlanTransportationCategories().add(ptc);
+		}
+	}
+
+	private void planSet(Plan plan, PlanDataReq dto) {
+		plan.setTitle(dto.getTitle() == null ? plan.getTitle() : dto.getTitle());
+		plan.setPeople(dto.getPeople() == null ? plan.getPeople() : dto.getPeople());
+		plan.setStartDate(dto.getStartDate() == null ? plan.getStartDate() : dto.getStartDate());
+		plan.setEndDate(dto.getEndDate() == null ? plan.getEndDate() : dto.getEndDate());
+		plan.setTotalCost(calculateTotalCostFromDays(dto.getDays()));
+	}
+
+	private long calculateTotalCostFromDays(List<PlanDayReq> days) {
+		if (days == null || days.isEmpty()) {
+			return 0;
+		}
+		return days.stream()
+			.mapToLong(PlanDayReq::getCost)
+			.sum();
+	}
+
 }

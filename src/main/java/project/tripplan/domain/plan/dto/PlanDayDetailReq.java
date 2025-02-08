@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class DetailReq {
+public class PlanDayDetailReq {
 	private int order;
 
 	@NotEmpty

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class DayPlanReq {
+public class PlanDayReq {
 	private int day;
 	private int cost;
 
@@ -16,6 +16,6 @@ public class DayPlanReq {
 	private LocalDate date;
 
 	@Valid
-	private List<DetailReq> detail;
+	private List<PlanDayDetailReq> detail;
 
 }
