@@ -79,6 +79,7 @@ public enum BaseResponseCode {
 	//planPlace & planTrans & planCategory 2400 ~
 	GET_PLAN_PLACE_FAIL(false, 2401, "해당 게시글의 장소 카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	GET_PLAN_TRANS_FAIL(false, 2402, "해당 게시글의 교통수단을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+	POST_PLAN_PLACE_FAIL(false, 2403, "해당 장소의 depth는 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
 	//planLike 2500 ~
 	PLANLIKE_NOT_EXIST(false, 2501, "게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),

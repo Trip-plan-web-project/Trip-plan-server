@@ -109,28 +109,8 @@ public class Plan extends BaseEntity {
 			.orElse(null); // 없으면 null
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setPeople(int people) {
-		this.people = people;
-	}
-
 	public void setStatus(PlanStatus status) {
 		this.status = status;
-	}
-
-	public void setTotalCost(Long totalCost) {
-		this.totalCost = totalCost;
-	}
-
-	public void setStartDate(LocalDate startDate) {
-		this.startDate = startDate;
-	}
-
-	public void setEndDate(LocalDate endDate) {
-		this.endDate = endDate;
 	}
 
 	public void clearAllPlanDays() {
@@ -152,5 +132,27 @@ public class Plan extends BaseEntity {
 			ptc.setPlan(null);
 		}
 		this.planTransportationCategories.clear();
+	}
+
+	public void applyPlanBasicFields(String title,
+		Integer people,
+		LocalDate startDate,
+		LocalDate endDate,
+		Long newTotalCost
+	) {
+		if (title != null) {
+			this.title = title;
+		}
+		if (people != null) {
+			this.people = people;
+		}
+		if (startDate != null) {
+			this.startDate = startDate;
+		}
+		if (endDate != null) {
+			this.endDate = endDate;
+		}
+
+		this.totalCost = newTotalCost;
 	}
 }
