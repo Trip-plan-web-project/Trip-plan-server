@@ -6,4 +6,5 @@ import lombok.Getter;
 public class PlaceCategoryNamesReq {
 	private String parent;
 	private String child;
+	private String grandChild;
 }
