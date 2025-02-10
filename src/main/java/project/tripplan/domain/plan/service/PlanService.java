@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.bookmark.entity.Bookmark;
+import project.tripplan.domain.bookmark.repository.BookmarkRepositoryCustom;
 import project.tripplan.domain.category.placeCategory.entity.PlaceCategory;
 import project.tripplan.domain.category.placeCategory.service.PlaceCategoryService;
 import project.tripplan.domain.category.planCategory.entity.PlanCategory;
@@ -83,9 +86,9 @@ public class PlanService {
 	private final S3Service s3Service;
 	private final PlaceCategoryService placeCategoryService;
 	private final TransportationCategoryRepository transportationCategoryRepository;
-	private final PlanTransportationCategoryRepository planTransportationCategoryRepository;
 	private final CommentRepositoryCustom commentRepositoryCustom;
 	private final UserRepository userRepository;
+	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
 
 	/**
 	 * 계획 저장 메서드
@@ -132,6 +135,8 @@ public class PlanService {
 		Optional<PlanLike> findPlanLike = planLikeRepositoryCustom.findPlanLikeWithUserAndPlan(user.getId(),
 			planId);
 
+		Optional<Bookmark> findBookmark = bookmarkRepositoryCustom.findByUserAndPlan(user.getId(), planId);
+
 		Long likesCount = planLikeRepositoryCustom.countLikesByPlanId(planId);
 
 		//조회수 증가
@@ -158,6 +163,7 @@ public class PlanService {
 		planDetailRes.setTitle(placeCategory.getPlan().getTitle());
 		planDetailRes.setSocialId(findPlan.getUser().getSocialId());
 		planDetailRes.setLikeId(findPlanLike.orElse(null) != null ? findPlanLike.get().getId() : null);
+		planDetailRes.setBookmarkId(findBookmark.orElse(null) != null ? findBookmark.get().getId() : null);
 		planDetailRes.setPlaceCategory(categoryNames);
 		planDetailRes.setAuthor(findPlan.getUser().getNickname());
 		planDetailRes.setProfileImage(prefix + "/" + findPlan.getUser().getImage());
@@ -350,6 +356,7 @@ public class PlanService {
 		return findCommentsPage.map(comment -> new PlanCommentsRes(
 			comment.getUser().getSocialId(),
 			comment.getId(),
+			comment.getUser().getImage(),
 			comment.getUser().getNickname(),
 			comment.getCreatedAt(),
 			comment.getContent()

@@ -38,7 +38,7 @@ public class BookmarkService {
 
 	@Transactional
 	public void deleteBookmark(User user, Long bookmarkId) {
-		Bookmark findBookmark = bookmarkRepositoryCustom.findByBookmarkIdWithUser(bookmarkId, user.getId())
+		Bookmark findBookmark = bookmarkRepositoryCustom.findByBookmarkIdWithUserId(bookmarkId, user.getId())
 			.orElseThrow(() -> new CustomException(BaseResponseCode.BOOKMARK_NOT_EXIST));
 
 		// 사용자가 다른 경우

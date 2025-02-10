@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +24,7 @@ import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
 import project.tripplan.domain.user.dto.UserCommentRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
+import project.tripplan.domain.user.dto.UserPlansDraftsRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
@@ -122,6 +124,14 @@ public class UserService {
 
 		// Page<UserCommentRes> 생성
 		return new PageImpl<>(dtoList, pageable, commentPage.getTotalElements());
+	}
+
+	@Transactional(readOnly = true)
+	public Page<UserPlansDraftsRes> getUserPlanDrafts(User user, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+
+		return planPlaceCategoryRepositoryCustom.findAllByUserIdWithPlan(
+			user.getId(), pageable);
 	}
 }
 
