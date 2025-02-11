@@ -14,6 +14,7 @@ import lombok.Setter;
 public class PlanCommentsRes {
 	private String socialId;
 	private Long commentId;
+	private String profileImage;
 	private String nickname;
 	private LocalDateTime createdAt;
 	private String content;
