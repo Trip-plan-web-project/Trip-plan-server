@@ -30,7 +30,7 @@ public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom {
 	private final QPlan plan = QPlan.plan;
 
 	@Override
-	public Optional<Bookmark> findByBookmarkIdWithUser(Long bookmarkId, Long userId) {
+	public Optional<Bookmark> findByBookmarkIdWithUserId(Long bookmarkId, Long userId) {
 		return Optional.ofNullable(
 			qf.selectFrom(bookmark)
 				.join(bookmark.user, user).fetchJoin()
@@ -71,5 +71,17 @@ public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom {
 			.fetchOne();
 
 		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
+	public Optional<Bookmark> findByUserAndPlan(Long userId, Long planId) {
+		return Optional.ofNullable(
+			qf.selectFrom(bookmark)
+				.join(bookmark.user, user).fetchJoin()
+				.join(bookmark.plan, plan).fetchJoin()
+				.where(bookmark.user.id.eq(userId)
+					.and(bookmark.plan.id.eq(planId)))
+				.fetchOne()
+		);
 	}
 }

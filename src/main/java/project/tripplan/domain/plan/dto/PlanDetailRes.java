@@ -20,6 +20,7 @@ public class PlanDetailRes {
 	private String title;
 	private String socialId;
 	private Long likeId;
+	private Long bookmarkId;
 	List<String> placeCategory = new ArrayList<>();
 	private String author;
 	private String profileImage;
