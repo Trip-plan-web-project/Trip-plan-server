@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,7 +81,6 @@ public class PlanService {
 
 	private final PlanRepository planRepository;
 	private final PlanCategoryRepository planCategoryRepository;
-	private final PlanPlaceCategoryRepository planPlaceCategoryRepository;
 	private final PlanPlaceCategoryRepositoryCustom planPlaceCategoryRepositoryCustom;
 	private final PlanTransCategoryRepositoryCustom planTransCategoryRepositoryCustom;
 	private final PlanRepositoryCustom planRepositoryCustom;
@@ -89,6 +91,7 @@ public class PlanService {
 	private final CommentRepositoryCustom commentRepositoryCustom;
 	private final UserRepository userRepository;
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
+	private final StringRedisTemplate redisTemplate;
 
 	/**
 	 * 계획 저장 메서드
@@ -139,8 +142,16 @@ public class PlanService {
 
 		Long likesCount = planLikeRepositoryCustom.countLikesByPlanId(planId);
 
-		//조회수 증가
-		findPlan.increaseViewCount();
+
+		// 동일아이디 조회수 증가 30분에 1번으로 제한
+		String redisKey = "view:plan:" + planId + ":user:" + user.getId();
+		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+
+		if (!Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
+			// Redis에 해당 사용자의 조회 기록이 없으면 조회수 증가
+			findPlan.increaseViewCount();
+			valueOperations.set(redisKey, "true", 30, TimeUnit.MINUTES);
+		}
 
 		PlanTransportationCategory findPlanTrans = planTransCategoryRepositoryCustom.findByPlanIdWithPlanTransCategory(
 				planId)
@@ -356,7 +367,7 @@ public class PlanService {
 		return findCommentsPage.map(comment -> new PlanCommentsRes(
 			comment.getUser().getSocialId(),
 			comment.getId(),
-			comment.getUser().getImage(),
+			prefix + "/" + comment.getUser().getImage(),
 			comment.getUser().getNickname(),
 			comment.getCreatedAt(),
 			comment.getContent()
