@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -141,7 +142,6 @@ public class PlanService {
 				planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.GET_PLAN_TRANS_FAIL));
 
-
 		if (findPlanPlaceCategories.isEmpty()) {
 			throw new CustomException(BaseResponseCode.GET_PLAN_PLACE_FAIL);
 		}
@@ -181,7 +181,15 @@ public class PlanService {
 		// 1) categoryNames가 있는 경우, 자식까지 포함한 categoryIds 구하기 (OR 조건)
 		if (req.getCategoryNames() != null && !req.getCategoryNames().isEmpty()) {
 			Set<Long> allIds = placeCategoryService.findAllDescendantCategoryIds(req.getCategoryNames());
-			req.setCategoryIds(allIds);
+			req.setCategoryNamecategoryIds(allIds);
+		}
+
+		// 2) keyword가 지역으로 판별되는 경우, placeCategory까지 검색
+		String keyword = req.getKeyword();
+		if (keyword != null && !keyword.isEmpty()) {
+			// isLocationKeyword(keyword)
+			Set<Long> categoryIds = placeCategoryService.findAllSearchDescendantCategoryIds(keyword);
+			req.setTitleCategoryIds(categoryIds);
 		}
 
 		// 2) DB 조회 (size+1 개)
@@ -195,7 +203,14 @@ public class PlanService {
 			? rawList.getContent().subList(0, req.getSize())
 			: rawList.getContent();
 
-		// 5) nextValue, nextId 설정 (전통적 switch 문)
+		for (Plan plan : content) {
+			Set<PlanPlaceCategory> planPlaceCategories = plan.getPlanPlaceCategories();
+			for (PlanPlaceCategory planPlaceCategory : planPlaceCategories) {
+				log.info("planplace = {}", planPlaceCategory.getPlaceCategory().getName());
+			}
+		}
+
+		// 5) nextValue, nextId 설정
 		String nextValue = null;
 		Long nextId = null;
 		if (!content.isEmpty()) {
@@ -561,6 +576,21 @@ public class PlanService {
 		return days.stream()
 			.mapToLong(PlanDayReq::getCost)
 			.sum();
+	}
+
+	// 지역 검색용 키워드인지 판단하는 메서드 예시
+	private boolean isLocationKeyword(String keyword) {
+		if (keyword == null || keyword.isBlank()) {
+			return false;
+		}
+
+		if (keyword.endsWith("시") || keyword.endsWith("구") ||
+			keyword.endsWith("동") || keyword.endsWith("읍") ||
+			keyword.endsWith("면")) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

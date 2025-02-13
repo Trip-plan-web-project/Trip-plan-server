@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.category.placeCategory.entity.PlaceCategory;
 import project.tripplan.domain.category.placeCategory.repository.PlaceCategoryRepository;
+import project.tripplan.domain.category.placeCategory.repository.PlaceCategoryRepositoryCustom;
 import project.tripplan.domain.plan.dto.CategoryNameDepthReq;
 import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
 import project.tripplan.global.common.exception.CustomException;
@@ -29,6 +30,7 @@ import project.tripplan.global.common.response.BaseResponseCode;
 public class PlaceCategoryService {
 
 	private final PlaceCategoryRepository placeCategoryRepository;
+	private final PlaceCategoryRepositoryCustom placeCategoryRepositoryCustom;
 
 	public PlaceCategory searchPlaceCategory(PlaceCategoryNamesReq req) {
 		// 1) parent 카테고리
@@ -147,5 +149,45 @@ public class PlaceCategoryService {
 		}
 
 		return ids;
+	}
+
+	public Set<Long> findAllSearchDescendantCategoryIds(String keyword) {
+		Set<Long> resultIds = new HashSet<>();
+
+		// 1) 전처리(접미사 제거 등) - 필요 없다면 생략 가능
+		String normalized = normalizePlaceName(keyword);
+		if (normalized.isEmpty()) {
+			return resultIds; // 빈 세트 반환
+		}
+
+		// 2) DB 검색
+		List<PlaceCategory> matchedCategories =
+			placeCategoryRepositoryCustom.findByNameOrSynonymsContaining(normalized);
+		if (matchedCategories.isEmpty()) {
+			return resultIds;
+		}
+
+		// 3) 각각 자식 카테고리까지 포함하여 ID 추출
+		for (PlaceCategory cat : matchedCategories) {
+			resultIds.add(cat.getId());              // 본인 ID
+			resultIds.addAll(getSearchDescendantIds(cat)); // 자식들 재귀적으로 탐색
+		}
+
+		return resultIds;
+	}
+
+	private Set<Long> getSearchDescendantIds(PlaceCategory parent) {
+		Set<Long> ids = new HashSet<>();
+		for (PlaceCategory child : parent.getChildren()) {
+			ids.add(child.getId());
+			ids.addAll(getDescendantIds(child));
+		}
+		return ids;
+	}
+
+	private String normalizePlaceName(String raw) {
+		if (raw == null)
+			return "";
+		return raw.trim().replaceAll("(동|읍|면|시|구)$", "").trim();
 	}
 }

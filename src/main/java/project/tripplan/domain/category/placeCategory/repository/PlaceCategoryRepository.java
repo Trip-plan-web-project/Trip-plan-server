@@ -14,4 +14,5 @@ public interface PlaceCategoryRepository extends JpaRepository<PlaceCategory, Lo
 
 	// name + depth로 단일 카테고리 찾기
 	PlaceCategory findByNameAndDepth(String name, int depth);
+
 }

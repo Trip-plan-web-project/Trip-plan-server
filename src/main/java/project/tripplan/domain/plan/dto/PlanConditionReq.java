@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PlanConditionReq {
-	private String title;
+	private String keyword;
 	private Integer size;
 	@NotNull
 	private String sortBy;
