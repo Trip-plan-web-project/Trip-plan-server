@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 public class PlanNoOffsetReq {
 
-	private String title;
+	private String keyword;
 	private int size;                  // 페이지 크기
 	private String sortBy;             // 정렬 기준 (예: "viewCount", "id")
 	private String direction;          // 정렬 방향 (예: "ASC", "DESC")
@@ -23,10 +23,17 @@ public class PlanNoOffsetReq {
 	private String transportCategoryName; // "CAR" or "PUBLIC_TRANSPORT"
 	private Integer people;            // 인원 수
 
-	// Service 단에서 세팅해서 Repository로 넘길 필드
-	private Set<Long> categoryIds;
+	// categoryNames로 넘어온 req에 대해 Service 단에서 세팅해서 Repository로 넘길 필드
+	private Set<Long> categoryNamecategoryIds;
 
-	public void setCategoryIds(Set<Long> categoryIds) {
-		this.categoryIds = categoryIds;
+	// title로 넘어온 req에 대해 Service 단에서 세팅해서 Repository로 넘길 필드
+	private Set<Long> titleCategoryIds;
+
+	public void setCategoryNamecategoryIds(Set<Long> categoryNamecategoryIds) {
+		this.categoryNamecategoryIds = categoryNamecategoryIds;
+	}
+
+	public void setTitleCategoryIds(Set<Long> titleCategoryIds) {
+		this.titleCategoryIds = titleCategoryIds;
 	}
 }
