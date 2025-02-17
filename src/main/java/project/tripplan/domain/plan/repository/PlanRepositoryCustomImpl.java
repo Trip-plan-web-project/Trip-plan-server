@@ -64,18 +64,27 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 	}
 
 	private List<Plan> getContent(PlanNoOffsetReq req) {
-		// (A) limit
 		int limit = req.getSize() + 1;
 
-		// (B) 필터링 조건
-		BooleanBuilder builder = buildSearchCondition(req);
+		// 1) 필터용 alias
+		QPlanPlaceCategory ppcFilter = new QPlanPlaceCategory("ppcFilter");
+		QPlaceCategory pcFilter = new QPlaceCategory("pcFilter");
 
-		// (C) 쿼리 생성 (중복 Plan 제거 위해 distinct)
+		// 2) 전체 fetch용 alias
+		QPlanPlaceCategory ppcFetch = new QPlanPlaceCategory("ppcFetch");
+		QPlaceCategory pcFetch = new QPlaceCategory("pcFetch");
+
+		// 필터링 조건
+		BooleanBuilder builder = buildSearchCondition(req, ppcFilter, pcFilter);
+
+		// 쿼리 생성
 		JPAQuery<Plan> query = qf
 			.selectDistinct(plan)
 			.from(plan)
-			.leftJoin(plan.planPlaceCategories, planPlaceCategory).fetchJoin()
-			.leftJoin(planPlaceCategory.placeCategory, placeCategory).fetchJoin()
+			.leftJoin(plan.planPlaceCategories, ppcFilter)
+			.leftJoin(ppcFilter.placeCategory, pcFilter)
+			.leftJoin(plan.planPlaceCategories, ppcFetch).fetchJoin()
+			.leftJoin(ppcFetch.placeCategory, pcFetch).fetchJoin()
 			.leftJoin(plan.planTransportationCategories, planTransport).fetchJoin()
 			.leftJoin(planTransport.transportationCategory, transportationCategory).fetchJoin()
 			.where(builder);
@@ -90,17 +99,27 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		return query.fetch();
 	}
 
-	private BooleanBuilder buildSearchCondition(PlanNoOffsetReq req) {
+	private BooleanBuilder buildSearchCondition(PlanNoOffsetReq req, QPlanPlaceCategory ppcFilter,
+		QPlaceCategory pcFilter) {
 		BooleanBuilder builder = new BooleanBuilder();
 
-		// title검색 조건
-		if (req.getTitle() != null && !req.getTitle().isBlank()) {
-			builder.and(plan.title.likeIgnoreCase("%" + req.getTitle() + "%"));
+		BooleanBuilder orBuilder = new BooleanBuilder();
+
+		// 1) 제목 검색
+		if (req.getKeyword() != null && !req.getKeyword().isBlank()) {
+			orBuilder.or(plan.title.likeIgnoreCase("%" + req.getKeyword() + "%"));
 		}
 
-		// 1) 카테고리 ID in (OR 조건)
-		if (req.getCategoryIds() != null && !req.getCategoryIds().isEmpty()) {
-			builder.and(placeCategory.id.in(req.getCategoryIds()));
+		if (req.getCategoryNamecategoryIds() != null && !req.getCategoryNamecategoryIds().isEmpty()) {
+			builder.and(pcFilter.id.in(req.getCategoryNamecategoryIds()));
+		}
+
+		if (req.getTitleCategoryIds() != null && !req.getTitleCategoryIds().isEmpty()) {
+			orBuilder.or(pcFilter.id.in(req.getTitleCategoryIds()));
+		}
+
+		if (orBuilder.hasValue()) {
+			builder.and(orBuilder);
 		}
 
 		// 2) day
@@ -194,15 +213,22 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 	}
 
 	private long getTotalCount(PlanNoOffsetReq req) {
-		BooleanBuilder builder = buildSearchCondition(req);
+		// 필터용 alias
+		QPlanPlaceCategory ppcFilter = new QPlanPlaceCategory("ppcFilter");
+		QPlaceCategory pcFilter = new QPlaceCategory("pcFilter");
+
+		BooleanBuilder builder = buildSearchCondition(req, ppcFilter, pcFilter);
 
 		Long countResult = qf
 			.select(plan.countDistinct())
 			.from(plan)
-			.leftJoin(plan.planPlaceCategories, planPlaceCategory)
-			.leftJoin(planPlaceCategory.placeCategory, placeCategory)
+
+			// 동일한 필터 조인
+			.leftJoin(plan.planPlaceCategories, ppcFilter)
+			.leftJoin(ppcFilter.placeCategory, pcFilter)
 			.leftJoin(plan.planTransportationCategories, planTransport)
 			.leftJoin(planTransport.transportationCategory, transportationCategory)
+
 			.where(builder)
 			.fetchOne();
 

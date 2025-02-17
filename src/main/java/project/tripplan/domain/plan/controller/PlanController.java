@@ -84,7 +84,7 @@ public class PlanController {
 			req.setLastId(queryParam.getLastId());
 		}
 
-		req.setTitle(queryParam.getTitle());
+		req.setKeyword(queryParam.getKeyword());
 		req.setSize(queryParam.getSize() != null ? queryParam.getSize() : 10);
 		req.setSortBy(queryParam.getSortBy());
 		req.setDirection(queryParam.getDirection());
