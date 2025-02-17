@@ -203,13 +203,6 @@ public class PlanService {
 			? rawList.getContent().subList(0, req.getSize())
 			: rawList.getContent();
 
-		for (Plan plan : content) {
-			Set<PlanPlaceCategory> planPlaceCategories = plan.getPlanPlaceCategories();
-			for (PlanPlaceCategory planPlaceCategory : planPlaceCategories) {
-				log.info("planplace = {}", planPlaceCategory.getPlaceCategory().getName());
-			}
-		}
-
 		// 5) nextValue, nextId 설정
 		String nextValue = null;
 		Long nextId = null;

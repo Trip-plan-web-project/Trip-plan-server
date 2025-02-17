@@ -103,9 +103,11 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		QPlaceCategory pcFilter) {
 		BooleanBuilder builder = new BooleanBuilder();
 
-		// 1) 검색 조건
+		BooleanBuilder orBuilder = new BooleanBuilder();
+
+		// 1) 제목 검색
 		if (req.getKeyword() != null && !req.getKeyword().isBlank()) {
-			builder.and(plan.title.likeIgnoreCase("%" + req.getKeyword() + "%"));
+			orBuilder.or(plan.title.likeIgnoreCase("%" + req.getKeyword() + "%"));
 		}
 
 		if (req.getCategoryNamecategoryIds() != null && !req.getCategoryNamecategoryIds().isEmpty()) {
@@ -113,7 +115,11 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		}
 
 		if (req.getTitleCategoryIds() != null && !req.getTitleCategoryIds().isEmpty()) {
-			builder.and(pcFilter.id.in(req.getTitleCategoryIds()));
+			orBuilder.or(pcFilter.id.in(req.getTitleCategoryIds()));
+		}
+
+		if (orBuilder.hasValue()) {
+			builder.and(orBuilder);
 		}
 
 		// 2) day
