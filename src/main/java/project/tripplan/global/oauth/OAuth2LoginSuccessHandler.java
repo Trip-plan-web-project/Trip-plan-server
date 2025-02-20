@@ -46,15 +46,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 	}
 
 	private void loginSuccess(HttpServletRequest request, HttpServletResponse response, CustomOAuth2User oAuth2User, String provider) throws IOException {
-		// 요청의 Origin(출처) 가져오기
-		String origin = request.getHeader("Origin");
+		// 요청이 들어온 서버의 URL 확인
+		String serverUrl = request.getRequestURL().toString();
+		log.info("requestURL : " + serverUrl);
 
-		// 기본값 설정 (로컬 환경)
-		String frontEndUrl = "http://localhost:3000";
+		String frontEndUrl = "https://trip-plan-frontend.vercel.app";
 
-		// 배포 환경일 경우 배포된 프론트엔드 URL로 변경
-		if (origin != null && origin.contains("https://trip-plan-frontend.vercel.app")) {
-			frontEndUrl = "https://trip-plan-frontend.vercel.app";
+		// 서버가 배포된 환경에서 실행 중이면 배포된 프론트엔드 URL 사용
+		if (serverUrl.contains("localhost")) {
+			frontEndUrl = "http://localhost:3000";
 		}
 
 		// 리다이렉트 URL 생성
