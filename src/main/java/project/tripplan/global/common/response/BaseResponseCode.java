@@ -50,6 +50,10 @@ public enum BaseResponseCode {
 	ADD_PLAN_LIKE_SUCCESS(true, 1501, "게시글 좋아요가 추가되었습니다.", HttpStatus.OK),
 	DELETE_PLAN_LIKE_SUCCESS(true, 1502, "게시글 좋아요가 취소되었습니다.", HttpStatus.OK),
 
+	// report 1600 ~
+	REPORT_COMMENT_SUCCESS(true, 1601, "댓글 신고가 완료되었습니다.", HttpStatus.OK),
+	REPORT_PLAN_SUCCESS(true, 1602, "여행 계획글 신고가 완료되었습니다.", HttpStatus.OK),
+
 	/**
 	 * 2000 ~ 2899: request 오류
 	 * 2900 ~ 3000: validation 오류
@@ -85,6 +89,10 @@ public enum BaseResponseCode {
 	//planLike 2500 ~
 	PLANLIKE_NOT_EXIST(false, 2501, "게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_PLANLIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
+
+	//report 2600 ~
+	ALREADY_REPORTED_COMMENT(false, 2601, "이미 신고한적 있는 댓글입니다.", HttpStatus.CONFLICT),
+	ALREADY_REPORTED_PLAN(false, 2602, "이미 신고한적 있는 계획글입니다.", HttpStatus.CONFLICT),
 
 	//valid && Token 2900 ~
 	VALIDATION_FAILED(false, 2900, "Bind Exception", HttpStatus.BAD_REQUEST),

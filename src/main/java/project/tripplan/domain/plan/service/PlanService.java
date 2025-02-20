@@ -168,6 +168,9 @@ public class PlanService {
 		// 첫 번째 PlanPlaceCategory에서 공통 정보를 가져옴
 		PlanPlaceCategory placeCategory = findPlanPlaceCategories.get(0);
 
+		String thumbnail = findPlan.getImageUrl() != null ? prefix + "/" + findPlan.getImageUrl() : null;
+		String profileImage = findPlan.getUser().getImage() != null ? prefix + "/" + findPlan.getUser().getImage() : null;
+
 		// PlanDetailRes DTO 생성
 		PlanDetailRes planDetailRes = new PlanDetailRes();
 		planDetailRes.setTitle(placeCategory.getPlan().getTitle());
@@ -176,8 +179,8 @@ public class PlanService {
 		planDetailRes.setBookmarkId(findBookmark.orElse(null) != null ? findBookmark.get().getId() : null);
 		planDetailRes.setPlaceCategory(categoryNames);
 		planDetailRes.setAuthor(findPlan.getUser().getNickname());
-		planDetailRes.setProfileImage(prefix + "/" + findPlan.getUser().getImage());
-		planDetailRes.setThumbnail(prefix + "/" + findPlan.getImageUrl());
+		planDetailRes.setProfileImage(profileImage);
+		planDetailRes.setThumbnail(thumbnail);
 		planDetailRes.setCreatedAt(placeCategory.getPlan().getCreatedAt());
 		planDetailRes.setStartDate(placeCategory.getPlan().getStartDate());
 		planDetailRes.setEndDate(placeCategory.getPlan().getEndDate());
@@ -330,7 +333,7 @@ public class PlanService {
 				plan.getPeople(),
 				transCategoryMap.getOrDefault(plan.getId(), null), // TransportationCategory가 없으면 null 반환
 				plan.getTotalCost().intValue(),
-				prefix + "/" + plan.getImageUrl()
+				plan.getImageUrl() != null ? prefix + "/" + plan.getImageUrl() : null
 			))
 			.toList();
 	}
@@ -360,7 +363,7 @@ public class PlanService {
 					plan.getPeople(),
 					transCategoryMap.getOrDefault(plan.getId(), null), // TransportationCategory가 없으면 null 반환
 					plan.getTotalCost().intValue(),
-					prefix + "/" + plan.getImageUrl()
+					plan.getImageUrl() != null ? prefix + "/" + plan.getImageUrl() : null
 				);
 			})
 			.toList();
