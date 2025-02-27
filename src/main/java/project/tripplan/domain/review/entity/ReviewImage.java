@@ -17,6 +17,7 @@ public class ReviewImage {
 	@Column(name = "review_image_id")
 	private Long id;
 
+	@Column(columnDefinition = "TEXT")
 	private String imageUrl;
-	
+
 }

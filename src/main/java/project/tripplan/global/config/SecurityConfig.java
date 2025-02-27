@@ -19,7 +19,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepository;
 import project.tripplan.domain.auth.service.AuthService;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
 import project.tripplan.global.jwt.JWTService;
@@ -60,7 +59,13 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/home", "/plans/search", "/login", "/test", "/token/issue/**", "/token/reissue/**",
 					"/",
-					"/index.html", "/favicon.ico").permitAll()
+					"/index.html", "/favicon.ico",
+					"/plans",
+					"/plans/{planId}/copy",
+					"/review",
+					"review/{reviewId}",
+					"/review/image/upload"
+				).permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest()
 				.authenticated()
@@ -85,7 +90,6 @@ public class SecurityConfig {
 			return config;
 		};
 	}
-
 
 	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
 		return new JwtAuthenticationProcessingFilter(jwtService,

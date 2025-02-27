@@ -1,5 +1,7 @@
 package project.tripplan.domain.review.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,13 +11,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.entity.BaseEntity;
 
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
 public class Review extends BaseEntity {
 
 	@Id
@@ -34,6 +41,7 @@ public class Review extends BaseEntity {
 	@Column(columnDefinition = "MEDIUMTEXT", nullable = false)
 	private String content;
 
+	@Builder.Default
 	private Long viewCount = 0L;
 
 	@Column(nullable = false)
@@ -41,4 +49,11 @@ public class Review extends BaseEntity {
 
 	@Column(nullable = false)
 	private Double longitude;
+
+	@Column(nullable = false)
+	private LocalDate visitedDay;
+
+	public void increaseViewCount() {
+		this.viewCount = this.viewCount + 1;
+	}
 }

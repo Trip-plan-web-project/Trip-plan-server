@@ -168,7 +168,12 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 			requestURI.startsWith("/token/issue/") ||
 			requestURI.startsWith("/token/reissue/") ||
 			requestURI.startsWith("/index.html") ||
-			requestURI.startsWith("/favicon.ico");
+			requestURI.startsWith("/plans") ||
+			requestURI.startsWith("/plans/{planId}/copy") ||
+			requestURI.startsWith("/review/{reviewId}") ||
+			requestURI.startsWith("/favicon.ico") ||
+			requestURI.startsWith("/review/image/upload") ||
+			requestURI.startsWith("/review");
 
 		log.info("Request URI: {} | Should not filter: {}", requestURI, isExcluded);
 

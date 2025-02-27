@@ -82,6 +82,7 @@ cloud:
   aws:
     s3:
       bucket: ${BUCKET_NAME}
+      review-bucket: ${REVIEW_BUCKET_NAME}
     credentials:
       access-key: ${ACCESS_KEY}
       secret-key: ${SECRET_KEY}
@@ -91,3 +92,4 @@ cloud:
     stack:
       auto: false
   prefix: ${URL_PREFIX}
+  image-prefix: ${IMAGE_URL_PREFIX}
