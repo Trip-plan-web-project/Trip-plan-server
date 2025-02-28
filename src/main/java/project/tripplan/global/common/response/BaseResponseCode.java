@@ -54,6 +54,15 @@ public enum BaseResponseCode {
 	REPORT_COMMENT_SUCCESS(true, 1601, "댓글 신고가 완료되었습니다.", HttpStatus.OK),
 	REPORT_PLAN_SUCCESS(true, 1602, "여행 계획글 신고가 완료되었습니다.", HttpStatus.OK),
 
+	// review 1700 ~
+	ADD_REVIEW_SUCCESS(true, 1701, "후기 게시글이 생성되었습니다.", HttpStatus.OK),
+	GET_REVIEW_SUCCESS(true, 1702, "후기 게시글 조회에 성공했습니다.", HttpStatus.OK),
+	UPLOAD_REVIEW_IMAGE_SUCCESS(true, 1703, "리뷰 이미지 업로드에 성공했습니다..", HttpStatus.OK),
+
+	// admin 1800 ~
+	GET_REPORTED_PLAN_LIST_SUCCESS(true, 1801, "신고받은 계획글 목록 조회에 성공했습니다", HttpStatus.OK),
+	GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS(true, 1802, "신고받은 계획글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
+
 	/**
 	 * 2000 ~ 2899: request 오류
 	 * 2900 ~ 3000: validation 오류
@@ -93,6 +102,9 @@ public enum BaseResponseCode {
 	//report 2600 ~
 	ALREADY_REPORTED_COMMENT(false, 2601, "이미 신고한적 있는 댓글입니다.", HttpStatus.CONFLICT),
 	ALREADY_REPORTED_PLAN(false, 2602, "이미 신고한적 있는 계획글입니다.", HttpStatus.CONFLICT),
+
+	//review 2700 ~
+	REVIEW_NOT_EXIST(false, 2701, "존재하지 않는 후기게시글 입니다.", HttpStatus.OK),
 
 	//valid && Token 2900 ~
 	VALIDATION_FAILED(false, 2900, "Bind Exception", HttpStatus.BAD_REQUEST),

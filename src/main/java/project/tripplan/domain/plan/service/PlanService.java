@@ -66,6 +66,7 @@ import project.tripplan.domain.planDayDetail.entity.PlanDayDetail;
 import project.tripplan.domain.planLike.entity.PlanLike;
 import project.tripplan.domain.planLike.repository.PlanLikeRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
@@ -384,11 +385,11 @@ public class PlanService {
 		));
 	}
 
-	public void deletePlan(Long planId, Long userId) {
+	public void deletePlan(Long planId, User user) {
 		Plan plan = planRepository.findById(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
-		log.info("userId = {}", plan.getUser().getId());
-		if (plan.getUser().getId() != userId) {
+		if (plan.getUser().getId() != user.getId() && user.getUserRole() != UserRole.ADMIN) {
+			// 관리자가 아니면서 본인이 작성한 게획글이 아닌 경우
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_POST_DELETE_STATUS);
 		}
 		planRepository.delete(plan);

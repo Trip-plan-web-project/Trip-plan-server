@@ -13,6 +13,7 @@ import project.tripplan.domain.comment.repository.CommentRepositoryCustom;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -44,7 +45,8 @@ public class CommentService {
 		Comment findComment = commentRepositoryCustom.findByIdWithUser(commentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
 
-		if(findComment.getUser().getId() != user.getId()) {
+		if(findComment.getUser().getId() != user.getId() && user.getUserRole() != UserRole.ADMIN) {
+			// 관리자가 아니면서 본인 댓글이 아닌 댓글을 삭제하려는 경우
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_DELETE_COMMENT);
 		}
 
