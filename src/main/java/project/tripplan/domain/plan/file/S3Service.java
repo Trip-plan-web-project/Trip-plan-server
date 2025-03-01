@@ -29,6 +29,9 @@ public class S3Service {
 	@Value("${cloud.aws.s3.bucket}")
 	private String bucket;
 
+	@Value("${cloud.aws.s3.review-bucket}")
+	private String reviewBucket;
+
 	public String uploadFile(MultipartFile multipartFile) {
 
 		if (multipartFile == null || multipartFile.isEmpty()) {
@@ -42,6 +45,27 @@ public class S3Service {
 
 		try (InputStream inputStream = multipartFile.getInputStream()) {
 			amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+				.withCannedAcl(CannedAccessControlList.PublicRead));
+		} catch (IOException e) {
+			throw new CustomException(BaseResponseCode.FILE_UPLOAD_ERROR);
+		}
+
+		return fileName;
+	}
+
+	public String uploadReviewFile(MultipartFile multipartFile) {
+
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			return null;
+		}
+
+		String fileName = createFileName(multipartFile.getOriginalFilename());
+		ObjectMetadata objectMetadata = new ObjectMetadata();
+		objectMetadata.setContentLength(multipartFile.getSize());
+		objectMetadata.setContentType(multipartFile.getContentType());
+
+		try (InputStream inputStream = multipartFile.getInputStream()) {
+			amazonS3.putObject(new PutObjectRequest(reviewBucket, fileName, inputStream, objectMetadata)
 				.withCannedAcl(CannedAccessControlList.PublicRead));
 		} catch (IOException e) {
 			throw new CustomException(BaseResponseCode.FILE_UPLOAD_ERROR);
