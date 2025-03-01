@@ -59,12 +59,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/home", "/plans/search", "/login", "/test", "/token/issue/**", "/token/reissue/**",
 					"/",
-					"/index.html", "/favicon.ico",
-					"/plans",
-					"/plans/{planId}/copy",
-					"/review",
-					"review/{reviewId}",
-					"/review/image/upload"
+					"/index.html", "/favicon.ico"
 				).permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest()

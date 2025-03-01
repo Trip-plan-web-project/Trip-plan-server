@@ -9,12 +9,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tripplan.domain.review.entity.Review;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.entity.BaseEntity;
 
 @Entity
+@Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewComment extends BaseEntity {
 
@@ -33,4 +39,8 @@ public class ReviewComment extends BaseEntity {
 
 	@Column(nullable = false)
 	private String content;
+
+	public void updateComment(String content) {
+		this.content = content;
+	}
 }
