@@ -21,6 +21,7 @@ import project.tripplan.domain.auth.refreshToken.entity.RefreshToken;
 import project.tripplan.domain.auth.refreshToken.repository.BlackListRepository;
 import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepository;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
 
 @Service
@@ -58,12 +59,14 @@ public class JWTService {
 	/**
 	 * AccessToken 생성 메소드
 	 */
-	public String createAccessToken(String socialId) {
+	public String createAccessToken(String socialId, UserRole userRole) {
 		Date now = new Date();
+
 		String accessToken = JWT.create()
 			.withSubject(ACCESS_TOKEN_SUBJECT)
 			.withExpiresAt(new Date(now.getTime() + accessTokenExpirationPeriod))
 			.withClaim("social_id", socialId)
+			.withClaim("role", userRole.name())
 			.sign(Algorithm.HMAC512(secretKey));
 
 		log.info("accessToken 발급 완료");
