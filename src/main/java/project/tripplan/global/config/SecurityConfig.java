@@ -27,7 +27,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.tripplan.domain.auth.refreshToken.repository.RefreshTokenRepository;
 import project.tripplan.domain.auth.service.AuthService;
 import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
@@ -71,7 +70,8 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/home", "/plans/search", "/login", "/test", "/token/issue/**", "/token/reissue/**",
 					"/",
-					"/index.html", "/favicon.ico").permitAll()
+					"/index.html", "/favicon.ico"
+				).permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest()
 				.authenticated()
@@ -121,7 +121,6 @@ public class SecurityConfig {
 			return config;
 		};
 	}
-
 
 	public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
 		return new JwtAuthenticationProcessingFilter(jwtService,

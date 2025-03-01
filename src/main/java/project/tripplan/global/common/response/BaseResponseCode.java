@@ -58,11 +58,12 @@ public enum BaseResponseCode {
 	ADD_REVIEW_SUCCESS(true, 1701, "후기 게시글이 생성되었습니다.", HttpStatus.OK),
 	GET_REVIEW_SUCCESS(true, 1702, "후기 게시글 조회에 성공했습니다.", HttpStatus.OK),
 	UPLOAD_REVIEW_IMAGE_SUCCESS(true, 1703, "리뷰 이미지 업로드에 성공했습니다..", HttpStatus.OK),
+	GET_REVIEW_COMMENTS_LIST_SUCCESS(true, 1704, "리뷰 댓글 목록 불러오기에 성공했습니다.", HttpStatus.OK),
 
 	// admin 1800 ~
 	GET_REPORTED_PLAN_LIST_SUCCESS(true, 1801, "신고받은 계획글 목록 조회에 성공했습니다", HttpStatus.OK),
-	GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS(true, 1802, "신고받은 계획글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
 
+	GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS(true, 1802, "신고받은 계획글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
 	/**
 	 * 2000 ~ 2899: request 오류
 	 * 2900 ~ 3000: validation 오류
