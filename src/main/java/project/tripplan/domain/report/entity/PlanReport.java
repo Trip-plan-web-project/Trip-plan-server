@@ -1,5 +1,8 @@
 package project.tripplan.domain.report.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,7 +28,7 @@ import project.tripplan.global.common.entity.BaseEntity;
 public class PlanReport extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "comment_report_id")
+	@Column(name = "plan_report_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -34,5 +37,6 @@ public class PlanReport extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "plan_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Plan plan;
 }

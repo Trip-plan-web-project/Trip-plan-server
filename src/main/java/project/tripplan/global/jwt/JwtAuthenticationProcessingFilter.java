@@ -127,8 +127,8 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		// User 엔티티의 정보를 기반으로 UserDetails 객체 생성
 		UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
 			.username(user.getSocialId()) // 소셜 로그인에서는 socialId를 username으로 사용
-			.password("")
-			.roles(user.getUserRole().name())
+			.password("") // 비밀번호는 사용하지 않음
+			.roles(user.getUserRole().name()) // 여기서 역할(Role) 설정
 			.build();
 
 		// Authentication 객체 생성
@@ -137,7 +137,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 			null,
 			authoritiesMapper.mapAuthorities(
 				Collections.singletonList(
-					new SimpleGrantedAuthority(user.getUserRole().name()) // userRole을 기반으로 권한 생성
+					new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name()) // "ROLE_ADMIN" 형태로 저장
 				)
 			)
 		);
@@ -145,6 +145,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		// SecurityContextHolder에 인증 정보 설정
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
+
 
 	/**
 	 * [401 Unauthorized 응답을 전송하는 메서드]

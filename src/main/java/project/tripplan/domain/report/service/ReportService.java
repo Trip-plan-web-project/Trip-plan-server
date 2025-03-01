@@ -12,15 +12,15 @@ import project.tripplan.domain.comment.repository.CommentRepository;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.report.dto.ReportReasonDto;
-import project.tripplan.domain.report.entity.CommentReport;
-import project.tripplan.domain.report.entity.CommentReportReason;
+import project.tripplan.domain.report.entity.PlanCommentReport;
+import project.tripplan.domain.report.entity.PlanCommentReportReason;
 import project.tripplan.domain.report.entity.PlanReport;
 import project.tripplan.domain.report.entity.PlanReportReason;
 import project.tripplan.domain.report.entity.ReportReason;
-import project.tripplan.domain.report.repository.PlanReportReasonRepository;
-import project.tripplan.domain.report.repository.commentReportReasonRepo.CommentReportReasonRepository;
-import project.tripplan.domain.report.repository.commentReportRepo.CommentReportRepository;
-import project.tripplan.domain.report.repository.commentReportRepo.CommentReportRepositoryCustom;
+import project.tripplan.domain.report.repository.planReportReasonRepo.PlanReportReasonRepository;
+import project.tripplan.domain.report.repository.planCommentReportReasonRepo.PlanCommentReportReasonRepository;
+import project.tripplan.domain.report.repository.planCommentReportRepo.PlanCommentReportRepository;
+import project.tripplan.domain.report.repository.planCommentReportRepo.PlanCommentReportRepositoryCustom;
 import project.tripplan.domain.report.repository.planReportRepo.PlanReportRepository;
 import project.tripplan.domain.report.repository.planReportRepo.PlanReportRepositoryCustom;
 import project.tripplan.domain.report.repository.reportReasonRepo.ReportReasonRepositoryCustom;
@@ -32,11 +32,11 @@ import project.tripplan.global.common.response.BaseResponseCode;
 @RequiredArgsConstructor
 public class ReportService {
 
-	private final CommentReportRepositoryCustom commentReportRepositoryCustom;
-	private final CommentReportRepository commentReportRepository;
+	private final PlanCommentReportRepositoryCustom planCommentReportRepositoryCustom;
+	private final PlanCommentReportRepository planCommentReportRepository;
 	private final CommentRepository commentRepository;
 	private final ReportReasonRepositoryCustom reportReasonRepositoryCustom;
-	private final CommentReportReasonRepository commentReportReasonRepository;
+	private final PlanCommentReportReasonRepository planCommentReportReasonRepository;
 	private final PlanReportRepositoryCustom planReportRepositoryCustom;
 	private final PlanRepository planRepository;
 	private final PlanReportRepository planReportRepository;
@@ -44,7 +44,7 @@ public class ReportService {
 
 	@Transactional
 	public void reportComment(User user, Long commentId, ReportReasonDto reportReasonDto) {
-		Optional<CommentReport> findCommentReport = commentReportRepositoryCustom.findByUserIdAndCommentId(
+		Optional<PlanCommentReport> findCommentReport = planCommentReportRepositoryCustom.findByUserIdAndCommentId(
 			user.getId(), commentId);
 
 		if (findCommentReport.isPresent()) {
@@ -55,23 +55,23 @@ public class ReportService {
 			Comment findComment = commentRepository.findById(commentId)
 				.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
 
-			CommentReport commentReport = CommentReport.builder()
+			PlanCommentReport planCommentReport = PlanCommentReport.builder()
 				.user(user)
 				.comment(findComment)
 				.build();
 
-			commentReportRepository.save(commentReport);
+			planCommentReportRepository.save(planCommentReport);
 
 			List<ReportReason> findReasonList = reportReasonRepositoryCustom.findAllByIds(reportReasonDto.getReportReasons());
 
-			List<CommentReportReason> commentReportReasonList = findReasonList.stream()
-				.map(reportReason -> CommentReportReason.builder()
-					.commentReport(commentReport)
+			List<PlanCommentReportReason> planCommentReportReasonList = findReasonList.stream()
+				.map(reportReason -> PlanCommentReportReason.builder()
+					.planCommentReport(planCommentReport)
 					.reportReason(reportReason)
 					.build())
 				.toList();
 
-			commentReportReasonRepository.saveAll(commentReportReasonList);
+			planCommentReportReasonRepository.saveAll(planCommentReportReasonList);
 		}
 	}
 

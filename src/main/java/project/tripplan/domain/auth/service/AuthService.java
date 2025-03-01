@@ -37,6 +37,7 @@ public class AuthService implements UserDetailsService {
 		User findUser = userRepositoryCustom.findBySocialId(socialId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.USER_NOT_EXIST));
 
+
 		return org.springframework.security.core.userdetails.User.builder()
 			.username(findUser.getSocialId())
 			.roles(findUser.getUserRole().name())
@@ -49,7 +50,7 @@ public class AuthService implements UserDetailsService {
 		User findUser = userRepositoryCustom.findBySocialId(socialId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.USER_NOT_EXIST));
 
-		String accessToken = jwtService.createAccessToken(socialId);
+		String accessToken = jwtService.createAccessToken(socialId, findUser.getUserRole());
 		String refreshToken = jwtService.createRefreshToken();
 
 		// Refresh Token 저장
@@ -73,7 +74,7 @@ public class AuthService implements UserDetailsService {
 		boolean isRefreshTokenValid = jwtService.isTokenValid(refreshToken);
 
 		// Access Token 생성
-		String reIssuedAccessToken = jwtService.createAccessToken(socialId);
+		String reIssuedAccessToken = jwtService.createAccessToken(socialId, findUser.getUserRole());
 
 		if (isRefreshTokenValid) {
 			// Refresh Token이 유효한 경우 Access Token만 재발급

@@ -48,9 +48,9 @@ public class UserController {
 				.userId(user.getId())
 				.nickname(user.getNickname())
 				.image((user.getImage() == null) ? null : prefix + "/" + user.getImage())
+				.userRole(user.getUserRole())
 				.build()
 		);
-
 	}
 
 	@PatchMapping("/users/profile")
