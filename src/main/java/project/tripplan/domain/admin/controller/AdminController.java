@@ -1,5 +1,7 @@
 package project.tripplan.domain.admin.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,5 +36,17 @@ public class AdminController {
 		@RequestParam(defaultValue = "10") int size) {
 		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS,
 			adminService.getReportedPlanCommentList(page, size));
+	}
+
+	@GetMapping("/admin/reports/search")
+	public BaseResponse<?> getReportedSearchList(@AuthenticationPrincipal User user,
+		@RequestParam Long category,
+		@RequestParam Long reasonId,
+		@RequestParam String startDate,
+		@RequestParam String endDate,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
+		return new BaseResponse<>(BaseResponseCode.SEARCH_REPORTED_LIST_SUCCESS,
+			adminService.getReportedSearchList(category, reasonId, startDate, endDate, page, size));
 	}
 }

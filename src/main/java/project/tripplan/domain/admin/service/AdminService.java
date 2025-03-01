@@ -30,4 +30,10 @@ public class AdminService {
 		Pageable pageable = PageRequest.of(page, size);
 		return planCommentReportReasonRepositoryCustom.findReportedPlanCommentsByDto(pageable);
 	}
+
+	@Transactional(readOnly = true)
+	public Object getReportedSearchList(Long category, Long reasonId, String startDate, String endDate, int page,
+		int size) {
+
+	}
 }
