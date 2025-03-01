@@ -1,10 +1,12 @@
 package project.tripplan.global.config;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -12,15 +14,24 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.auth.service.AuthService;
+import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
+import project.tripplan.global.common.exception.CustomException;
+import project.tripplan.global.common.response.BaseResponseCode;
 import project.tripplan.global.jwt.JWTService;
 import project.tripplan.global.jwt.JwtAuthenticationProcessingFilter;
 import project.tripplan.global.oauth.CustomOAuth2UserService;
@@ -64,6 +75,31 @@ public class SecurityConfig {
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest()
 				.authenticated()
+			)
+			.exceptionHandling(exceptionHandling ->
+				exceptionHandling
+					.accessDeniedHandler(new AccessDeniedHandler() {
+						@Override
+						public void handle(HttpServletRequest request, HttpServletResponse response,
+							AccessDeniedException accessDeniedException) throws IOException, ServletException {
+							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+							response.setContentType("application/json");
+							response.setCharacterEncoding("UTF-8");
+							response.getWriter().write("{\"message\": \"관리자 권한이 없습니다.\"}");
+							response.getWriter().flush();
+						}
+					})  // 403 Forbidden
+					.authenticationEntryPoint(new AuthenticationEntryPoint() {
+						@Override
+						public void commence(HttpServletRequest request, HttpServletResponse response,
+							AuthenticationException authException) throws IOException, ServletException {
+							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+							response.setContentType("application/json");
+							response.setCharacterEncoding("UTF-8");
+							response.getWriter().write("{\"message\": \"인증이 필요합니다.\"}");
+							response.getWriter().flush();
+						}
+					}) // 401 Unauthorized
 			)
 			.addFilterBefore(jwtAuthenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();

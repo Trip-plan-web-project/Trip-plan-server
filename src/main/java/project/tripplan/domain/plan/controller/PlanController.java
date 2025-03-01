@@ -115,7 +115,7 @@ public class PlanController {
 	public BaseResponse<Void> deletePlan(
 		@AuthenticationPrincipal User user,
 		@PathVariable Long planId) {
-		planService.deletePlan(planId, user.getId());
+		planService.deletePlan(planId, user);
 		return new BaseResponse<>(BaseResponseCode.DELETE_PLAN_SUCCESS);
 	}
 

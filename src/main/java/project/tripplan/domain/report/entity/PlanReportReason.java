@@ -1,5 +1,8 @@
 package project.tripplan.domain.report.entity;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,6 +31,7 @@ public class PlanReportReason extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "plan_report_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private PlanReport planReport;
 
 	@ManyToOne(fetch = FetchType.LAZY)
