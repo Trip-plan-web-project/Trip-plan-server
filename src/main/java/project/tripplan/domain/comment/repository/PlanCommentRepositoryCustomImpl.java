@@ -11,46 +11,46 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import project.tripplan.domain.comment.entity.Comment;
-import project.tripplan.domain.comment.entity.QComment;
+import project.tripplan.domain.comment.entity.PlanComment;
+import project.tripplan.domain.comment.entity.QPlanComment;
 import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.user.entity.QUser;
 
 @Repository
 @RequiredArgsConstructor
-public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
+public class PlanCommentRepositoryCustomImpl implements PlanCommentRepositoryCustom {
 	private final JPAQueryFactory qf;
-	private final QComment comment = QComment.comment;
+	private final QPlanComment planComment = QPlanComment.planComment;
 	private final QUser user = QUser.user;
 	private final QPlan plan = QPlan.plan;
 
 	@Override
-	public Optional<Comment> findByIdWithUser(Long commentId) {
+	public Optional<PlanComment> findByIdWithUser(Long commentId) {
 		return Optional.ofNullable(
-			qf.selectFrom(comment)
-				.join(comment.user, user).fetchJoin()
-				.where(comment.id.eq(commentId))
+			qf.selectFrom(planComment)
+				.join(planComment.user, user).fetchJoin()
+				.where(planComment.id.eq(commentId))
 				.fetchOne()
 		);
 	}
 
 	@Override
-	public Page<Comment> findAllByPlanIdWithUser(Long planId, Pageable pageable) {
+	public Page<PlanComment> findAllByPlanIdWithUser(Long planId, Pageable pageable) {
 		// 쿼리 생성
-		List<Comment> content = qf
-			.selectFrom(comment)
-			.join(comment.plan, plan).fetchJoin()
-			.join(comment.user, user).fetchJoin()
+		List<PlanComment> content = qf
+			.selectFrom(planComment)
+			.join(planComment.plan, plan).fetchJoin()
+			.join(planComment.user, user).fetchJoin()
 			.where(plan.id.eq(planId))
-			.orderBy(comment.createdAt.desc(), comment.id.desc())
+			.orderBy(planComment.createdAt.desc(), planComment.id.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
 		// 총 개수 계산
 		Long totalCount = qf
-			.select(comment.count())
-			.from(comment)
+			.select(planComment.count())
+			.from(planComment)
 			.where(plan.id.eq(planId))
 			.fetchOne();
 
@@ -61,20 +61,20 @@ public class CommentRepositoryCustomImpl implements CommentRepositoryCustom {
 	}
 
 	@Override
-	public Page<Comment> findCommentsByUser(Long userId, Pageable pageable) {
-		List<Comment> content = qf
-			.selectFrom(comment)
-			.join(comment.plan, plan).fetchJoin()
-			.where(comment.user.id.eq(userId))
-			.orderBy(comment.createdAt.desc())
+	public Page<PlanComment> findCommentsByUser(Long userId, Pageable pageable) {
+		List<PlanComment> content = qf
+			.selectFrom(planComment)
+			.join(planComment.plan, plan).fetchJoin()
+			.where(planComment.user.id.eq(userId))
+			.orderBy(planComment.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
 
 		Long totalCount = qf
-			.select(comment.count())
-			.from(comment)
-			.where(comment.user.id.eq(userId))
+			.select(planComment.count())
+			.from(planComment)
+			.where(planComment.user.id.eq(userId))
 			.fetchOne();
 
 		long total = (totalCount == null) ? 0 : totalCount;

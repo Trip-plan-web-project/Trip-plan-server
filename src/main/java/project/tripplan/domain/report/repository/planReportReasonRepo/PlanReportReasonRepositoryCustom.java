@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import project.tripplan.domain.admin.dto.ReportedPlanListRes;
 
 public interface PlanReportReasonRepositoryCustom {
-	Page<ReportedPlanListRes> findReportedPlanListByDto(Pageable pageable);
+	Page<ReportedPlanListRes> findReportedPlanList(Pageable pageable);
 }

@@ -22,7 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.tripplan.domain.comment.entity.Comment;
+import project.tripplan.domain.comment.entity.PlanComment;
 import project.tripplan.domain.plan.enums.PlanStatus;
 import project.tripplan.domain.planDay.entity.PlanDay;
 import project.tripplan.domain.planLike.entity.PlanLike;
@@ -85,7 +85,7 @@ public class Plan extends BaseEntity {
 
 	@Builder.Default
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Comment> comments = new ArrayList<>();
+	private List<PlanComment> planComments = new ArrayList<>();
 
 	public void addPlanDay(PlanDay planDay) {
 		planDays.add(planDay);
