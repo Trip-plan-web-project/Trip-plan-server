@@ -24,7 +24,7 @@ import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
 
 @ExtendWith(MockitoExtension.class)
-class ReviewCommentServiceTest {
+class ReviewPlanCommentServiceTest {
 
 	@Mock
 	private ReviewCommentRepositoryCustom reviewCommentRepositoryCustom;

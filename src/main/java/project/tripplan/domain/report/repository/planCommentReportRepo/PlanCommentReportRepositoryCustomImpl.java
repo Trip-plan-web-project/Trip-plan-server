@@ -7,11 +7,9 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
-import project.tripplan.domain.comment.entity.QComment;
+import project.tripplan.domain.comment.entity.QPlanComment;
 import project.tripplan.domain.report.entity.PlanCommentReport;
 import project.tripplan.domain.report.entity.QPlanCommentReport;
-import project.tripplan.domain.report.entity.QPlanCommentReportReason;
-import project.tripplan.domain.report.entity.QReportReason;
 import project.tripplan.domain.user.entity.QUser;
 
 @Repository
@@ -21,15 +19,15 @@ public class PlanCommentReportRepositoryCustomImpl implements PlanCommentReportR
 	private final JPAQueryFactory qf;
 	private final QPlanCommentReport planCommentReport = QPlanCommentReport.planCommentReport;
 	private final QUser user = QUser.user;
-	private final QComment comment = QComment.comment;
+	private final QPlanComment planComment = QPlanComment.planComment;
 
 	@Override
 	public Optional<PlanCommentReport> findByUserIdAndCommentId(Long userId, Long commentId) {
 		return Optional.ofNullable(
 			qf.selectFrom(planCommentReport)
 				.join(planCommentReport.user, user).fetchJoin()
-				.join(planCommentReport.comment, comment).fetchJoin()
-				.where(user.id.eq(userId).and(comment.id.eq(commentId)))
+				.join(planCommentReport.planComment, planComment).fetchJoin()
+				.where(user.id.eq(userId).and(planComment.id.eq(commentId)))
 				.fetchOne()
 		);
 	}

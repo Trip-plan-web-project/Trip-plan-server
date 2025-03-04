@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QPlanCommentReport is a Querydsl query type for PlanCommentReport
+ * QReviewCommentReport is a Querydsl query type for ReviewCommentReport
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QPlanCommentReport extends EntityPathBase<PlanCommentReport> {
+public class QReviewCommentReport extends EntityPathBase<ReviewCommentReport> {
 
-    private static final long serialVersionUID = 29702394L;
+    private static final long serialVersionUID = 1207420203L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QPlanCommentReport planCommentReport = new QPlanCommentReport("planCommentReport");
+    public static final QReviewCommentReport reviewCommentReport = new QReviewCommentReport("reviewCommentReport");
 
     public final project.tripplan.global.common.entity.QBaseEntity _super = new project.tripplan.global.common.entity.QBaseEntity(this);
 
@@ -29,32 +29,32 @@ public class QPlanCommentReport extends EntityPathBase<PlanCommentReport> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final project.tripplan.domain.comment.entity.QPlanComment planComment;
+    public final project.tripplan.domain.comment.entity.QReviewComment reviewComment;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final project.tripplan.domain.user.entity.QUser user;
 
-    public QPlanCommentReport(String variable) {
-        this(PlanCommentReport.class, forVariable(variable), INITS);
+    public QReviewCommentReport(String variable) {
+        this(ReviewCommentReport.class, forVariable(variable), INITS);
     }
 
-    public QPlanCommentReport(Path<? extends PlanCommentReport> path) {
+    public QReviewCommentReport(Path<? extends ReviewCommentReport> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QPlanCommentReport(PathMetadata metadata) {
+    public QReviewCommentReport(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QPlanCommentReport(PathMetadata metadata, PathInits inits) {
-        this(PlanCommentReport.class, metadata, inits);
+    public QReviewCommentReport(PathMetadata metadata, PathInits inits) {
+        this(ReviewCommentReport.class, metadata, inits);
     }
 
-    public QPlanCommentReport(Class<? extends PlanCommentReport> type, PathMetadata metadata, PathInits inits) {
+    public QReviewCommentReport(Class<? extends ReviewCommentReport> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.planComment = inits.isInitialized("planComment") ? new project.tripplan.domain.comment.entity.QPlanComment(forProperty("planComment"), inits.get("planComment")) : null;
+        this.reviewComment = inits.isInitialized("reviewComment") ? new project.tripplan.domain.comment.entity.QReviewComment(forProperty("reviewComment"), inits.get("reviewComment")) : null;
         this.user = inits.isInitialized("user") ? new project.tripplan.domain.user.entity.QUser(forProperty("user")) : null;
     }
 

@@ -51,8 +51,10 @@ public enum BaseResponseCode {
 	DELETE_PLAN_LIKE_SUCCESS(true, 1502, "게시글 좋아요가 취소되었습니다.", HttpStatus.OK),
 
 	// report 1600 ~
-	REPORT_COMMENT_SUCCESS(true, 1601, "댓글 신고가 완료되었습니다.", HttpStatus.OK),
+	REPORT_PLAN_COMMENT_SUCCESS(true, 1601, "여행 계획글 댓글 신고가 완료되었습니다.", HttpStatus.OK),
 	REPORT_PLAN_SUCCESS(true, 1602, "여행 계획글 신고가 완료되었습니다.", HttpStatus.OK),
+	REPORT_REVIEW_SUCCESS(true, 1603, "리뷰글 신고가 완료되었습니다.", HttpStatus.OK),
+	REPORT_REVIEW_COMMENT_SUCCESS(true, 1604, "리뷰글 댓글 신고가 완료되었습니다.", HttpStatus.OK),
 
 	// review 1700 ~
 	ADD_REVIEW_SUCCESS(true, 1701, "후기 게시글이 생성되었습니다.", HttpStatus.OK),
@@ -62,6 +64,13 @@ public enum BaseResponseCode {
 
 	// admin 1800 ~
 	GET_REPORTED_PLAN_LIST_SUCCESS(true, 1801, "신고받은 계획글 목록 조회에 성공했습니다", HttpStatus.OK),
+<<<<<<< Updated upstream
+=======
+	GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS(true, 1802, "신고받은 계획글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
+	SEARCH_REPORTED_LIST_SUCCESS(true, 1803, "신고목록 필터 검색에 성공했습니다.", HttpStatus.OK),
+	GET_REPORTED_REVIEW_LIST_SUCCESS(true, 1804, "신고받은 리뷰글 목록 조회에 성공했습니다.", HttpStatus.OK),
+	GET_REPORTED_REVIEW_COMMENT_LIST_SUCCESS(true, 1805, "신고받은 리뷰글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
+>>>>>>> Stashed changes
 
 	GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS(true, 1802, "신고받은 계획글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
 	/**
@@ -101,11 +110,14 @@ public enum BaseResponseCode {
 	UNAUTHORIZED_PLANLIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
 
 	//report 2600 ~
-	ALREADY_REPORTED_COMMENT(false, 2601, "이미 신고한적 있는 댓글입니다.", HttpStatus.CONFLICT),
+	ALREADY_REPORTED_PLAN_COMMENT(false, 2601, "이미 신고한적 있는 게획글 댓글입니다.", HttpStatus.CONFLICT),
 	ALREADY_REPORTED_PLAN(false, 2602, "이미 신고한적 있는 계획글입니다.", HttpStatus.CONFLICT),
+	ALREADY_REPORTED_REVIEW(false, 2603, "이미 신고한적 있는 리뷰글입니다.", HttpStatus.CONFLICT),
+	ALREADY_REPORTED_REVIEW_COMMENT(false, 2604, "이미 신고한적 있는 리뷰글 댓글입니다.", HttpStatus.CONFLICT),
 
 	//review 2700 ~
-	REVIEW_NOT_EXIST(false, 2701, "존재하지 않는 후기게시글 입니다.", HttpStatus.OK),
+	REVIEW_NOT_EXIST(false, 2701, "존재하지 않는 후기게시글 입니다.", HttpStatus.NOT_FOUND),
+	REVIEW_COMMENT_NOT_EXIST(false, 2702, "존재하지 않는 후기댓글 입니다.", HttpStatus.NOT_FOUND),
 
 	//valid && Token 2900 ~
 	VALIDATION_FAILED(false, 2900, "Bind Exception", HttpStatus.BAD_REQUEST),

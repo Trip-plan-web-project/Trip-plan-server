@@ -16,8 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.tripplan.domain.comment.entity.PlanComment;
-import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.comment.entity.ReviewComment;
 import project.tripplan.global.common.entity.BaseEntity;
 
 @AllArgsConstructor
@@ -25,19 +24,18 @@ import project.tripplan.global.common.entity.BaseEntity;
 @Getter
 @Entity
 @Builder
-public class PlanCommentReport extends BaseEntity {
+public class ReviewCommentReportReason extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "plan_comment_report_id")
+	@Column(name = "review_comment_report_reason_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "reporter_id")
-	private User user;
+	@JoinColumn(name = "review_comment_report_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private ReviewCommentReport reviewCommentReport;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "comment_id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	private PlanComment planComment;
+	@JoinColumn(name = "report_reason_id")
+	private ReportReason reportReason;
 }
-

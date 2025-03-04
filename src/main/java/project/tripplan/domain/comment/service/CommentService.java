@@ -1,15 +1,14 @@
 package project.tripplan.domain.comment.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.comment.dto.CommentReq;
-import project.tripplan.domain.comment.entity.Comment;
-import project.tripplan.domain.comment.repository.CommentRepository;
-import project.tripplan.domain.comment.repository.CommentRepositoryCustom;
+import project.tripplan.domain.comment.entity.PlanComment;
+import project.tripplan.domain.comment.repository.PlanCommentRepository;
+import project.tripplan.domain.comment.repository.PlanCommentRepositoryCustom;
 import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.user.entity.User;
@@ -22,47 +21,47 @@ import project.tripplan.global.common.response.BaseResponseCode;
 @RequiredArgsConstructor
 public class CommentService {
 
-	private final CommentRepository commentRepository;
+	private final PlanCommentRepository planCommentRepository;
 	private final PlanRepository planRepository;
-	private final CommentRepositoryCustom commentRepositoryCustom;
+	private final PlanCommentRepositoryCustom planCommentRepositoryCustom;
 
 	@Transactional
 	public Long addComment(User user, Long planId, CommentReq commentReq) {
 		Plan findPlan = planRepository.findById(planId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
 
-		Comment comment = Comment.builder()
+		PlanComment planComment = PlanComment.builder()
 			.user(user)
 			.plan(findPlan)
 			.content(commentReq.getContent())
 			.build();
 
-		return commentRepository.save(comment).getId();
+		return planCommentRepository.save(planComment).getId();
 	}
 
 	@Transactional
 	public void deleteComment(User user, Long commentId) {
-		Comment findComment = commentRepositoryCustom.findByIdWithUser(commentId)
+		PlanComment findPlanComment = planCommentRepositoryCustom.findByIdWithUser(commentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
 
-		if(findComment.getUser().getId() != user.getId() && user.getUserRole() != UserRole.ADMIN) {
+		if(findPlanComment.getUser().getId() != user.getId() && user.getUserRole() != UserRole.ADMIN) {
 			// 관리자가 아니면서 본인 댓글이 아닌 댓글을 삭제하려는 경우
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_DELETE_COMMENT);
 		}
 
-		commentRepository.delete(findComment);
+		planCommentRepository.delete(findPlanComment);
 	}
 
 	@Transactional
 	public void updateComment(User user, Long commentId, CommentReq commentReq) {
-		Comment findComment = commentRepositoryCustom.findByIdWithUser(commentId)
+		PlanComment findPlanComment = planCommentRepositoryCustom.findByIdWithUser(commentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
 
-		if(findComment.getUser().getId() != user.getId()) {
+		if(findPlanComment.getUser().getId() != user.getId()) {
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_UPDATE_COMMENT);
 		}
 
-		findComment.updateComment(commentReq.getContent());
+		findPlanComment.updateComment(commentReq.getContent());
 	}
 
 }

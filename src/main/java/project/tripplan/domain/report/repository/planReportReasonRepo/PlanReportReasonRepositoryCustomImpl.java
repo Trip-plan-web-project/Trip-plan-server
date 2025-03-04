@@ -34,7 +34,7 @@ public class PlanReportReasonRepositoryCustomImpl implements PlanReportReasonRep
 	private final QReportReason reportReason = QReportReason.reportReason1;
 
 	@Override
-	public Page<ReportedPlanListRes> findReportedPlanListByDto(Pageable pageable) {
+	public Page<ReportedPlanListRes> findReportedPlanList(Pageable pageable) {
 		List<ReportedPlanListRes> results = qf
 			.select(Projections.constructor(ReportedPlanListRes.class,
 				planReport.plan.id,
@@ -55,6 +55,7 @@ public class PlanReportReasonRepositoryCustomImpl implements PlanReportReasonRep
 			.join(plan.user, reported)
 			.join(planReportReason.reportReason, reportReason)
 			.groupBy(planReport.id)
+			.orderBy(planReport.createdAt.desc(), planReport.id.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();

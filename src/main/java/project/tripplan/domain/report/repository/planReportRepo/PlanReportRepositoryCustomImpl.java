@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.report.entity.PlanReport;
 import project.tripplan.domain.report.entity.QPlanReport;
-import project.tripplan.domain.report.entity.QPlanReportReason;
-import project.tripplan.domain.report.entity.QReportReason;
 import project.tripplan.domain.user.entity.QUser;
 
 @Repository
@@ -22,8 +20,6 @@ public class PlanReportRepositoryCustomImpl implements PlanReportRepositoryCusto
 	private final QPlanReport planReport = QPlanReport.planReport;
 	private final QPlan plan = QPlan.plan;
 	private final QUser user = QUser.user;
-	private final QPlanReportReason planReportReason = QPlanReportReason.planReportReason;
-	private final QReportReason reportReason = QReportReason.reportReason1;
 
 	@Override
 	public Optional<PlanReport> findByUserIdAndPlanId(Long userId, Long planId) {
