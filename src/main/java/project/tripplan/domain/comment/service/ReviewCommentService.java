@@ -17,6 +17,7 @@ import project.tripplan.domain.plan.dto.PlanCommentsRes;
 import project.tripplan.domain.review.entity.Review;
 import project.tripplan.domain.review.repository.ReviewRepository;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -51,7 +52,7 @@ public class ReviewCommentService {
 		ReviewComment findReviewComment = reviewCommentRepositoryCustom.findByIdWithUser(reviewCommentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
 
-		if (findReviewComment.getUser().getId() != user.getId()) {
+		if (findReviewComment.getUser().getId() != user.getId() && user.getUserRole() != UserRole.ADMIN) {
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_DELETE_COMMENT);
 		}
 
