@@ -48,13 +48,10 @@ public class AdminService {
 		Pageable pageable = PageRequest.of(page, size);
 		return revCommentReportReasonCustom.findReportedReviewComments(pageable);
 	}
-<<<<<<< Updated upstream
-=======
 
 	@Transactional(readOnly = true)
 	public Object getReportedSearchList(Long category, Long reasonId, String startDate, String endDate, int page,
 		int size) {
 		return null;
 	}
->>>>>>> Stashed changes
 }
