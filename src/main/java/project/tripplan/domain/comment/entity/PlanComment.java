@@ -1,7 +1,4 @@
-package project.tripplan.domain.report.entity;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+package project.tripplan.domain.comment.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.tripplan.domain.comment.entity.PlanComment;
+import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.entity.BaseEntity;
 
@@ -25,19 +22,23 @@ import project.tripplan.global.common.entity.BaseEntity;
 @Getter
 @Entity
 @Builder
-public class PlanCommentReport extends BaseEntity {
+public class PlanComment extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "plan_comment_report_id")
+	@Column(name = "comment_id")
 	private Long id;
 
+	private String content;
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "reporter_id")
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "comment_id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	private PlanComment planComment;
-}
+	@JoinColumn(name = "plan_id")
+	private Plan plan;
 
+	public void updateComment(String content) {
+		this.content = content;
+	}
+}

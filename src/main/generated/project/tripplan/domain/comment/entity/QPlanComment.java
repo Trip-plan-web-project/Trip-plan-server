@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QComment is a Querydsl query type for Comment
+ * QPlanComment is a Querydsl query type for PlanComment
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QComment extends EntityPathBase<Comment> {
+public class QPlanComment extends EntityPathBase<PlanComment> {
 
-    private static final long serialVersionUID = 1476060770L;
+    private static final long serialVersionUID = -1680144007L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QComment comment = new QComment("comment");
+    public static final QPlanComment planComment = new QPlanComment("planComment");
 
     public final project.tripplan.global.common.entity.QBaseEntity _super = new project.tripplan.global.common.entity.QBaseEntity(this);
 
@@ -38,23 +38,23 @@ public class QComment extends EntityPathBase<Comment> {
 
     public final project.tripplan.domain.user.entity.QUser user;
 
-    public QComment(String variable) {
-        this(Comment.class, forVariable(variable), INITS);
+    public QPlanComment(String variable) {
+        this(PlanComment.class, forVariable(variable), INITS);
     }
 
-    public QComment(Path<? extends Comment> path) {
+    public QPlanComment(Path<? extends PlanComment> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QComment(PathMetadata metadata) {
+    public QPlanComment(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QComment(PathMetadata metadata, PathInits inits) {
-        this(Comment.class, metadata, inits);
+    public QPlanComment(PathMetadata metadata, PathInits inits) {
+        this(PlanComment.class, metadata, inits);
     }
 
-    public QComment(Class<? extends Comment> type, PathMetadata metadata, PathInits inits) {
+    public QPlanComment(Class<? extends PlanComment> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.plan = inits.isInitialized("plan") ? new project.tripplan.domain.plan.entity.QPlan(forProperty("plan"), inits.get("plan")) : null;
         this.user = inits.isInitialized("user") ? new project.tripplan.domain.user.entity.QUser(forProperty("user")) : null;

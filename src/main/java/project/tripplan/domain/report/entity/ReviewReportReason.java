@@ -1,4 +1,7 @@
-package project.tripplan.domain.comment.entity;
+package project.tripplan.domain.report.entity;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,8 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.tripplan.domain.plan.entity.Plan;
-import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.entity.BaseEntity;
 
 @AllArgsConstructor
@@ -22,23 +23,18 @@ import project.tripplan.global.common.entity.BaseEntity;
 @Getter
 @Entity
 @Builder
-public class Comment extends BaseEntity {
+public class ReviewReportReason extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "comment_id")
+	@Column(name = "review_report_reason_id")
 	private Long id;
 
-	private String content;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "review_report_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private ReviewReport reviewReport;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private User user;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "plan_id")
-	private Plan plan;
-
-	public void updateComment(String content) {
-		this.content = content;
-	}
+	@JoinColumn(name = "report_reason_id")
+	private ReportReason reportReason;
 }

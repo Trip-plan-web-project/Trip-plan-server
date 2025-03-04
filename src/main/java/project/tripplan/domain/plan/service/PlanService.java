@@ -34,8 +34,8 @@ import project.tripplan.domain.category.planCategory.repository.PlanCategoryRepo
 import project.tripplan.domain.category.transportationCategory.entitiy.TransportationCategory;
 import project.tripplan.domain.category.transportationCategory.enums.TransportationName;
 import project.tripplan.domain.category.transportationCategory.repository.TransportationCategoryRepository;
-import project.tripplan.domain.comment.entity.Comment;
-import project.tripplan.domain.comment.repository.CommentRepositoryCustom;
+import project.tripplan.domain.comment.entity.PlanComment;
+import project.tripplan.domain.comment.repository.PlanCommentRepositoryCustom;
 import project.tripplan.domain.plan.dto.HomeRes;
 import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
 import project.tripplan.domain.plan.dto.PlanCommentsRes;
@@ -55,12 +55,10 @@ import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 import project.tripplan.domain.plan.entity.PlanTransportationCategory;
 import project.tripplan.domain.plan.enums.PlanStatus;
 import project.tripplan.domain.plan.file.S3Service;
-import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepository;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanTransCategoryRepositoryCustom;
-import project.tripplan.domain.plan.repository.PlanTransportationCategoryRepository;
 import project.tripplan.domain.planDay.entity.PlanDay;
 import project.tripplan.domain.planDayDetail.entity.PlanDayDetail;
 import project.tripplan.domain.planLike.entity.PlanLike;
@@ -89,7 +87,7 @@ public class PlanService {
 	private final S3Service s3Service;
 	private final PlaceCategoryService placeCategoryService;
 	private final TransportationCategoryRepository transportationCategoryRepository;
-	private final CommentRepositoryCustom commentRepositoryCustom;
+	private final PlanCommentRepositoryCustom planCommentRepositoryCustom;
 	private final UserRepository userRepository;
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
 	private final StringRedisTemplate redisTemplate;
@@ -373,7 +371,7 @@ public class PlanService {
 	@Transactional(readOnly = true)
 	public Page<PlanCommentsRes> getPlanComments(Long planId, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
-		Page<Comment> findCommentsPage = commentRepositoryCustom.findAllByPlanIdWithUser(planId, pageable);
+		Page<PlanComment> findCommentsPage = planCommentRepositoryCustom.findAllByPlanIdWithUser(planId, pageable);
 
 		return findCommentsPage.map(comment -> new PlanCommentsRes(
 			comment.getUser().getSocialId(),
@@ -414,7 +412,7 @@ public class PlanService {
 			.planPlaceCategories(new HashSet<>())
 			.planDays(new HashSet<>())
 			.planLikes(new ArrayList<>())
-			.comments(new ArrayList<>())
+			.planComments(new ArrayList<>())
 			.build();
 
 		planRepository.save(copyPlan);

@@ -19,11 +19,11 @@ public class ReportController {
 
 	private final ReportService reportService;
 
-	@PostMapping("/reports/comments/{commentId}")
-	public BaseResponse<Void> reportComment(@AuthenticationPrincipal User user, @PathVariable Long commentId,
+	@PostMapping("/reports/plans/comments/{commentId}")
+	public BaseResponse<Void> reportPlanComment(@AuthenticationPrincipal User user, @PathVariable Long commentId,
 		@RequestBody ReportReasonDto reportReasonDto) {
-		reportService.reportComment(user, commentId, reportReasonDto);
-		return new BaseResponse<>(BaseResponseCode.REPORT_COMMENT_SUCCESS);
+		reportService.reportPlanComment(user, commentId, reportReasonDto);
+		return new BaseResponse<>(BaseResponseCode.REPORT_PLAN_COMMENT_SUCCESS);
 	}
 
 	@PostMapping("/reports/plans/{planId}")
@@ -31,5 +31,19 @@ public class ReportController {
 		@RequestBody ReportReasonDto reportReasonDto) {
 		reportService.reportPlan(user, planId, reportReasonDto);
 		return new BaseResponse<>(BaseResponseCode.REPORT_PLAN_SUCCESS);
+	}
+
+	@PostMapping("/reports/reviews/{reviewId}")
+	public BaseResponse<Void> reportReview(@AuthenticationPrincipal User user, @PathVariable Long reviewId,
+		@RequestBody ReportReasonDto reportReasonDto) {
+		reportService.reportReview(user, reviewId, reportReasonDto);
+		return new BaseResponse<>(BaseResponseCode.REPORT_REVIEW_SUCCESS);
+	}
+
+	@PostMapping("/reports/reviews/comments/{commentId}")
+	public BaseResponse<Void> reportReviewComment(@AuthenticationPrincipal User user, @PathVariable Long commentId,
+		@RequestBody ReportReasonDto reportReasonDto) {
+		reportService.reportReviewComment(user, commentId, reportReasonDto);
+		return new BaseResponse<>(BaseResponseCode.REPORT_REVIEW_COMMENT_SUCCESS);
 	}
 }
