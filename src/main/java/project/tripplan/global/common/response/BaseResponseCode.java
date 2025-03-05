@@ -61,18 +61,15 @@ public enum BaseResponseCode {
 	GET_REVIEW_SUCCESS(true, 1702, "후기 게시글 조회에 성공했습니다.", HttpStatus.OK),
 	UPLOAD_REVIEW_IMAGE_SUCCESS(true, 1703, "리뷰 이미지 업로드에 성공했습니다..", HttpStatus.OK),
 	GET_REVIEW_COMMENTS_LIST_SUCCESS(true, 1704, "리뷰 댓글 목록 불러오기에 성공했습니다.", HttpStatus.OK),
+	DELETE_REVIEW_SUCCESS(true, 1705, "리뷰 삭제가 완료되었습니다.", HttpStatus.OK),
 
 	// admin 1800 ~
 	GET_REPORTED_PLAN_LIST_SUCCESS(true, 1801, "신고받은 계획글 목록 조회에 성공했습니다", HttpStatus.OK),
-<<<<<<< Updated upstream
-=======
 	GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS(true, 1802, "신고받은 계획글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
 	SEARCH_REPORTED_LIST_SUCCESS(true, 1803, "신고목록 필터 검색에 성공했습니다.", HttpStatus.OK),
 	GET_REPORTED_REVIEW_LIST_SUCCESS(true, 1804, "신고받은 리뷰글 목록 조회에 성공했습니다.", HttpStatus.OK),
 	GET_REPORTED_REVIEW_COMMENT_LIST_SUCCESS(true, 1805, "신고받은 리뷰글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
->>>>>>> Stashed changes
 
-	GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS(true, 1802, "신고받은 계획글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
 	/**
 	 * 2000 ~ 2899: request 오류
 	 * 2900 ~ 3000: validation 오류
@@ -118,6 +115,7 @@ public enum BaseResponseCode {
 	//review 2700 ~
 	REVIEW_NOT_EXIST(false, 2701, "존재하지 않는 후기게시글 입니다.", HttpStatus.NOT_FOUND),
 	REVIEW_COMMENT_NOT_EXIST(false, 2702, "존재하지 않는 후기댓글 입니다.", HttpStatus.NOT_FOUND),
+	UNAUTHORIZED_DELETE_REVIEW(false, 2703, "본인 후기글만 삭제 가능합니다.", HttpStatus.FORBIDDEN),
 
 	//valid && Token 2900 ~
 	VALIDATION_FAILED(false, 2900, "Bind Exception", HttpStatus.BAD_REQUEST),

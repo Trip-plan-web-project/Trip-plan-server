@@ -2,6 +2,7 @@ package project.tripplan.domain.review.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,4 +57,11 @@ public class ReviewController {
 					imagePrefix + "/" + s3Service.uploadReviewFile(image))
 				.build());
 	}
+
+	@DeleteMapping("/review/{reviewId}")
+	public BaseResponse<Void> deleteReview(@AuthenticationPrincipal User user, @PathVariable Long reviewId) {
+		reviewService.deleteReview(user, reviewId);
+		return new BaseResponse<>(BaseResponseCode.DELETE_REVIEW_SUCCESS);
+	}
+
 }

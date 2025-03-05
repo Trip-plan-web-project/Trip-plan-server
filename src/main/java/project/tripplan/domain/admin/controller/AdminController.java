@@ -37,8 +37,6 @@ public class AdminController {
 		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS,
 			adminService.getReportedPlanCommentList(page, size));
 	}
-<<<<<<< Updated upstream
-=======
 
 	@GetMapping("/admin/reports/reviews")
 	public BaseResponse<Page<ReportedReviewRes>> getReportedReviewList(@AuthenticationPrincipal User user,
@@ -49,9 +47,10 @@ public class AdminController {
 	}
 
 	@GetMapping("/admin/reports/reviews/comments")
-	public BaseResponse<Page<ReportedReviewCommentsRes>> getReportedReviewCommentList(@AuthenticationPrincipal User user,
-		@RequestParam(defaultValue = "0")int page,
-		@RequestParam(defaultValue = "10")int size) {
+	public BaseResponse<Page<ReportedReviewCommentsRes>> getReportedReviewCommentList(
+		@AuthenticationPrincipal User user,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
 		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_REVIEW_COMMENT_LIST_SUCCESS,
 			adminService.getReportedReviewCommentList(page, size));
 	}
@@ -67,5 +66,4 @@ public class AdminController {
 		return new BaseResponse<>(BaseResponseCode.SEARCH_REPORTED_LIST_SUCCESS,
 			adminService.getReportedSearchList(category, reasonId, startDate, endDate, page, size));
 	}
->>>>>>> Stashed changes
 }
