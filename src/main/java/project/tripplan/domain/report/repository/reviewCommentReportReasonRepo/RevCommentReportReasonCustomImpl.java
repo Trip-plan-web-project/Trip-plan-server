@@ -68,4 +68,69 @@ public class RevCommentReportReasonCustomImpl implements RevCommentReportReasonC
 
 		return new PageImpl<>(results, pageable, total);
 	}
+<<<<<<< Updated upstream
+=======
+
+	@Override
+	public Page<ReportedReviewCommentsRes> searchReportedReviewComments(Pageable pageable, Long reasonId,
+		String startDate, String endDate) {
+
+		BooleanBuilder conditions = createSearchConditions(reasonId, startDate, endDate);
+
+		List<ReportedReviewCommentsRes> results = qf.select(Projections.constructor(ReportedReviewCommentsRes.class,
+				reviewCommentReport.reviewComment.id,
+				reviewCommentReport.id,
+				reporter.nickname,
+				reported.nickname,
+				reviewCommentReport.reviewComment.content,
+				Expressions.stringTemplate("'후기 댓글'"),
+				reviewCommentReport.createdAt,
+				ExpressionUtils.as(
+					Expressions.stringTemplate("GROUP_CONCAT({0})", reportReason.id), "reasonIds"
+				)
+			))
+			.from(reviewCommentReportReason)
+			.join(reviewCommentReportReason.reviewCommentReport, reviewCommentReport)
+			.join(reviewCommentReportReason.reportReason, reportReason)
+			.join(reviewCommentReport.reviewComment, reviewComment)
+			.join(reviewCommentReport.user, reporter)
+			.join(reviewComment.user, reported)
+			.where(conditions)
+			.groupBy(reviewCommentReport.id)
+			.orderBy(reviewCommentReport.createdAt.desc(), reviewCommentReport.id.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		Long total = Optional.ofNullable(
+			qf.select(reviewCommentReport.count())
+				.from(reviewCommentReport)
+				.where(conditions)
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(results, pageable, total);
+	}
+
+	private BooleanBuilder createSearchConditions(Long reasonId, String startDate, String endDate) {
+		BooleanBuilder conditions = new BooleanBuilder();
+
+		if (reasonId != null) {
+			conditions.and(reviewCommentReport.id.in(
+				JPAExpressions.select(reviewCommentReportReason.reviewCommentReport.id)
+					.from(reviewCommentReportReason)
+					.join(reviewCommentReportReason.reportReason, reportReason)
+					.where(reviewCommentReportReason.reportReason.id.eq(reasonId))
+			));
+		}
+
+		if (startDate != null && endDate != null) {
+			LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+			LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+			conditions.and(reviewCommentReport.createdAt.between(start, end));
+		}
+
+		return conditions;
+	}
+>>>>>>> Stashed changes
 }

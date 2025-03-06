@@ -69,4 +69,69 @@ public class PlanCommentReportReasonRepositoryCustomImpl implements PlanCommentR
 
 		return new PageImpl<>(results, pageable, total);
 	}
+<<<<<<< Updated upstream
+=======
+
+	@Override
+	public Page<ReportedPlanCommentsRes> searchReportedPlanComments(Pageable pageable, Long reasonId, String startDate,
+		String endDate) {
+		BooleanBuilder conditions = createSearchConditions(reasonId, startDate, endDate);
+
+		List<ReportedPlanCommentsRes> results = qf.select(Projections.constructor(ReportedPlanCommentsRes.class,
+				planCommentReport.planComment.id,
+				planCommentReport.id,
+				reporter.nickname,
+				reported.nickname,
+				planCommentReport.planComment.content,
+				Expressions.stringTemplate("'일정 댓글'"),
+				planCommentReportReason.planCommentReport.createdAt,
+				ExpressionUtils.as(
+					Expressions.stringTemplate("GROUP_CONCAT({0})", reportReason.id), "reasonIds"
+				)
+			))
+			.from(planCommentReportReason)
+			.join(planCommentReportReason.planCommentReport, planCommentReport)
+			.join(planCommentReportReason.reportReason, reportReason)
+			.join(planCommentReport.planComment, planComment)
+			.join(planCommentReport.user, reporter)
+			.join(planComment.user, reported)
+			.where(conditions)
+			.groupBy(planCommentReport.id)
+			.orderBy(planCommentReport.createdAt.desc(), planCommentReport.id.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		Long total = Optional.ofNullable(
+			qf.select(planCommentReport.count())
+				.from(planCommentReportReason)
+				.join(planCommentReportReason.planCommentReport, planCommentReport)
+				.where(conditions)
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(results, pageable, total);
+	}
+
+	private BooleanBuilder createSearchConditions(Long reasonId, String startDate, String endDate) {
+		BooleanBuilder conditions = new BooleanBuilder();
+
+		if (reasonId != null) {
+			conditions.and(planCommentReport.id.in(
+				JPAExpressions.select(planCommentReportReason.planCommentReport.id)
+					.from(planCommentReportReason)
+					.join(planCommentReportReason.reportReason, reportReason)
+					.where(planCommentReportReason.reportReason.id.eq(reasonId))
+			));
+		}
+
+		if (startDate != null && endDate != null) {
+			LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+			LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+			conditions.and(planCommentReport.createdAt.between(start, end));
+		}
+
+		return conditions;
+	}
+>>>>>>> Stashed changes
 }

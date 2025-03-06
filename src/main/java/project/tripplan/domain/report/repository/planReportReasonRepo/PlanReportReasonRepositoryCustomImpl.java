@@ -71,4 +71,71 @@ public class PlanReportReasonRepositoryCustomImpl implements PlanReportReasonRep
 		return new PageImpl<>(results, pageable, total);
 	}
 
+<<<<<<< Updated upstream
+=======
+	@Override
+	public Page<ReportedPlanListRes> searchReportedPlanList(Pageable pageable, Long reasonId, String startDate,
+		String endDate) {
+		BooleanBuilder conditions = createSearchConditions(reasonId, startDate, endDate);
+
+		List<ReportedPlanListRes> results = qf
+			.select(Projections.constructor(ReportedPlanListRes.class,
+				planReport.plan.id,
+				planReport.id,
+				reporter.nickname,
+				reported.nickname,
+				planReport.plan.title,
+				Expressions.stringTemplate("'일정'"),
+				planReport.createdAt,
+				ExpressionUtils.as(
+					Expressions.stringTemplate("GROUP_CONCAT({0})", reportReason.id), "reasonIds"
+				)
+			))
+			.from(planReportReason)
+			.join(planReportReason.planReport, planReport)
+			.join(planReport.plan, plan)
+			.join(planReport.user, reporter)
+			.join(plan.user, reported)
+			.join(planReportReason.reportReason, reportReason)
+			.where(conditions)
+			.groupBy(planReport.id)
+			.orderBy(planReport.createdAt.desc(), planReport.id.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		// 전체 개수 조회 (PlanReport 개수 기준)
+		Long total = Optional.ofNullable(
+			qf.select(planReport.count())
+				.from(planReportReason)
+				.join(planReportReason.planReport, planReport)
+				.where(conditions)
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(results, pageable, total);
+	}
+
+	private BooleanBuilder createSearchConditions(Long reasonId, String startDate, String endDate) {
+		BooleanBuilder conditions = new BooleanBuilder();
+
+		if (reasonId != null) {
+			conditions.and(planReport.id.in(
+				JPAExpressions.select(planReportReason.planReport.id)
+					.from(planReportReason)
+					.join(planReportReason.reportReason, reportReason)
+					.where(planReportReason.reportReason.id.eq(reasonId))
+			));
+		}
+
+		if (startDate != null && endDate != null) {
+			LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+			LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+			conditions.and(planReport.createdAt.between(start, end));
+		}
+
+		return conditions;
+	}
+
+>>>>>>> Stashed changes
 }
