@@ -7,4 +7,7 @@ import project.tripplan.domain.admin.dto.ReportedPlanCommentsRes;
 
 public interface PlanCommentReportReasonRepositoryCustom {
 	Page<ReportedPlanCommentsRes> findReportedPlanComments(Pageable pageable);
+
+	Page<ReportedPlanCommentsRes> searchReportedPlanComments(Pageable pageable, Long reasonId, String startDate,
+		String endDate);
 }

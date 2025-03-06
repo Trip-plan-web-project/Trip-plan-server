@@ -1,5 +1,6 @@
 package project.tripplan.domain.report.repository.planCommentReportReasonRepo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,9 +9,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -68,5 +71,66 @@ public class PlanCommentReportReasonRepositoryCustomImpl implements PlanCommentR
 		).orElse(0L);
 
 		return new PageImpl<>(results, pageable, total);
+	}
+
+	@Override
+	public Page<ReportedPlanCommentsRes> searchReportedPlanComments(Pageable pageable, Long reasonId, String startDate,
+		String endDate) {
+		BooleanBuilder conditions = createSearchConditions(reasonId, startDate, endDate);
+
+		List<ReportedPlanCommentsRes> results = qf.select(Projections.constructor(ReportedPlanCommentsRes.class,
+				planCommentReport.planComment.id,
+				planCommentReport.id,
+				reporter.nickname,
+				reported.nickname,
+				planCommentReport.planComment.content,
+				Expressions.stringTemplate("'일정 댓글'"),
+				planCommentReportReason.planCommentReport.createdAt,
+				ExpressionUtils.as(
+					Expressions.stringTemplate("GROUP_CONCAT({0})", reportReason.id), "reasonIds"
+				)
+			))
+			.from(planCommentReportReason)
+			.join(planCommentReportReason.planCommentReport, planCommentReport)
+			.join(planCommentReportReason.reportReason, reportReason)
+			.join(planCommentReport.planComment, planComment)
+			.join(planCommentReport.user, reporter)
+			.join(planComment.user, reported)
+			.where(conditions)
+			.groupBy(planCommentReport.id)
+			.orderBy(planCommentReport.createdAt.desc(), planCommentReport.id.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		Long total = Optional.ofNullable(
+			qf.select(planCommentReport.count())
+				.from(planCommentReportReason)
+				.join(planCommentReportReason.planCommentReport, planCommentReport)
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(results, pageable, total);
+	}
+
+	private BooleanBuilder createSearchConditions(Long reasonId, String startDate, String endDate) {
+		BooleanBuilder conditions = new BooleanBuilder();
+
+		if (reasonId != null) {
+			conditions.and(planCommentReport.id.in(
+				JPAExpressions.select(planCommentReportReason.planCommentReport.id)
+					.from(planCommentReportReason)
+					.join(planCommentReportReason.reportReason, reportReason)
+					.where(planCommentReportReason.reportReason.id.eq(reasonId))
+			));
+		}
+
+		if (startDate != null && endDate != null) {
+			LocalDateTime start = LocalDateTime.parse(startDate + "T00:00:00");
+			LocalDateTime end = LocalDateTime.parse(endDate + "T23:59:59");
+			conditions.and(planCommentReport.createdAt.between(start, end));
+		}
+
+		return conditions;
 	}
 }
