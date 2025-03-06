@@ -119,6 +119,7 @@ public class ReviewReportReasonRepositoryCustomImpl implements ReviewReportReaso
 			conditions.and(reviewReport.id.in(
 				JPAExpressions.select(reviewReportReason.reviewReport.id)
 					.from(reviewReportReason)
+					.join(reviewReportReason.reportReason, reportReason)
 					.where(reviewReportReason.reportReason.id.eq(reasonId))
 			));
 		}

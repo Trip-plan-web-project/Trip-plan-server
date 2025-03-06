@@ -123,6 +123,7 @@ public class PlanReportReasonRepositoryCustomImpl implements PlanReportReasonRep
 			conditions.and(planReport.id.in(
 				JPAExpressions.select(planReportReason.planReport.id)
 					.from(planReportReason)
+					.join(planReportReason.reportReason, reportReason)
 					.where(planReportReason.reportReason.id.eq(reasonId))
 			));
 		}
