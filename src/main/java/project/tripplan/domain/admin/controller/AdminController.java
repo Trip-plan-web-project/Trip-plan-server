@@ -56,10 +56,10 @@ public class AdminController {
 
 	@GetMapping("/admin/reports/search")
 	public BaseResponse<?> getReportedSearchList(@AuthenticationPrincipal User user,
-		@RequestParam Long category,
-		@RequestParam Long reasonId,
-		@RequestParam String startDate,
-		@RequestParam String endDate,
+		@RequestParam Integer category,
+		@RequestParam(required = false) Long reasonId,
+		@RequestParam(required = false) String startDate,
+		@RequestParam(required = false) String endDate,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
 		return new BaseResponse<>(BaseResponseCode.SEARCH_REPORTED_LIST_SUCCESS,
