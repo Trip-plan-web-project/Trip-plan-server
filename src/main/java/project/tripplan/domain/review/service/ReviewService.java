@@ -12,6 +12,7 @@ import project.tripplan.domain.review.entity.Review;
 import project.tripplan.domain.review.repository.ReviewRepository;
 import project.tripplan.domain.review.repository.ReviewRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -61,5 +62,17 @@ public class ReviewService {
 			.longitude(review.getLongitude())
 			.visitedDay(review.getVisitedDay())
 			.build();
+	}
+
+	public void deleteReview(User user, Long reviewId) {
+		Review review = reviewRepositoryCustom.findReviewIdWithUser(reviewId)
+			.orElseThrow(() -> new CustomException(BaseResponseCode.REVIEW_NOT_EXIST));
+
+		if (review.getUser().getId() != user.getId() && user.getUserRole() != UserRole.ADMIN) {
+			// 관리자가 아니면서 본인 댓글이 아닌 댓글을 삭제하려는 경우
+			throw new CustomException(BaseResponseCode.UNAUTHORIZED_DELETE_REVIEW);
+		}
+
+		reviewRepository.delete(review);
 	}
 }

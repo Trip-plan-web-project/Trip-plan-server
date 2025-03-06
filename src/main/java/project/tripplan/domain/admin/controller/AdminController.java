@@ -47,9 +47,10 @@ public class AdminController {
 	}
 
 	@GetMapping("/admin/reports/reviews/comments")
-	public BaseResponse<Page<ReportedReviewCommentsRes>> getReportedReviewCommentList(@AuthenticationPrincipal User user,
-		@RequestParam(defaultValue = "0")int page,
-		@RequestParam(defaultValue = "10")int size) {
+	public BaseResponse<Page<ReportedReviewCommentsRes>> getReportedReviewCommentList(
+		@AuthenticationPrincipal User user,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size) {
 		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_REVIEW_COMMENT_LIST_SUCCESS,
 			adminService.getReportedReviewCommentList(page, size));
 	}
