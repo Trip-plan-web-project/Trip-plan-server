@@ -30,6 +30,8 @@ public class QUser extends EntityPathBase<User> {
 
     public final StringPath nickname = createString("nickname");
 
+    public final NumberPath<Integer> point = createNumber("point", Integer.class);
+
     public final EnumPath<project.tripplan.domain.user.enums.Provider> provider = createEnum("provider", project.tripplan.domain.user.enums.Provider.class);
 
     public final StringPath socialId = createString("socialId");

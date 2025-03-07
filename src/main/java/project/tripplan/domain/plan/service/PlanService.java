@@ -63,6 +63,10 @@ import project.tripplan.domain.planDay.entity.PlanDay;
 import project.tripplan.domain.planDayDetail.entity.PlanDayDetail;
 import project.tripplan.domain.planLike.entity.PlanLike;
 import project.tripplan.domain.planLike.repository.PlanLikeRepositoryCustom;
+import project.tripplan.domain.point.entity.Point;
+import project.tripplan.domain.point.enums.PointStatus;
+import project.tripplan.domain.point.enums.PointType;
+import project.tripplan.domain.point.repository.PointRepository;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.domain.user.repository.UserRepository;
@@ -91,12 +95,13 @@ public class PlanService {
 	private final UserRepository userRepository;
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
 	private final StringRedisTemplate redisTemplate;
+	private final PointRepository pointRepository;
 
 	/**
 	 * 계획 저장 메서드
 	 */
 	@Transactional
-	public Boolean savePlan(User user, PlanReq planReq, MultipartFile thumbnail) throws IOException {
+	public void savePlan(User user, PlanReq planReq, MultipartFile thumbnail) throws IOException {
 		Plan plan = Plan.builder()
 			.user(user)
 			.status(PUBLIC)
@@ -111,7 +116,15 @@ public class PlanService {
 
 		planRepository.save(plan);
 
-		return true;
+		Point point = Point.builder()
+			.user(user)
+			.pointType(PointType.PLAN)
+			.pointTypeId(plan.getId())
+			.pointStatus(PointStatus.PENDING)
+			.point(100)
+			.build();
+
+		pointRepository.save(point);
 	}
 
 	@Transactional

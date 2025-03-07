@@ -71,6 +71,7 @@ public class OAuthAttributes {
 			.socialId(oauth2UserInfo.getId())
 			.nickname(oauth2UserInfo.getNickname())
 			.provider(provider)
+			.point(0)
 			.build();
 	}
 }
