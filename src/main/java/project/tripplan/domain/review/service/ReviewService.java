@@ -3,7 +3,7 @@ package project.tripplan.domain.review.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.point.entity.Point;
@@ -23,7 +23,7 @@ import project.tripplan.global.common.response.BaseResponseCode;
 @Service
 @Transactional
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReviewService {
 
 	private final ReviewRepositoryCustom reviewRepositoryCustom;
@@ -34,6 +34,7 @@ public class ReviewService {
 	public Long addReview(User user, AddReviewReq reviewReq) {
 		Review review = Review.builder()
 			.user(user)
+			.placeId(reviewReq.getPlaceId())
 			.title(reviewReq.getTitle())
 			.content(reviewReq.getContent())
 			.latitude(reviewReq.getLatitude())
@@ -68,6 +69,7 @@ public class ReviewService {
 
 		return ReviewRes.builder()
 			.id(review.getId())
+			.placeId(review.getPlaceId())
 			.title(review.getTitle())
 			.nickname(review.getUser().getNickname())
 			.userImage(review.getUser().getImage())

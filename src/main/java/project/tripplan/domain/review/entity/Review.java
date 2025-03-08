@@ -1,7 +1,10 @@
 package project.tripplan.domain.review.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,10 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.tripplan.domain.comment.entity.ReviewComment;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.entity.BaseEntity;
 
@@ -31,11 +36,18 @@ public class Review extends BaseEntity {
 	private Long id;
 
 	@Column(nullable = false)
+	private Long placeId;
+
+	@Column(nullable = false)
 	private String title;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
+
+	@Builder.Default
+	@OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ReviewComment> reviewComments = new ArrayList<>();
 
 	@Lob
 	@Column(columnDefinition = "MEDIUMTEXT", nullable = false)

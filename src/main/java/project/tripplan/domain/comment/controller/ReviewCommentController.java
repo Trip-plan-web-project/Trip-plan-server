@@ -33,7 +33,7 @@ public class ReviewCommentController {
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "4") int size) {
 		return new BaseResponse<>(BaseResponseCode.GET_REVIEW_COMMENTS_LIST_SUCCESS,
-			reviewCommentService.getPlanComments(reviewId, page, size));
+			reviewCommentService.getReviewComments(reviewId, page, size));
 	}
 
 	@PostMapping("/reviews/{reviewId}/comments")

@@ -13,6 +13,9 @@ public class AddReviewReq {
 	private String title;
 
 	@NotNull
+	private Long placeId;
+
+	@NotNull
 	private double latitude;
 	@NotNull
 	private double longitude;
