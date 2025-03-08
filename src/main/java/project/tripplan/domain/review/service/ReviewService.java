@@ -29,6 +29,7 @@ public class ReviewService {
 	public Long addReview(User user, AddReviewReq reviewReq) {
 		Review review = Review.builder()
 			.user(user)
+			.placeId(reviewReq.getPlaceId())
 			.title(reviewReq.getTitle())
 			.content(reviewReq.getContent())
 			.latitude(reviewReq.getLatitude())
@@ -53,6 +54,7 @@ public class ReviewService {
 
 		return ReviewRes.builder()
 			.id(review.getId())
+			.placeId(review.getPlaceId())
 			.title(review.getTitle())
 			.nickname(review.getUser().getNickname())
 			.userImage(review.getUser().getImage())

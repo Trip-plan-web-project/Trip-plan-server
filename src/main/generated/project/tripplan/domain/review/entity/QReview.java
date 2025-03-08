@@ -35,6 +35,8 @@ public class QReview extends EntityPathBase<Review> {
 
     public final NumberPath<Double> longitude = createNumber("longitude", Double.class);
 
+    public final NumberPath<Long> placeId = createNumber("placeId", Long.class);
+
     public final StringPath title = createString("title");
 
     //inherited

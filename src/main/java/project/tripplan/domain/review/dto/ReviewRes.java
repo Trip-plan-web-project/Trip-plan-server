@@ -15,6 +15,8 @@ public class ReviewRes {
 
 	private Long id;
 
+	private Long placeId;
+
 	private String title;
 
 	private String nickname;

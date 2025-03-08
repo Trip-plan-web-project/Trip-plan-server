@@ -31,6 +31,9 @@ public class Review extends BaseEntity {
 	private Long id;
 
 	@Column(nullable = false)
+	private Long placeId;
+
+	@Column(nullable = false)
 	private String title;
 
 	@ManyToOne(fetch = FetchType.LAZY)
