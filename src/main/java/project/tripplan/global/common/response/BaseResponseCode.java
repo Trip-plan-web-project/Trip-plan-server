@@ -69,6 +69,8 @@ public enum BaseResponseCode {
 	SEARCH_REPORTED_LIST_SUCCESS(true, 1803, "신고목록 필터 검색에 성공했습니다.", HttpStatus.OK),
 	GET_REPORTED_REVIEW_LIST_SUCCESS(true, 1804, "신고받은 리뷰글 목록 조회에 성공했습니다.", HttpStatus.OK),
 	GET_REPORTED_REVIEW_COMMENT_LIST_SUCCESS(true, 1805, "신고받은 리뷰글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
+	GET_POINT_HISTORY_SUCCESS(true, 1806, "포인트 적립 대기 목록 조회에 성공했습니다.", HttpStatus.OK),
+	ADD_POINT_SUCCESS(true, 1807, "포인트 적립에 성공했습니다.", HttpStatus.OK),
 
 	/**
 	 * 2000 ~ 2899: request 오류

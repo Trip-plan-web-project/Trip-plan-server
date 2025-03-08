@@ -23,12 +23,12 @@ import project.tripplan.global.common.response.BaseResponseCode;
 public class AuthController {
 	private final AuthService authService;
 
-	@GetMapping("/token/issue/{socialId}")
+	@PostMapping("/token/issue/{socialId}")
 	public BaseResponse<LoginRes> issueToken(@PathVariable String socialId) {
 		return new BaseResponse<>(BaseResponseCode.LOGIN_SUCCESS, authService.issueAccessAndRefresh(socialId));
 	}
 
-	@GetMapping("/token/reissue/{socialId}")
+	@PostMapping("/token/reissue/{socialId}")
 	public BaseResponse<Void> reissueToken(@PathVariable String socialId,
 		@RequestHeader("Authorization_refresh") String refreshToken,
 		@RequestHeader("Authorization") String accessToken,

@@ -44,12 +44,13 @@ public class PlanController {
 	private final UserRepository userRepository;
 
 	@PostMapping(value = "/plans", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public BaseResponse<?> createPlan(
+	public BaseResponse<Void> savePlan(
 		@RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
 		@Valid @RequestPart("plan") PlanReq planDto,
 		@AuthenticationPrincipal User user
 	) throws IOException {
-		return new BaseResponse<>(BaseResponseCode.ADD_PLAN_SUCCESS, planService.savePlan(user, planDto, thumbnail));
+		planService.savePlan(user, planDto, thumbnail);
+		return new BaseResponse<>(BaseResponseCode.ADD_PLAN_SUCCESS);
 	}
 
 	@PatchMapping("/plans/{planId}/status")

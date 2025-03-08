@@ -6,6 +6,10 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.plan.file.S3Service;
+import project.tripplan.domain.point.entity.Point;
+import project.tripplan.domain.point.enums.PointStatus;
+import project.tripplan.domain.point.enums.PointType;
+import project.tripplan.domain.point.repository.PointRepository;
 import project.tripplan.domain.review.dto.AddReviewReq;
 import project.tripplan.domain.review.dto.ReviewRes;
 import project.tripplan.domain.review.entity.Review;
@@ -25,6 +29,7 @@ public class ReviewService {
 	private final ReviewRepositoryCustom reviewRepositoryCustom;
 	private final ReviewRepository reviewRepository;
 	private final S3Service s3Service;
+	private final PointRepository pointRepository;
 
 	public Long addReview(User user, AddReviewReq reviewReq) {
 		Review review = Review.builder()
@@ -37,6 +42,16 @@ public class ReviewService {
 			.build();
 
 		reviewRepository.save(review);
+
+		Point point = Point.builder()
+			.user(user)
+			.pointType(PointType.REVIEW)
+			.pointTypeId(review.getId())
+			.pointStatus(PointStatus.PENDING)
+			.point(100)
+			.build();
+
+		pointRepository.save(point);
 
 		return review.getId();
 	}

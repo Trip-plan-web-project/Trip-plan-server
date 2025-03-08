@@ -44,11 +44,18 @@ public class User extends BaseEntity {
 	@Column(columnDefinition = "TEXT")
 	private String image;
 
+	@Column
+	private Integer point;
+
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+
+	public void addPoint(int point) {
+		this.point += point;
 	}
 }
