@@ -72,7 +72,7 @@ public class ReviewCommentService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<PlanCommentsRes> getPlanComments(Long reviewId, int page, int size) {
+	public Page<PlanCommentsRes> getReviewComments(Long reviewId, int page, int size) {
 		Pageable pageable = PageRequest.of(page, size);
 		Page<ReviewComment> findCommentsPage = reviewCommentRepositoryCustom.findAllByReviewIdWithUser(reviewId,
 			pageable);

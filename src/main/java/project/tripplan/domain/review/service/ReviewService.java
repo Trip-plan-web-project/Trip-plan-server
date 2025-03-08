@@ -3,7 +3,7 @@ package project.tripplan.domain.review.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.review.dto.AddReviewReq;
@@ -19,7 +19,7 @@ import project.tripplan.global.common.response.BaseResponseCode;
 @Service
 @Transactional
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReviewService {
 
 	private final ReviewRepositoryCustom reviewRepositoryCustom;

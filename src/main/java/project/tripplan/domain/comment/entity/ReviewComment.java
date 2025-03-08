@@ -26,7 +26,7 @@ public class ReviewComment extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "review_commnet_id")
+	@Column(name = "review_comment_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
