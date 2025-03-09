@@ -6,8 +6,6 @@ import org.springframework.data.domain.Pageable;
 import project.tripplan.domain.admin.dto.ReportedReviewCommentsRes;
 
 public interface RevCommentReportReasonCustom {
-	Page<ReportedReviewCommentsRes> findReportedReviewComments(Pageable pageable);
-
 	Page<ReportedReviewCommentsRes> searchReportedReviewComments(Pageable pageable, Long reasonId, String startDate,
 		String endDate);
 }

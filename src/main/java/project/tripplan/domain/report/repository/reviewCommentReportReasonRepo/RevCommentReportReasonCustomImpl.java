@@ -37,42 +37,6 @@ public class RevCommentReportReasonCustomImpl implements RevCommentReportReasonC
 	private final QReviewComment reviewComment = QReviewComment.reviewComment;
 
 	@Override
-	public Page<ReportedReviewCommentsRes> findReportedReviewComments(Pageable pageable) {
-		List<ReportedReviewCommentsRes> results = qf.select(Projections.constructor(ReportedReviewCommentsRes.class,
-				reviewCommentReport.reviewComment.id,
-				reviewCommentReport.id,
-				reporter.nickname,
-				reported.nickname,
-				reviewCommentReport.reviewComment.content,
-				Expressions.stringTemplate("'후기 댓글'"),
-				reviewCommentReport.createdAt,
-				ExpressionUtils.as(
-					Expressions.stringTemplate("GROUP_CONCAT({0})", reportReason.id), "reasonIds"
-				)
-			))
-			.from(reviewCommentReportReason)
-			.join(reviewCommentReportReason.reviewCommentReport, reviewCommentReport)
-			.join(reviewCommentReportReason.reportReason, reportReason)
-			.join(reviewCommentReport.reviewComment, reviewComment)
-			.join(reviewCommentReport.user, reporter)
-			.join(reviewComment.user, reported)
-			.groupBy(reviewCommentReport.id)
-			.orderBy(reviewCommentReport.createdAt.desc(), reviewCommentReport.id.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		Long total = Optional.ofNullable(
-			qf.select(reviewCommentReport.count())
-				.from(reviewCommentReportReason)
-				.join(reviewCommentReportReason.reviewCommentReport, reviewCommentReport)
-				.fetchOne()
-		).orElse(0L);
-
-		return new PageImpl<>(results, pageable, total);
-	}
-
-	@Override
 	public Page<ReportedReviewCommentsRes> searchReportedReviewComments(Pageable pageable, Long reasonId,
 		String startDate, String endDate) {
 

@@ -26,49 +26,16 @@ public class AdminController {
 
 	private final AdminService adminService;
 
-	@GetMapping("/admin/reports/plans")
-	public BaseResponse<Page<ReportedPlanListRes>> getReportedPlanList(@AuthenticationPrincipal User user,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size) {
-		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_PLAN_LIST_SUCCESS,
-			adminService.getReportedPlanList(page, size));
-	}
-
-	@GetMapping("/admin/reports/plans/comments")
-	public BaseResponse<Page<ReportedPlanCommentsRes>> getReportedPlanCommentList(@AuthenticationPrincipal User user,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size) {
-		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS,
-			adminService.getReportedPlanCommentList(page, size));
-	}
-
-	@GetMapping("/admin/reports/reviews")
-	public BaseResponse<Page<ReportedReviewRes>> getReportedReviewList(@AuthenticationPrincipal User user,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size) {
-		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_REVIEW_LIST_SUCCESS,
-			adminService.getReportedReviewList(page, size));
-	}
-
-	@GetMapping("/admin/reports/reviews/comments")
-	public BaseResponse<Page<ReportedReviewCommentsRes>> getReportedReviewCommentList(
-		@AuthenticationPrincipal User user,
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size) {
-		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_REVIEW_COMMENT_LIST_SUCCESS,
-			adminService.getReportedReviewCommentList(page, size));
-	}
-
-	@GetMapping("/admin/reports/search")
-	public BaseResponse<?> getReportedSearchList(@AuthenticationPrincipal User user,
+	@GetMapping("/admin/reports")
+	public BaseResponse<?> getReportedHistory(@AuthenticationPrincipal User user,
 		@RequestParam Integer category,
 		@RequestParam(required = false) Long reasonId,
 		@RequestParam(required = false) String startDate,
 		@RequestParam(required = false) String endDate,
 		@RequestParam(defaultValue = "0") int page,
 		@RequestParam(defaultValue = "10") int size) {
-		return new BaseResponse<>(BaseResponseCode.SEARCH_REPORTED_LIST_SUCCESS,
-			adminService.getReportedSearchList(category, reasonId, startDate, endDate, page, size));
+		return new BaseResponse<>(BaseResponseCode.GET_REPORTED_HISTORY_SUCCESS,
+			adminService.getReportedHistory(category, reasonId, startDate, endDate, page, size));
 	}
 
 	 @GetMapping("/admin/points")

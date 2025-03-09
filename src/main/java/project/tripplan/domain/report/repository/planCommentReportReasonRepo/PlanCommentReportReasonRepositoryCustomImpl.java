@@ -36,43 +36,6 @@ public class PlanCommentReportReasonRepositoryCustomImpl implements PlanCommentR
 	private final QPlanCommentReportReason planCommentReportReason = QPlanCommentReportReason.planCommentReportReason;
 	private final QReportReason reportReason = QReportReason.reportReason1;
 
-
-	@Override
-	public Page<ReportedPlanCommentsRes> findReportedPlanComments(Pageable pageable) {
-		List<ReportedPlanCommentsRes> results = qf.select(Projections.constructor(ReportedPlanCommentsRes.class,
-				planCommentReport.planComment.id,
-				planCommentReport.id,
-				reporter.nickname,
-				reported.nickname,
-				planCommentReport.planComment.content,
-				Expressions.stringTemplate("'일정 댓글'"),
-				planCommentReportReason.planCommentReport.createdAt,
-				ExpressionUtils.as(
-					Expressions.stringTemplate("GROUP_CONCAT({0})", reportReason.id), "reasonIds"
-				)
-			))
-			.from(planCommentReportReason)
-			.join(planCommentReportReason.planCommentReport, planCommentReport)
-			.join(planCommentReportReason.reportReason, reportReason)
-			.join(planCommentReport.planComment, planComment)
-			.join(planCommentReport.user, reporter)
-			.join(planComment.user, reported)
-			.groupBy(planCommentReport.id)
-			.orderBy(planCommentReport.createdAt.desc(), planCommentReport.id.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		Long total = Optional.ofNullable(
-			qf.select(planCommentReport.count())
-				.from(planCommentReportReason)
-				.join(planCommentReportReason.planCommentReport, planCommentReport)
-				.fetchOne()
-		).orElse(0L);
-
-		return new PageImpl<>(results, pageable, total);
-	}
-
 	@Override
 	public Page<ReportedPlanCommentsRes> searchReportedPlanComments(Pageable pageable, Long reasonId, String startDate,
 		String endDate) {
