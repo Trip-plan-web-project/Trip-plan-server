@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import project.tripplan.domain.admin.dto.PointHistoryRes;
 import project.tripplan.domain.point.entity.Point;
 import project.tripplan.domain.point.entity.QPoint;
+import project.tripplan.domain.point.enums.PointStatus;
 import project.tripplan.domain.point.enums.PointType;
 import project.tripplan.domain.user.entity.QUser;
 
@@ -87,10 +88,30 @@ public class PointRepositoryCustomImpl implements PointRepositoryCustom {
 	}
 
 	@Override
-	public List<Point> findAllByIdWithUser(List<Long> ids) {
+	public List<Point> findAllByIdWithUserIds(List<Long> ids) {
 		return qf.selectFrom(point)
 			.join(point.user, user).fetchJoin()
 			.where(point.id.in(ids))
 			.fetch();
+	}
+
+	@Override
+	public Page<Point> findAllWithUser(Pageable pageable, Long userId) {
+		List<Point> results = qf.selectFrom(point)
+			.join(point.user, user).fetchJoin()
+			.where(user.id.eq(userId).and(point.pointStatus.eq(PointStatus.COMPLETED)))
+			.orderBy(point.updatedAt.desc(), point.id.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		Long total = Optional.ofNullable(
+			qf.select(point.count())
+				.from(point)
+				.where(point.user.id.eq(userId))
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(results, pageable, total);
 	}
 }
