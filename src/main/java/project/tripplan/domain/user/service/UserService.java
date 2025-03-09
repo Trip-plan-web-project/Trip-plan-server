@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +21,12 @@ import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
+import project.tripplan.domain.point.entity.Point;
+import project.tripplan.domain.point.repository.PointRepositoryCustom;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
 import project.tripplan.domain.user.dto.UserCommentRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
+import project.tripplan.domain.user.dto.UserPointHistoryRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
@@ -42,6 +46,7 @@ public class UserService {
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
 	private final PlanCommentRepositoryCustom planCommentRepositoryCustom;
 	private final PlanPlaceCategoryRepositoryCustom planPlaceCategoryRepositoryCustom;
+	private final PointRepositoryCustom pointRepositoryCustom;
 	private final S3Service s3Service;
 
 	public void updateUserProfile(Long userId, UserProfileReq req, MultipartFile image) {
@@ -122,6 +127,18 @@ public class UserService {
 
 		// Page<UserCommentRes> 생성
 		return new PageImpl<>(dtoList, pageable, commentPage.getTotalElements());
+	}
+
+	@Transactional(readOnly = true)
+	public Page<UserPointHistoryRes> getUserPointHistory(User user, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+
+		return pointRepositoryCustom.findAllWithUser(pageable, user.getId()).map(point -> new UserPointHistoryRes(
+			point.getUpdatedAt(),
+			point.getPointType(),
+			point.getPoint(),
+			point.getPointTypeId()
+		));
 	}
 }
 

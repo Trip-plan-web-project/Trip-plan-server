@@ -11,5 +11,7 @@ import project.tripplan.domain.point.entity.Point;
 public interface PointRepositoryCustom {
 	Page<PointHistoryRes> findPointHistory(Pageable pageable, Integer category, String startDate, String endDate);
 
-	List<Point> findAllByIdWithUser(List<Long> ids);
+	List<Point> findAllByIdWithUserIds(List<Long> ids);
+
+	Page<Point> findAllWithUser(Pageable pageable, Long userId);
 }

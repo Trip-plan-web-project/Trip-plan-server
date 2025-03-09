@@ -40,5 +40,6 @@ public class PlaceCategory extends BaseEntity {
 	private PlaceCategory parent;
 
 	@OneToMany(mappedBy = "parent")
+	@Builder.Default
 	private List<PlaceCategory> children = new ArrayList<>();
 }

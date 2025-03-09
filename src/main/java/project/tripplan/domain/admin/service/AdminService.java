@@ -96,7 +96,7 @@ public class AdminService {
 
 	@Transactional
 	public void addPoint(AddPointListReq pointIds) {
-		List<Point> findPointList = pointRepositoryCustom.findAllByIdWithUser(pointIds.getPointIds());
+		List<Point> findPointList = pointRepositoryCustom.findAllByIdWithUserIds(pointIds.getPointIds());
 
 		for (Point point : findPointList) {
 			point.getUser().addPoint(point.getPoint());

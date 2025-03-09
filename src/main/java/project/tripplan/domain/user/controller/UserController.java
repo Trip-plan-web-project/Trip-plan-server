@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
 import project.tripplan.domain.user.dto.UserCommentRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
+import project.tripplan.domain.user.dto.UserPointHistoryRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
 import project.tripplan.domain.user.entity.User;
@@ -49,6 +50,7 @@ public class UserController {
 				.nickname(user.getNickname())
 				.image((user.getImage() == null) ? null : prefix + "/" + user.getImage())
 				.userRole(user.getUserRole())
+				.point(user.getPoint())
 				.build()
 		);
 	}
@@ -106,6 +108,16 @@ public class UserController {
 		return new BaseResponse<>(BaseResponseCode.USER_COMMENTS_GET_SUCCESS,
 			userService.getUserComments(user.getId(), pageable)
 		);
+	}
+
+	@GetMapping("/users/points")
+	public BaseResponse<Page<UserPointHistoryRes>> getUserPointHistory(
+		@AuthenticationPrincipal User user,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "11") int size
+	) {
+		return new BaseResponse<>(BaseResponseCode.GET_USER_POINT_HISTORY_SUCCESS,
+			userService.getUserPointHistory(user, page, size));
 	}
 }
 

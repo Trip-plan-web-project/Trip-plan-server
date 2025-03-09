@@ -13,4 +13,5 @@ public class UserProfileRes {
 	private String nickname;
 	private String image;
 	private UserRole userRole;
+	private Integer point;
 }
