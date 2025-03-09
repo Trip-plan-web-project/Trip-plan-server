@@ -37,44 +37,6 @@ public class PlanReportReasonRepositoryCustomImpl implements PlanReportReasonRep
 	private final QReportReason reportReason = QReportReason.reportReason1;
 
 	@Override
-	public Page<ReportedPlanListRes> findReportedPlanList(Pageable pageable) {
-		List<ReportedPlanListRes> results = qf
-			.select(Projections.constructor(ReportedPlanListRes.class,
-				planReport.plan.id,
-				planReport.id,
-				reporter.nickname,
-				reported.nickname,
-				planReport.plan.title,
-				Expressions.stringTemplate("'일정'"),
-				planReport.createdAt,
-				ExpressionUtils.as(
-					Expressions.stringTemplate("GROUP_CONCAT({0})", reportReason.id), "reasonIds"
-				)
-			))
-			.from(planReportReason)
-			.join(planReportReason.planReport, planReport)
-			.join(planReport.plan, plan)
-			.join(planReport.user, reporter)
-			.join(plan.user, reported)
-			.join(planReportReason.reportReason, reportReason)
-			.groupBy(planReport.id)
-			.orderBy(planReport.createdAt.desc(), planReport.id.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		// 전체 개수 조회 (PlanReport 개수 기준)
-		Long total = Optional.ofNullable(
-			qf.select(planReport.count())
-				.from(planReportReason)
-				.join(planReportReason.planReport, planReport)
-				.fetchOne()
-		).orElse(0L);
-
-		return new PageImpl<>(results, pageable, total);
-	}
-
-	@Override
 	public Page<ReportedPlanListRes> searchReportedPlanList(Pageable pageable, Long reasonId, String startDate,
 		String endDate) {
 		BooleanBuilder conditions = createSearchConditions(reasonId, startDate, endDate);

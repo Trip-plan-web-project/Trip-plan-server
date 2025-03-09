@@ -37,42 +37,6 @@ public class ReviewReportReasonRepositoryCustomImpl implements ReviewReportReaso
 	private final QReview review = QReview.review;
 
 	@Override
-	public Page<ReportedReviewRes> findReportedReviews(Pageable pageable) {
-		List<ReportedReviewRes> results = qf.select(Projections.constructor(ReportedReviewRes.class,
-				reviewReport.review.id,
-				reviewReport.id,
-				reporter.nickname,
-				reported.nickname,
-				reviewReport.review.title,
-				Expressions.stringTemplate("'후기'"),
-				reviewReport.createdAt,
-				ExpressionUtils.as(
-					Expressions.stringTemplate("GROUP_CONCAT({0})", reportReason.id), "reasonIds"
-				)
-			))
-			.from(reviewReportReason)
-			.join(reviewReportReason.reportReason, reportReason)
-			.join(reviewReportReason.reviewReport, reviewReport)
-			.join(reviewReport.user, reporter)
-			.join(reviewReport.review, review)
-			.join(review.user, reported)
-			.groupBy(reviewReport.id)
-			.orderBy(reviewReport.createdAt.desc(), reviewReport.id.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
-
-		Long total = Optional.ofNullable(
-			qf.select(reviewReport.count())
-				.from(reviewReportReason)
-				.join(reviewReportReason.reviewReport, reviewReport)
-				.fetchOne()
-		).orElse(0L);
-
-		return new PageImpl<>(results, pageable, total);
-	}
-
-	@Override
 	public Page<ReportedReviewRes> searchReportedReviews(Pageable pageable, Long reasonId, String startDate,
 		String endDate) {
 		BooleanBuilder conditions = createSearchConditions(reasonId, startDate, endDate);

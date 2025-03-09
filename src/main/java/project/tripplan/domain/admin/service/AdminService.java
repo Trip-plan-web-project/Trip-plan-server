@@ -33,52 +33,28 @@ public class AdminService {
 	private final PointRepositoryCustom pointRepositoryCustom;
 
 	@Transactional(readOnly = true)
-	public Page<ReportedPlanListRes> getReportedPlanList(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return planReportReasonRepositoryCustom.findReportedPlanList(pageable);
-	}
-
-	@Transactional(readOnly = true)
-	public Page<ReportedPlanCommentsRes> getReportedPlanCommentList(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return planCommentReportReasonRepositoryCustom.findReportedPlanComments(pageable);
-	}
-
-	@Transactional(readOnly = true)
-	public Page<ReportedReviewRes> getReportedReviewList(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return reviewReportReasonRepositoryCustom.findReportedReviews(pageable);
-	}
-
-	@Transactional(readOnly = true)
-	public Page<ReportedReviewCommentsRes> getReportedReviewCommentList(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		return revCommentReportReasonCustom.findReportedReviewComments(pageable);
-	}
-
-	@Transactional(readOnly = true)
-	public Page<?> getReportedSearchList(Integer category, Long reasonId, String startDate, String endDate, int page,
+	public Page<?> getReportedHistory(Integer category, Long reasonId, String startDate, String endDate, int page,
 		int size) {
-		if (category == null) {
-			throw new IllegalArgumentException("카테고리는 필수입니다.");
-		}
+			if (category == null) {
+				throw new IllegalArgumentException("카테고리는 필수입니다.");
+			}
 
-		Pageable pageable = PageRequest.of(page, size);
+			Pageable pageable = PageRequest.of(page, size);
 
-		switch (category) {
-			case 1: // 게시글 신고 목록 검색
-				return planReportReasonRepositoryCustom.searchReportedPlanList(pageable, reasonId, startDate, endDate);
-			case 2: // 게시글 댓글 신고 목록 검색:
-				return planCommentReportReasonRepositoryCustom.searchReportedPlanComments(pageable, reasonId, startDate,
-					endDate);
-			case 3: // 리뷰글 신고 목록 검색
-				return reviewReportReasonRepositoryCustom.searchReportedReviews(pageable, reasonId, startDate, endDate);
-			case 4: // 리뷰글 댓글 신고 목록 검색
-				return revCommentReportReasonCustom.searchReportedReviewComments(pageable, reasonId, startDate,
-					endDate);
-			default:
-				throw new IllegalArgumentException("잘못된 카테고리 값입니다: " + category);
-		}
+			switch (category) {
+				case 1: // 게시글 신고 목록 검색
+					return planReportReasonRepositoryCustom.searchReportedPlanList(pageable, reasonId, startDate, endDate);
+				case 2: // 게시글 댓글 신고 목록 검색:
+					return planCommentReportReasonRepositoryCustom.searchReportedPlanComments(pageable, reasonId, startDate,
+						endDate);
+				case 3: // 리뷰글 신고 목록 검색
+					return reviewReportReasonRepositoryCustom.searchReportedReviews(pageable, reasonId, startDate, endDate);
+				case 4: // 리뷰글 댓글 신고 목록 검색
+					return revCommentReportReasonCustom.searchReportedReviewComments(pageable, reasonId, startDate,
+						endDate);
+				default:
+					throw new IllegalArgumentException("잘못된 카테고리 값입니다: " + category);
+			}
 	}
 
 	@Transactional(readOnly = true)

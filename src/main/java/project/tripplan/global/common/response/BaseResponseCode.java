@@ -65,13 +65,9 @@ public enum BaseResponseCode {
 	DELETE_REVIEW_SUCCESS(true, 1705, "리뷰 삭제가 완료되었습니다.", HttpStatus.OK),
 
 	// admin 1800 ~
-	GET_REPORTED_PLAN_LIST_SUCCESS(true, 1801, "신고받은 계획글 목록 조회에 성공했습니다", HttpStatus.OK),
-	GET_REPORTED_PLAN_COMMENT_LIST_SUCCESS(true, 1802, "신고받은 계획글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
-	SEARCH_REPORTED_LIST_SUCCESS(true, 1803, "신고목록 필터 검색에 성공했습니다.", HttpStatus.OK),
-	GET_REPORTED_REVIEW_LIST_SUCCESS(true, 1804, "신고받은 리뷰글 목록 조회에 성공했습니다.", HttpStatus.OK),
-	GET_REPORTED_REVIEW_COMMENT_LIST_SUCCESS(true, 1805, "신고받은 리뷰글 댓글 목록 조회에 성공했습니다.", HttpStatus.OK),
-	GET_POINT_HISTORY_SUCCESS(true, 1806, "포인트 적립 대기 목록 조회에 성공했습니다.", HttpStatus.OK),
-	ADD_POINT_SUCCESS(true, 1807, "포인트 적립에 성공했습니다.", HttpStatus.OK),
+	GET_REPORTED_HISTORY_SUCCESS(true, 1801, "신고된 목록 조회에 성공했습니다.", HttpStatus.OK),
+	GET_POINT_HISTORY_SUCCESS(true, 1802, "포인트 적립 대기 목록 조회에 성공했습니다.", HttpStatus.OK),
+	ADD_POINT_SUCCESS(true, 1803, "포인트 적립에 성공했습니다.", HttpStatus.OK),
 
 	/**
 	 * 2000 ~ 2899: request 오류
