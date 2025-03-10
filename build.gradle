@@ -40,8 +40,8 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.jsoup:jsoup:1.16.1'
 
-    
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"

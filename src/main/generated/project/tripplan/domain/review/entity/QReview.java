@@ -24,6 +24,8 @@ public class QReview extends EntityPathBase<Review> {
 
     public final project.tripplan.global.common.entity.QBaseEntity _super = new project.tripplan.global.common.entity.QBaseEntity(this);
 
+    public final NumberPath<Long> averageRating = createNumber("averageRating", Long.class);
+
     public final StringPath content = createString("content");
 
     //inherited
@@ -35,7 +37,7 @@ public class QReview extends EntityPathBase<Review> {
 
     public final NumberPath<Double> longitude = createNumber("longitude", Double.class);
 
-    public final NumberPath<Long> placeId = createNumber("placeId", Long.class);
+    public final StringPath placeId = createString("placeId");
 
     public final ListPath<project.tripplan.domain.comment.entity.ReviewComment, project.tripplan.domain.comment.entity.QReviewComment> reviewComments = this.<project.tripplan.domain.comment.entity.ReviewComment, project.tripplan.domain.comment.entity.QReviewComment>createList("reviewComments", project.tripplan.domain.comment.entity.ReviewComment.class, project.tripplan.domain.comment.entity.QReviewComment.class, PathInits.DIRECT2);
 

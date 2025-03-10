@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.review.dto.AddReviewReq;
+import project.tripplan.domain.review.dto.PlaceReviewRes;
 import project.tripplan.domain.review.dto.ReviewImageRes;
 import project.tripplan.domain.review.dto.ReviewRes;
 import project.tripplan.domain.review.service.ReviewService;
@@ -34,7 +36,8 @@ public class ReviewController {
 	private final S3Service s3Service;
 
 	@PostMapping("/review")
-	public BaseResponse<Void> addReview(@AuthenticationPrincipal User user, @RequestBody AddReviewReq reviewReq) {
+	public BaseResponse<Void> addReview(@AuthenticationPrincipal User user,
+		@Valid @RequestBody AddReviewReq reviewReq) {
 		reviewService.addReview(user, reviewReq);
 		return new BaseResponse<>(BaseResponseCode.ADD_REVIEW_SUCCESS);
 	}
@@ -62,4 +65,12 @@ public class ReviewController {
 		return new BaseResponse<>(BaseResponseCode.DELETE_REVIEW_SUCCESS);
 	}
 
+	@GetMapping("/review/others/{placeId}")
+	public BaseResponse<PlaceReviewRes> getPlaceIdOtherReview(
+		@AuthenticationPrincipal User user,
+		@PathVariable String placeId
+	) {
+		return new BaseResponse<>(BaseResponseCode.GET_PLACEID_OTHER_REVIEW_SUCCESS,
+			reviewService.getPlaceIdOtherReview(user, placeId));
+	}
 }

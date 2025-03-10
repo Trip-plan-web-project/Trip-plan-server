@@ -2,6 +2,8 @@ package project.tripplan.domain.review.dto;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -13,7 +15,7 @@ public class AddReviewReq {
 	private String title;
 
 	@NotNull
-	private Long placeId;
+	private String placeId;
 
 	@NotNull
 	private double latitude;
@@ -25,4 +27,9 @@ public class AddReviewReq {
 
 	@NotNull
 	private LocalDate visitedDay;
+
+	@NotNull
+	@Min(1)
+	@Max(5)
+	private Long averageRating;
 }

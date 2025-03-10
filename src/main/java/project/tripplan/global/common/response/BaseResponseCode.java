@@ -63,6 +63,7 @@ public enum BaseResponseCode {
 	UPLOAD_REVIEW_IMAGE_SUCCESS(true, 1703, "리뷰 이미지 업로드에 성공했습니다..", HttpStatus.OK),
 	GET_REVIEW_COMMENTS_LIST_SUCCESS(true, 1704, "리뷰 댓글 목록 불러오기에 성공했습니다.", HttpStatus.OK),
 	DELETE_REVIEW_SUCCESS(true, 1705, "리뷰 삭제가 완료되었습니다.", HttpStatus.OK),
+	GET_PLACEID_OTHER_REVIEW_SUCCESS(true, 1706, "같은장소의 다른 리뷰 목록 불러오기에 성공했습니다.", HttpStatus.OK),
 
 	// admin 1800 ~
 	GET_REPORTED_HISTORY_SUCCESS(true, 1801, "신고된 목록 조회에 성공했습니다.", HttpStatus.OK),
