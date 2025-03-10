@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.plan.file.S3Service;
@@ -36,7 +37,8 @@ public class ReviewController {
 	private final S3Service s3Service;
 
 	@PostMapping("/review")
-	public BaseResponse<Void> addReview(@AuthenticationPrincipal User user, @RequestBody AddReviewReq reviewReq) {
+	public BaseResponse<Void> addReview(@AuthenticationPrincipal User user,
+		@Valid @RequestBody AddReviewReq reviewReq) {
 		reviewService.addReview(user, reviewReq);
 		return new BaseResponse<>(BaseResponseCode.ADD_REVIEW_SUCCESS);
 	}

@@ -36,7 +36,7 @@ public class Review extends BaseEntity {
 	private Long id;
 
 	@Column(nullable = false)
-	private Long placeId;
+	private String placeId;
 
 	@Column(nullable = false)
 	private String title;
@@ -44,6 +44,9 @@ public class Review extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User user;
+
+	@Column(nullable = false)
+	private Long averageRating;
 
 	@Builder.Default
 	@OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)

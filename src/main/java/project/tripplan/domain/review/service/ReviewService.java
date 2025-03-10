@@ -40,6 +40,7 @@ public class ReviewService {
 			.latitude(reviewReq.getLatitude())
 			.longitude(reviewReq.getLongitude())
 			.visitedDay(reviewReq.getVisitedDay())
+			.averageRating(reviewReq.getAverageRating())
 			.build();
 
 		reviewRepository.save(review);
@@ -78,6 +79,7 @@ public class ReviewService {
 			.latitude(review.getLatitude())
 			.longitude(review.getLongitude())
 			.visitedDay(review.getVisitedDay())
+			.averageRating(review.getAverageRating())
 			.build();
 	}
 

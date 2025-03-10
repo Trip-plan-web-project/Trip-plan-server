@@ -15,7 +15,7 @@ public class ReviewRes {
 
 	private Long id;
 
-	private Long placeId;
+	private String placeId;
 
 	private String title;
 
@@ -32,5 +32,7 @@ public class ReviewRes {
 	private Double longitude;
 
 	private LocalDate visitedDay;
+
+	private Long averageRating;
 
 }
