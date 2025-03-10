@@ -8,12 +8,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.point.entity.Point;
 import project.tripplan.domain.point.enums.PointStatus;
 import project.tripplan.domain.point.enums.PointType;
@@ -41,8 +44,8 @@ public class ReviewService {
 
 	private final ReviewRepositoryCustom reviewRepositoryCustom;
 	private final ReviewRepository reviewRepository;
-	private final S3Service s3Service;
 	private final PointRepository pointRepository;
+	private final StringRedisTemplate redisTemplate;
 
 	public Long addReview(User user, AddReviewReq reviewReq) {
 		Review review = Review.builder()
@@ -72,15 +75,19 @@ public class ReviewService {
 	}
 
 	//조회수 증가가 있기 떄문에 readOnly = false
-	@Transactional
-	public ReviewRes getReview(Long reviewId) {
+	public ReviewRes getReview(User user, Long reviewId) {
 
 		Review review = reviewRepositoryCustom.findReviewIdWithUser(reviewId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.REVIEW_NOT_EXIST));
 
-		//조회수 증가
-		review.increaseViewCount();
+		// 동일아이디 조회수 증가 30분에 1번으로 제한
+		String redisKey = "view:plan:" + reviewId + ":user:" + user.getId();
+		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
+		if (!Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
+			review.increaseViewCount();
+			valueOperations.set(redisKey, "true", 30, TimeUnit.MINUTES);
+		}
 		return ReviewRes.builder()
 			.id(review.getId())
 			.placeId(review.getPlaceId())

@@ -21,7 +21,6 @@ import project.tripplan.domain.review.dto.ReviewImageRes;
 import project.tripplan.domain.review.dto.ReviewRes;
 import project.tripplan.domain.review.service.ReviewService;
 import project.tripplan.domain.user.entity.User;
-import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.global.common.response.BaseResponse;
 import project.tripplan.global.common.response.BaseResponseCode;
 
@@ -34,7 +33,6 @@ public class ReviewController {
 	private String imagePrefix;
 
 	private final ReviewService reviewService;
-	private final UserRepository userRepository;
 	private final S3Service s3Service;
 
 	@PostMapping("/review")
@@ -45,8 +43,8 @@ public class ReviewController {
 	}
 
 	@GetMapping("/review/{reviewId}")
-	public BaseResponse<ReviewRes> getReview(@PathVariable Long reviewId) {
-		return new BaseResponse<>(BaseResponseCode.GET_REVIEW_SUCCESS, reviewService.getReview(reviewId));
+	public BaseResponse<ReviewRes> getReview(@AuthenticationPrincipal User user, @PathVariable Long reviewId) {
+		return new BaseResponse<>(BaseResponseCode.GET_REVIEW_SUCCESS, reviewService.getReview(user, reviewId));
 	}
 
 	@PostMapping("/review/image/upload")
