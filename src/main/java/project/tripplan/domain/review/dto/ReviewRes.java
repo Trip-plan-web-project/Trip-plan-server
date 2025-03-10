@@ -35,4 +35,9 @@ public class ReviewRes {
 
 	private Long averageRating;
 
+	private LocalDate createAt;
+
+	@Builder.Default
+	private int reviewLike = 5;
+
 }

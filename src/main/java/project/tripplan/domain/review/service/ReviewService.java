@@ -2,14 +2,13 @@ package project.tripplan.domain.review.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Value;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -100,6 +99,7 @@ public class ReviewService {
 			.longitude(review.getLongitude())
 			.visitedDay(review.getVisitedDay())
 			.averageRating(review.getAverageRating())
+			.createAt(LocalDate.from(review.getCreatedAt()))
 			.build();
 	}
 
