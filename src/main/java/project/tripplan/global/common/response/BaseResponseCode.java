@@ -55,6 +55,10 @@ public enum BaseResponseCode {
 	ADD_PLAN_LIKE_SUCCESS(true, 1501, "게시글 좋아요가 추가되었습니다.", HttpStatus.OK),
 	DELETE_PLAN_LIKE_SUCCESS(true, 1502, "게시글 좋아요가 취소되었습니다.", HttpStatus.OK),
 
+	// reviewLike 1550~
+	ADD_REVIEW_LIKE_SUCCESS(true, 1551, "게시글 좋아요가 추가되었습니다.", HttpStatus.OK),
+	DELETE_REVIEW_LIKE_SUCCESS(true, 1552, "게시글 좋아요가 취소되었습니다.", HttpStatus.OK),
+
 	// report 1600 ~
 	REPORT_PLAN_COMMENT_SUCCESS(true, 1601, "여행 계획글 댓글 신고가 완료되었습니다.", HttpStatus.OK),
 	REPORT_PLAN_SUCCESS(true, 1602, "여행 계획글 신고가 완료되었습니다.", HttpStatus.OK),
