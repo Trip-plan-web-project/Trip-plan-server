@@ -28,4 +28,16 @@ public class ReviewBookmarkRepositoryCustomImpl implements ReviewBookmarkReposit
 				.fetchOne()
 		);
 	}
+
+	@Override
+	public Optional<ReviewBookmark> findByReviewIdAndUserId(Long reviewId, Long userId) {
+		return Optional.ofNullable(
+			qf.selectFrom(reviewBookmark)
+				.join(reviewBookmark.user, user).fetchJoin()
+				.where(reviewBookmark.review.id.eq(reviewId)
+					.and(reviewBookmark.user.id.eq(userId)))
+				.fetchOne()
+		);
+	}
+
 }

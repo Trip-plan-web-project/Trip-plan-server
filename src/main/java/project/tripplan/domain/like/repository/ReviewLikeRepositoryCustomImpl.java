@@ -28,4 +28,15 @@ public class ReviewLikeRepositoryCustomImpl implements ReviewLikeRepositoryCusto
 				.fetchOne()
 		);
 	}
+
+	@Override
+	public Optional<ReviewLike> findByReviewIdAndUserId(Long reviewId, Long userId) {
+		return Optional.ofNullable(
+			qf.selectFrom(reviewLike)
+				.join(reviewLike.user, user).fetchJoin()
+				.where(reviewLike.review.id.eq(reviewId)
+					.and(reviewLike.user.id.eq(userId)))
+				.fetchOne()
+		);
+	}
 }

@@ -6,4 +6,7 @@ import project.tripplan.domain.bookmark.entity.ReviewBookmark;
 
 public interface ReviewBookmarkRepositoryCustom {
 	Optional<ReviewBookmark> findByReviewBookmarkIdWithUserId(Long reviewBookmarkId, Long userId);
+
+	Optional<ReviewBookmark> findByReviewIdAndUserId(Long reviewId, Long userId);
+
 }
