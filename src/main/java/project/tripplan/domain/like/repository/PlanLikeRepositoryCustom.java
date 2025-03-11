@@ -1,8 +1,8 @@
-package project.tripplan.domain.planLike.repository;
+package project.tripplan.domain.like.repository;
 
 import java.util.Optional;
 
-import project.tripplan.domain.planLike.entity.PlanLike;
+import project.tripplan.domain.like.entity.PlanLike;
 
 public interface PlanLikeRepositoryCustom {
 	Long countLikesByPlanId(Long planId);

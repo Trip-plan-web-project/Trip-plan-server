@@ -1,4 +1,4 @@
-package project.tripplan.domain.planLike.entity;
+package project.tripplan.domain.like.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -16,7 +16,7 @@ import com.querydsl.core.types.dsl.PathInits;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QPlanLike extends EntityPathBase<PlanLike> {
 
-    private static final long serialVersionUID = 1541632156L;
+    private static final long serialVersionUID = -1603684525L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 

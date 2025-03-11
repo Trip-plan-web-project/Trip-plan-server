@@ -106,6 +106,10 @@ public enum BaseResponseCode {
 	PLANLIKE_NOT_EXIST(false, 2501, "게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_PLANLIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
 
+	//reviewLike 2550 ~
+	REVIEWLIKE_NOT_EXIST(false, 2551, "후기게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+	UNAUTHORIZED_REVIVELIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
+
 	//report 2600 ~
 	ALREADY_REPORTED_PLAN_COMMENT(false, 2601, "이미 신고한적 있는 게획글 댓글입니다.", HttpStatus.CONFLICT),
 	ALREADY_REPORTED_PLAN(false, 2602, "이미 신고한적 있는 계획글입니다.", HttpStatus.CONFLICT),

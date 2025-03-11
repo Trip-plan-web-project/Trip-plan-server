@@ -1,4 +1,4 @@
-package project.tripplan.domain.planLike.entity;
+package project.tripplan.domain.like.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

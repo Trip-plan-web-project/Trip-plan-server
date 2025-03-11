@@ -1,4 +1,4 @@
-package project.tripplan.domain.planLike.entity;
+package project.tripplan.domain.like.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tripplan.domain.review.entity.Review;
@@ -20,6 +21,7 @@ import project.tripplan.global.common.entity.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
+@Builder
 public class ReviewLike extends BaseEntity {
 
 	@Id
