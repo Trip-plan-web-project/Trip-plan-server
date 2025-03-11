@@ -1,4 +1,7 @@
-package project.tripplan.domain.planLike.entity;
+package project.tripplan.domain.bookmark.entity;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,21 +13,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tripplan.domain.review.entity.Review;
 import project.tripplan.domain.user.entity.User;
-import project.tripplan.global.common.entity.BaseEntity;
 
+@Entity
+@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-@Entity
-public class ReviewLike extends BaseEntity {
+public class ReviewBookmark {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "plan_like_id")
+	@Column(name = "review_bookmark_id")
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -33,5 +37,6 @@ public class ReviewLike extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "review_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Review review;
 }

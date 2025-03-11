@@ -1,4 +1,4 @@
-package project.tripplan.domain.planLike.repository;
+package project.tripplan.domain.like.repository;
 
 import java.util.Optional;
 
@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import project.tripplan.domain.like.entity.PlanLike;
+import project.tripplan.domain.like.entity.QPlanLike;
 import project.tripplan.domain.plan.entity.QPlan;
-import project.tripplan.domain.planLike.entity.PlanLike;
-import project.tripplan.domain.planLike.entity.QPlanLike;
 import project.tripplan.domain.user.entity.QUser;
 
 @Repository

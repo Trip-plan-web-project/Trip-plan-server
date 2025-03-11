@@ -1,4 +1,4 @@
-package project.tripplan.domain.planLike.controller;
+package project.tripplan.domain.like.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import project.tripplan.domain.planLike.service.PlanLikeService;
+import project.tripplan.domain.like.service.PlanLikeService;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.response.BaseResponse;
 import project.tripplan.global.common.response.BaseResponseCode;

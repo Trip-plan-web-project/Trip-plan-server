@@ -34,6 +34,10 @@ public enum BaseResponseCode {
 	ADD_BOOKMARK_SUCCESS(true, 1301, "해당 게시글이 즐겨찾기에 추가되었습니다.", HttpStatus.OK),
 	DELETE_BOOKMARK_SUCCESS(true, 1302, "해당 게시글을 즐겨찾기에서 삭제하였습니다.", HttpStatus.OK),
 
+	//reviewBookmark 1350 ~
+	ADD_REVIEW_BOOKMARK_SUCCESS(true, 1351, "해당 리뷰게시글이 즐겨찾기에 추가되었습니다.", HttpStatus.OK),
+	DELETE_REVIEW_BOOKMARK_SUCCESS(true, 1352, "해당 리뷰게시글을 즐겨찾기에서 삭제하였습니다.", HttpStatus.OK),
+
 	//plan 1400 ~
 	ADD_PLAN_SUCCESS(true, 1401, "게시글이 생성되었습니다.", HttpStatus.OK),
 	UPDATE_PLAN_STATUS_SUCCESS(true, 1402, "게시글 상태가 변경되었습니다.", HttpStatus.OK),
@@ -50,6 +54,10 @@ public enum BaseResponseCode {
 	// planLike 1500 ~
 	ADD_PLAN_LIKE_SUCCESS(true, 1501, "게시글 좋아요가 추가되었습니다.", HttpStatus.OK),
 	DELETE_PLAN_LIKE_SUCCESS(true, 1502, "게시글 좋아요가 취소되었습니다.", HttpStatus.OK),
+
+	// reviewLike 1550~
+	ADD_REVIEW_LIKE_SUCCESS(true, 1551, "게시글 좋아요가 추가되었습니다.", HttpStatus.OK),
+	DELETE_REVIEW_LIKE_SUCCESS(true, 1552, "게시글 좋아요가 취소되었습니다.", HttpStatus.OK),
 
 	// report 1600 ~
 	REPORT_PLAN_COMMENT_SUCCESS(true, 1601, "여행 계획글 댓글 신고가 완료되었습니다.", HttpStatus.OK),
@@ -97,6 +105,9 @@ public enum BaseResponseCode {
 	BOOKMARK_NOT_EXIST(false, 2301, "존재하지 않는 즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_BOOKMARK_DELETE(false, 2302, "자신의 즐겨찾기만 제거할 수 있습니다.", HttpStatus.FORBIDDEN),
 
+	//reviewBookmark 2350~
+	REVIEW_BOOKMARK_NOT_EXIST(false, 2351, "존재하지 않는 리뷰즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
+
 	//planPlace & planTrans & planCategory 2400 ~
 	GET_PLAN_PLACE_FAIL(false, 2401, "해당 게시글의 장소 카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 	GET_PLAN_TRANS_FAIL(false, 2402, "해당 게시글의 교통수단을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
@@ -105,6 +116,10 @@ public enum BaseResponseCode {
 	//planLike 2500 ~
 	PLANLIKE_NOT_EXIST(false, 2501, "게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_PLANLIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
+
+	//reviewLike 2550 ~
+	REVIEWLIKE_NOT_EXIST(false, 2551, "후기게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+	UNAUTHORIZED_REVIVELIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
 
 	//report 2600 ~
 	ALREADY_REPORTED_PLAN_COMMENT(false, 2601, "이미 신고한적 있는 게획글 댓글입니다.", HttpStatus.CONFLICT),
