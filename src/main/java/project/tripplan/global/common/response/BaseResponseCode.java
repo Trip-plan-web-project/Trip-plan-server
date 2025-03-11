@@ -34,6 +34,10 @@ public enum BaseResponseCode {
 	ADD_BOOKMARK_SUCCESS(true, 1301, "해당 게시글이 즐겨찾기에 추가되었습니다.", HttpStatus.OK),
 	DELETE_BOOKMARK_SUCCESS(true, 1302, "해당 게시글을 즐겨찾기에서 삭제하였습니다.", HttpStatus.OK),
 
+	//reviewBookmark 1350 ~
+	ADD_REVIEW_BOOKMARK_SUCCESS(true, 1351, "해당 리뷰게시글이 즐겨찾기에 추가되었습니다.", HttpStatus.OK),
+	DELETE_REVIEW_BOOKMARK_SUCCESS(true, 1352, "해당 리뷰게시글을 즐겨찾기에서 삭제하였습니다.", HttpStatus.OK),
+
 	//plan 1400 ~
 	ADD_PLAN_SUCCESS(true, 1401, "게시글이 생성되었습니다.", HttpStatus.OK),
 	UPDATE_PLAN_STATUS_SUCCESS(true, 1402, "게시글 상태가 변경되었습니다.", HttpStatus.OK),
@@ -96,6 +100,9 @@ public enum BaseResponseCode {
 	//bookmark 2300 ~
 	BOOKMARK_NOT_EXIST(false, 2301, "존재하지 않는 즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_BOOKMARK_DELETE(false, 2302, "자신의 즐겨찾기만 제거할 수 있습니다.", HttpStatus.FORBIDDEN),
+
+	//reviewBookmark 2350~
+	REVIEW_BOOKMARK_NOT_EXIST(false, 2351, "존재하지 않는 리뷰즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
 
 	//planPlace & planTrans & planCategory 2400 ~
 	GET_PLAN_PLACE_FAIL(false, 2401, "해당 게시글의 장소 카테고리를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),

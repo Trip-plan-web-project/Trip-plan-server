@@ -87,11 +87,6 @@ public class Plan extends BaseEntity {
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PlanComment> planComments = new ArrayList<>();
 
-	public void addPlanDay(PlanDay planDay) {
-		planDays.add(planDay);
-		planDay.setPlan(this);
-	}
-
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
