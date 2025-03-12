@@ -1,4 +1,4 @@
-package project.tripplan.domain.planLike.entity;
+package project.tripplan.domain.like.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import project.tripplan.domain.plan.entity.Plan;
+import project.tripplan.domain.review.entity.Review;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.entity.BaseEntity;
 
@@ -22,7 +22,8 @@ import project.tripplan.global.common.entity.BaseEntity;
 @Getter
 @Entity
 @Builder
-public class PlanLike extends BaseEntity {
+public class ReviewLike extends BaseEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "plan_like_id")
@@ -33,6 +34,6 @@ public class PlanLike extends BaseEntity {
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "plan_id")
-	private Plan plan;
+	@JoinColumn(name = "review_id")
+	private Review review;
 }

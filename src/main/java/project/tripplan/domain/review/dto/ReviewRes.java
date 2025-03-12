@@ -15,6 +15,12 @@ public class ReviewRes {
 
 	private Long id;
 
+	private String socialId;
+
+	private Long likeId;
+
+	private Long bookmarkId;
+
 	private String placeId;
 
 	private String title;

@@ -36,6 +36,8 @@ import project.tripplan.domain.category.transportationCategory.enums.Transportat
 import project.tripplan.domain.category.transportationCategory.repository.TransportationCategoryRepository;
 import project.tripplan.domain.comment.entity.PlanComment;
 import project.tripplan.domain.comment.repository.PlanCommentRepositoryCustom;
+import project.tripplan.domain.like.entity.PlanLike;
+import project.tripplan.domain.like.repository.PlanLikeRepositoryCustom;
 import project.tripplan.domain.plan.dto.HomeRes;
 import project.tripplan.domain.plan.dto.PlaceCategoryNamesReq;
 import project.tripplan.domain.plan.dto.PlanCommentsRes;
@@ -61,8 +63,6 @@ import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanTransCategoryRepositoryCustom;
 import project.tripplan.domain.planDay.entity.PlanDay;
 import project.tripplan.domain.planDayDetail.entity.PlanDayDetail;
-import project.tripplan.domain.planLike.entity.PlanLike;
-import project.tripplan.domain.planLike.repository.PlanLikeRepositoryCustom;
 import project.tripplan.domain.point.entity.Point;
 import project.tripplan.domain.point.enums.PointStatus;
 import project.tripplan.domain.point.enums.PointType;
@@ -154,7 +154,6 @@ public class PlanService {
 
 		Long likesCount = planLikeRepositoryCustom.countLikesByPlanId(planId);
 
-
 		// 동일아이디 조회수 증가 30분에 1번으로 제한
 		String redisKey = "view:plan:" + planId + ":user:" + user.getId();
 		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
@@ -181,7 +180,8 @@ public class PlanService {
 		PlanPlaceCategory placeCategory = findPlanPlaceCategories.get(0);
 
 		String thumbnail = findPlan.getImageUrl() != null ? prefix + "/" + findPlan.getImageUrl() : null;
-		String profileImage = findPlan.getUser().getImage() != null ? prefix + "/" + findPlan.getUser().getImage() : null;
+		String profileImage =
+			findPlan.getUser().getImage() != null ? prefix + "/" + findPlan.getUser().getImage() : null;
 
 		// PlanDetailRes DTO 생성
 		PlanDetailRes planDetailRes = new PlanDetailRes();

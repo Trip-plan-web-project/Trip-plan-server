@@ -16,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import project.tripplan.domain.bookmark.entity.ReviewBookmark;
+import project.tripplan.domain.bookmark.repository.ReviewBookmarkRepositoryCustom;
+import project.tripplan.domain.like.entity.ReviewLike;
+import project.tripplan.domain.like.repository.ReviewLikeRepositoryCustom;
 import project.tripplan.domain.point.entity.Point;
 import project.tripplan.domain.point.enums.PointStatus;
 import project.tripplan.domain.point.enums.PointType;
@@ -45,6 +49,8 @@ public class ReviewService {
 	private final ReviewRepository reviewRepository;
 	private final PointRepository pointRepository;
 	private final StringRedisTemplate redisTemplate;
+	private final ReviewBookmarkRepositoryCustom reviewBookmarkRepositoryCustom;
+	private final ReviewLikeRepositoryCustom reviewLikeRepositoryCustom;
 
 	public Long addReview(User user, AddReviewReq reviewReq) {
 		Review review = Review.builder()
@@ -79,6 +85,12 @@ public class ReviewService {
 		Review review = reviewRepositoryCustom.findReviewIdWithUser(reviewId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.REVIEW_NOT_EXIST));
 
+		ReviewBookmark reviewBookmark = reviewBookmarkRepositoryCustom.findByReviewIdAndUserId(reviewId, user.getId())
+			.orElse(null);
+
+		ReviewLike reviewLike = reviewLikeRepositoryCustom.findByReviewIdAndUserId(reviewId, user.getId())
+			.orElse(null);
+
 		// 동일아이디 조회수 증가 30분에 1번으로 제한
 		String redisKey = "view:plan:" + reviewId + ":user:" + user.getId();
 		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
@@ -89,6 +101,9 @@ public class ReviewService {
 		}
 		return ReviewRes.builder()
 			.id(review.getId())
+			.socialId(review.getUser().getSocialId())
+			.bookmarkId(reviewBookmark != null ? reviewBookmark.getId() : null)
+			.likeId(reviewLike != null ? reviewLike.getId() : null)
 			.placeId(review.getPlaceId())
 			.title(review.getTitle())
 			.nickname(review.getUser().getNickname())
