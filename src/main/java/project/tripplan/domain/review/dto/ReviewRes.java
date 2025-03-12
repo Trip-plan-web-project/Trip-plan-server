@@ -43,7 +43,6 @@ public class ReviewRes {
 
 	private LocalDate createAt;
 
-	@Builder.Default
-	private int reviewLike = 5;
+	private Long reviewLike;
 
 }

@@ -9,4 +9,6 @@ public interface ReviewLikeRepositoryCustom {
 	Optional<ReviewLike> findReviewLikeWithUser(Long reviewLikeId);
 
 	Optional<ReviewLike> findByReviewIdAndUserId(Long reviewId, Long userId);
+
+	Long countLikesByReviewId(Long reviewId);
 }

@@ -91,6 +91,8 @@ public class ReviewService {
 		ReviewLike reviewLike = reviewLikeRepositoryCustom.findByReviewIdAndUserId(reviewId, user.getId())
 			.orElse(null);
 
+		Long likeCount = reviewLikeRepositoryCustom.countLikesByReviewId(reviewId);
+
 		// 동일아이디 조회수 증가 30분에 1번으로 제한
 		String redisKey = "view:plan:" + reviewId + ":user:" + user.getId();
 		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
@@ -115,6 +117,7 @@ public class ReviewService {
 			.visitedDay(review.getVisitedDay())
 			.averageRating(review.getAverageRating())
 			.createAt(LocalDate.from(review.getCreatedAt()))
+			.reviewLike(likeCount)
 			.build();
 	}
 
