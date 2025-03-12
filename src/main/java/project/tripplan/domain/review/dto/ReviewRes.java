@@ -43,6 +43,6 @@ public class ReviewRes {
 
 	private LocalDate createAt;
 
-	private Long reviewLike;
+	private Long like;
 
 }

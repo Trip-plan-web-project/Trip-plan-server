@@ -117,7 +117,7 @@ public class ReviewService {
 			.visitedDay(review.getVisitedDay())
 			.averageRating(review.getAverageRating())
 			.createAt(LocalDate.from(review.getCreatedAt()))
-			.reviewLike(likeCount)
+			.like(likeCount)
 			.build();
 	}
 
