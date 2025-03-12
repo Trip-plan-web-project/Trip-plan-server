@@ -28,6 +28,11 @@ public class ReviewLikeService {
 		Review findReview = reviewRepository.findById(reviewId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLAN_NOT_EXIST));
 
+		reviewLikeRepositoryCustom.findByReviewIdAndUserId(reviewId, user.getId())
+			.ifPresent(existingBookmark -> {
+				throw new CustomException(BaseResponseCode.REVIEW_LIKE_ALREADY_EXISTS);
+			});
+
 		ReviewLike reviewLike = ReviewLike.builder()
 			.user(user)
 			.review(findReview)
