@@ -64,5 +64,4 @@ public class ReviewBookmarkRepositoryCustomImpl implements ReviewBookmarkReposit
 
 		return new PageImpl<>(content, pageable, totalCount);
 	}
-
 }

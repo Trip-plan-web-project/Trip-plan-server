@@ -13,4 +13,5 @@ public interface ReviewBookmarkRepositoryCustom {
 	Optional<ReviewBookmark> findByReviewIdAndUserId(Long reviewId, Long userId);
 
 	Page<ReviewBookmark> findReviewBookmarksByUserId(Long userId, Pageable pageable);
+
 }

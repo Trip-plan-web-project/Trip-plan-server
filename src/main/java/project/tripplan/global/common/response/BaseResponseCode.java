@@ -106,6 +106,9 @@ public enum BaseResponseCode {
 	BOOKMARK_NOT_EXIST(false, 2301, "존재하지 않는 즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_BOOKMARK_DELETE(false, 2302, "자신의 즐겨찾기만 제거할 수 있습니다.", HttpStatus.FORBIDDEN),
 
+	//reveiwBookmark 2350~
+	REVIEW_BOOKMARK_ALREADY_EXISTS(false, 2351, "이미 즐겨찾기한 리뷰 게시글입니다.", HttpStatus.FORBIDDEN),
+
 	//reviewBookmark 2350~
 	REVIEW_BOOKMARK_NOT_EXIST(false, 2351, "존재하지 않는 리뷰즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
 
