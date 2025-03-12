@@ -22,9 +22,17 @@ public class QReviewBookmark extends EntityPathBase<ReviewBookmark> {
 
     public static final QReviewBookmark reviewBookmark = new QReviewBookmark("reviewBookmark");
 
+    public final project.tripplan.global.common.entity.QBaseEntity _super = new project.tripplan.global.common.entity.QBaseEntity(this);
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final project.tripplan.domain.review.entity.QReview review;
+
+    //inherited
+    public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
     public final project.tripplan.domain.user.entity.QUser user;
 
