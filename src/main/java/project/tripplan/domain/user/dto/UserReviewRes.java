@@ -13,5 +13,5 @@ public class UserReviewRes {
 	private Integer imageCount;
 	private String contentText;
 	private String contentImageUrl;
-	private LocalDate createAt;
+	private LocalDate createdAt;
 }

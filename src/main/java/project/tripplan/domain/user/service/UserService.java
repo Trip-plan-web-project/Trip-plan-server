@@ -184,7 +184,7 @@ public class UserService {
 					.imageCount(imageCount)
 					.contentText(contentText)
 					.contentImageUrl(contentImageUrl)
-					.createAt(LocalDate.from(rb.getCreatedAt()))
+					.createdAt(LocalDate.from(rb.getCreatedAt()))
 					.build();
 			})
 			.collect(Collectors.toList());
@@ -223,7 +223,7 @@ public class UserService {
 					.imageCount(imageCount)
 					.contentText(contentText)
 					.contentImageUrl(contentImageUrl)
-					.createAt(LocalDate.from(review.getCreatedAt()))
+					.createdAt(LocalDate.from(review.getCreatedAt()))
 					.build();
 			})
 			.collect(Collectors.toList());
