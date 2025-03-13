@@ -28,12 +28,15 @@ import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.point.repository.PointRepositoryCustom;
+import project.tripplan.domain.review.entity.Review;
+import project.tripplan.domain.review.repository.ReviewRepositoryCustom;
 import project.tripplan.domain.user.dto.UserBookmarkRes;
 import project.tripplan.domain.user.dto.UserCommentRes;
 import project.tripplan.domain.user.dto.UserPlanRes;
 import project.tripplan.domain.user.dto.UserPointHistoryRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserReviewBookmarkRes;
+import project.tripplan.domain.user.dto.UserReviewRes;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
@@ -54,6 +57,7 @@ public class UserService {
 	private final PlanCommentRepositoryCustom planCommentRepositoryCustom;
 	private final PlanPlaceCategoryRepositoryCustom planPlaceCategoryRepositoryCustom;
 	private final PointRepositoryCustom pointRepositoryCustom;
+	private final ReviewRepositoryCustom reviewRepositoryCustom;
 	private final S3Service s3Service;
 
 	public void updateUserProfile(Long userId, UserProfileReq req, MultipartFile image) {
@@ -189,5 +193,43 @@ public class UserService {
 		return new PageImpl<>(mappedList, pageable, findReviewBookmarks.getTotalElements());
 	}
 
+	public Page<UserReviewRes> getMyReviews(Long userId, Pageable pageable) {
+		// 1) Review 목록 조회
+		Page<Review> findReview = reviewRepositoryCustom.findReviewsByUserId(userId, pageable);
+
+		// 2) Stream API를 이용해 HTML 파싱 + DTO 변환
+		List<UserReviewRes> mappedList = findReview.stream()
+			.map(review -> {
+				// review(Review) -> HTML 파싱
+				Document doc = Jsoup.parse(review.getContent());
+				Elements images = doc.select("img[src]");
+
+				// 이미지 개수
+				int imageCount = images.size();
+
+				// 첫 번째 이미지 URL
+				String contentImageUrl = images.isEmpty() ? null : images.first().attr("src");
+
+				// 본문 텍스트 추출을 위해 img 태그 제거
+				images.remove();
+
+				// HTML 태그 제거 후 순수 텍스트만 추출
+				String contentText = doc.body().text();
+
+				// 최종적으로 UserReviewRes DTO를 빌드하여 반환
+				return UserReviewRes.builder()
+					.reviewId(review.getId())
+					.title(review.getTitle())
+					.imageCount(imageCount)
+					.contentText(contentText)
+					.contentImageUrl(contentImageUrl)
+					.createAt(LocalDate.from(review.getCreatedAt()))
+					.build();
+			})
+			.collect(Collectors.toList());
+
+		// 3) Page<UserReviewRes> 형태로 반환
+		return new PageImpl<>(mappedList, pageable, findReview.getTotalElements());
+	}
 }
 

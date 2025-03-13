@@ -23,6 +23,7 @@ import project.tripplan.domain.user.dto.UserPointHistoryRes;
 import project.tripplan.domain.user.dto.UserProfileReq;
 import project.tripplan.domain.user.dto.UserProfileRes;
 import project.tripplan.domain.user.dto.UserReviewBookmarkRes;
+import project.tripplan.domain.user.dto.UserReviewRes;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.domain.user.service.UserService;
@@ -130,6 +131,18 @@ public class UserController {
 		Pageable pageable = PageRequest.of(page - 1, size);
 		return new BaseResponse<>(BaseResponseCode.USER_REVIEW_BOOKMARK_GET_SUCCESS,
 			userService.getUserReviewBookmarks(user.getId(), pageable)
+		);
+	}
+
+	@GetMapping("/users/reviews")
+	public BaseResponse<Page<UserReviewRes>> getMyReviews(
+		@RequestParam int page,
+		@RequestParam int size,
+		@AuthenticationPrincipal User user
+	) {
+		Pageable pageable = PageRequest.of(page - 1, size);
+		return new BaseResponse<>(BaseResponseCode.USER_REVIEW_GET_SUCCESS,
+			userService.getMyReviews(user.getId(), pageable)
 		);
 	}
 }

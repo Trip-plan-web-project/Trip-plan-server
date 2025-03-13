@@ -25,6 +25,7 @@ public enum BaseResponseCode {
 	GET_PlANS_DRAFTS_SUCCESS(true, 1009, "임시저장 목록 조회에 성공했습니다.", HttpStatus.OK),
 	GET_USER_POINT_HISTORY_SUCCESS(true, 1010, "포인트 지급 내역 조회에 성공했습니다.", HttpStatus.OK),
 	USER_REVIEW_BOOKMARK_GET_SUCCESS(true, 1011, "찜한 리뷰게시물 목록 조회에 성공했습니다.", HttpStatus.OK),
+	USER_REVIEW_GET_SUCCESS(true, 1012, "내가 작성한 리뷰게시물 목록 조회에 성공했습니다.", HttpStatus.OK),
 
 	//comment 1200 ~
 	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),
