@@ -65,13 +65,14 @@ public class ReviewController {
 		return new BaseResponse<>(BaseResponseCode.DELETE_REVIEW_SUCCESS);
 	}
 
-	@GetMapping("/review/others/{placeId}")
+	@GetMapping("/review/others/{reviewId}")
 	public BaseResponse<PlaceReviewRes> getPlaceIdOtherReview(
 		@AuthenticationPrincipal User user,
-		@PathVariable String placeId
+		@PathVariable Long reviewId
 	) {
 		return new BaseResponse<>(BaseResponseCode.GET_PLACEID_OTHER_REVIEW_SUCCESS,
-			reviewService.getPlaceIdOtherReview(user, placeId));
+
+			reviewService.getPlaceIdOtherReview(reviewId, user));
 	}
 
 	@GetMapping("/review/all")

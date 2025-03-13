@@ -134,8 +134,8 @@ public class ReviewService {
 	}
 
 	@Transactional(readOnly = true)
-	public PlaceReviewRes getPlaceIdOtherReview(User user, String placeId) {
-		List<Review> reviews = reviewRepositoryCustom.findByPlaceIdAndUserNot(placeId, user);
+	public PlaceReviewRes getPlaceIdOtherReview(Long reviewId, User user) {
+		List<Review> reviews = reviewRepositoryCustom.findByReviewIdNot(reviewId, user.getId());
 
 		List<ReviewDto> summaries = reviews.stream()
 			.map(review -> {

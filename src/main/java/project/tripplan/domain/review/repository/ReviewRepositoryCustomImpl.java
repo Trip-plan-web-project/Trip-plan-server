@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import project.tripplan.domain.review.entity.QReview;
 import project.tripplan.domain.review.entity.Review;
 import project.tripplan.domain.user.entity.QUser;
-import project.tripplan.domain.user.entity.User;
 
 @Repository
 @RequiredArgsConstructor
@@ -37,11 +36,19 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 	}
 
 	@Override
-	public List<Review> findByPlaceIdAndUserNot(String placeId, User user) {
+	public List<Review> findByReviewIdNot(Long reviewId, Long userId) {
+		String placeId = qf.select(review.placeId)
+			.from(review)
+			.where(review.id.eq(reviewId))
+			.fetchOne();
+
 		return qf.selectFrom(review)
-			.join(review.user, this.user).fetchJoin()
-			.where(review.placeId.eq(placeId)
-				.and(review.user.ne(user)))
+			.join(review.user, user).fetchJoin()
+			.where(
+				review.placeId.eq(placeId)
+					.and(review.id.ne(reviewId))
+					.and(review.user.id.ne(userId))
+			)
 			.orderBy(review.createdAt.desc())
 			.fetch();
 	}

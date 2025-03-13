@@ -7,13 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import project.tripplan.domain.review.entity.Review;
-import project.tripplan.domain.user.entity.User;
 
 public interface ReviewRepositoryCustom {
 
 	Optional<Review> findReviewIdWithUser(Long reviewId);
 
-	List<Review> findByPlaceIdAndUserNot(String placeId, User user);
+	List<Review> findByReviewIdNot(Long reviewId, Long userId);
 
 	List<Review> findByAllReview();
 
