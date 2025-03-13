@@ -42,4 +42,12 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 			.orderBy(review.createdAt.desc())
 			.fetch();
 	}
+
+	@Override
+	public List<Review> findByAllReview() {
+		return qf.selectFrom(review)
+			.join(review.user, user).fetchJoin()
+			.orderBy(review.createdAt.desc())
+			.fetch();
+	}
 }

@@ -10,5 +10,8 @@ public interface ReviewRepositoryCustom {
 
 	Optional<Review> findReviewIdWithUser(Long reviewId);
 
-	public List<Review> findByPlaceIdAndUserNot(String placeId, User user);
+	List<Review> findByPlaceIdAndUserNot(String placeId, User user);
+
+	List<Review> findByAllReview();
+
 }
