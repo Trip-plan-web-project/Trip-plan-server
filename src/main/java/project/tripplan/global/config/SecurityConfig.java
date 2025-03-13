@@ -28,10 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import project.tripplan.domain.auth.service.AuthService;
-import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
-import project.tripplan.global.common.exception.CustomException;
-import project.tripplan.global.common.response.BaseResponseCode;
 import project.tripplan.global.jwt.JWTService;
 import project.tripplan.global.jwt.JwtAuthenticationProcessingFilter;
 import project.tripplan.global.oauth.CustomOAuth2UserService;
@@ -69,7 +66,7 @@ public class SecurityConfig {
 			)
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/home", "/plans/search", "/login", "/test", "/token/issue/**", "/token/reissue/**",
-					"/",
+					"/review/all", "/",
 					"/index.html", "/favicon.ico"
 				).permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")

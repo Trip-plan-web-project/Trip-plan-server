@@ -146,7 +146,6 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 	}
 
-
 	/**
 	 * [401 Unauthorized 응답을 전송하는 메서드]
 	 */
@@ -168,6 +167,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 			requestURI.startsWith("/test") ||
 			requestURI.startsWith("/token/issue/") ||
 			requestURI.startsWith("/token/reissue/") ||
+			requestURI.startsWith("/review/all") ||
 			requestURI.startsWith("/index.html") ||
 			requestURI.startsWith("/favicon.ico");
 
