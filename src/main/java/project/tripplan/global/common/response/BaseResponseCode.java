@@ -129,10 +129,10 @@ public enum BaseResponseCode {
 	REVIEW_LIKE_ALREADY_EXISTS(false, 2551, "이미 좋아요를 누른 리뷰 게시글입니다.", HttpStatus.FORBIDDEN),
 
 	//report 2600 ~
-	ALREADY_REPORTED_PLAN_COMMENT(false, 2601, "이미 신고한적 있는 게획글 댓글입니다.", HttpStatus.CONFLICT),
-	ALREADY_REPORTED_PLAN(false, 2602, "이미 신고한적 있는 계획글입니다.", HttpStatus.CONFLICT),
-	ALREADY_REPORTED_REVIEW(false, 2603, "이미 신고한적 있는 리뷰글입니다.", HttpStatus.CONFLICT),
-	ALREADY_REPORTED_REVIEW_COMMENT(false, 2604, "이미 신고한적 있는 리뷰글 댓글입니다.", HttpStatus.CONFLICT),
+	ALREADY_REPORTED_PLAN_COMMENT(false, 2601, "이미 신고한적 있는 게획글 댓글입니다.", HttpStatus.NO_CONTENT),
+	ALREADY_REPORTED_PLAN(false, 2602, "이미 신고한적 있는 계획글입니다.", HttpStatus.NO_CONTENT),
+	ALREADY_REPORTED_REVIEW(false, 2603, "이미 신고한적 있는 리뷰글입니다.", HttpStatus.NO_CONTENT),
+	ALREADY_REPORTED_REVIEW_COMMENT(false, 2604, "이미 신고한적 있는 리뷰글 댓글입니다.", HttpStatus.NO_CONTENT),
 
 	//review 2700 ~
 	REVIEW_NOT_EXIST(false, 2701, "존재하지 않는 후기게시글 입니다.", HttpStatus.NOT_FOUND),

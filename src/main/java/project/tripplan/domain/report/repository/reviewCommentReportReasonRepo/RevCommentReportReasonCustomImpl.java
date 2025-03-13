@@ -22,6 +22,7 @@ import project.tripplan.domain.comment.entity.QReviewComment;
 import project.tripplan.domain.report.entity.QReportReason;
 import project.tripplan.domain.report.entity.QReviewCommentReport;
 import project.tripplan.domain.report.entity.QReviewCommentReportReason;
+import project.tripplan.domain.review.entity.QReview;
 import project.tripplan.domain.user.entity.QUser;
 
 @Repository
@@ -35,6 +36,7 @@ public class RevCommentReportReasonCustomImpl implements RevCommentReportReasonC
 	private final QReviewCommentReport reviewCommentReport = QReviewCommentReport.reviewCommentReport;
 	private final QReviewCommentReportReason reviewCommentReportReason = QReviewCommentReportReason.reviewCommentReportReason;
 	private final QReviewComment reviewComment = QReviewComment.reviewComment;
+	private final QReview review = QReview.review;
 
 	@Override
 	public Page<ReportedReviewCommentsRes> searchReportedReviewComments(Pageable pageable, Long reasonId,
@@ -44,6 +46,7 @@ public class RevCommentReportReasonCustomImpl implements RevCommentReportReasonC
 
 		List<ReportedReviewCommentsRes> results = qf.select(Projections.constructor(ReportedReviewCommentsRes.class,
 				reviewCommentReport.reviewComment.id,
+				reviewComment.review.id,
 				reviewCommentReport.id,
 				reporter.nickname,
 				reported.nickname,
@@ -60,6 +63,7 @@ public class RevCommentReportReasonCustomImpl implements RevCommentReportReasonC
 			.join(reviewCommentReport.reviewComment, reviewComment)
 			.join(reviewCommentReport.user, reporter)
 			.join(reviewComment.user, reported)
+			.join(reviewComment.review, review)
 			.where(conditions)
 			.groupBy(reviewCommentReport.id)
 			.orderBy(reviewCommentReport.createdAt.desc(), reviewCommentReport.id.desc())

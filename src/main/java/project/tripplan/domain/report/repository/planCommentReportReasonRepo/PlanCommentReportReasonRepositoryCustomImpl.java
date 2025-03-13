@@ -19,6 +19,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import project.tripplan.domain.admin.dto.ReportedPlanCommentsRes;
 import project.tripplan.domain.comment.entity.QPlanComment;
+import project.tripplan.domain.plan.entity.QPlan;
 import project.tripplan.domain.report.entity.QPlanCommentReport;
 import project.tripplan.domain.report.entity.QPlanCommentReportReason;
 import project.tripplan.domain.report.entity.QReportReason;
@@ -35,6 +36,7 @@ public class PlanCommentReportReasonRepositoryCustomImpl implements PlanCommentR
 	private final QPlanCommentReport planCommentReport = QPlanCommentReport.planCommentReport;
 	private final QPlanCommentReportReason planCommentReportReason = QPlanCommentReportReason.planCommentReportReason;
 	private final QReportReason reportReason = QReportReason.reportReason1;
+	private final QPlan plan = QPlan.plan;
 
 	@Override
 	public Page<ReportedPlanCommentsRes> searchReportedPlanComments(Pageable pageable, Long reasonId, String startDate,
@@ -43,6 +45,7 @@ public class PlanCommentReportReasonRepositoryCustomImpl implements PlanCommentR
 
 		List<ReportedPlanCommentsRes> results = qf.select(Projections.constructor(ReportedPlanCommentsRes.class,
 				planCommentReport.planComment.id,
+				planComment.plan.id,
 				planCommentReport.id,
 				reporter.nickname,
 				reported.nickname,
@@ -59,6 +62,7 @@ public class PlanCommentReportReasonRepositoryCustomImpl implements PlanCommentR
 			.join(planCommentReport.planComment, planComment)
 			.join(planCommentReport.user, reporter)
 			.join(planComment.user, reported)
+			.join(planComment.plan, plan)
 			.where(conditions)
 			.groupBy(planCommentReport.id)
 			.orderBy(planCommentReport.createdAt.desc(), planCommentReport.id.desc())

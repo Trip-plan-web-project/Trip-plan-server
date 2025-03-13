@@ -15,6 +15,7 @@ import lombok.Setter;
 @Setter
 public class ReportedPlanCommentsRes {
 	private Long commentId;
+	private Long planId;
 	private Long planCommentReportId;
 	private String reporter;
 	private String reported;
@@ -23,9 +24,11 @@ public class ReportedPlanCommentsRes {
 	private LocalDateTime createdAt;
 	private List<Long> reportReason;
 
-	public ReportedPlanCommentsRes(Long commentId, Long planCommentReportId, String reporter, String reported,
+	public ReportedPlanCommentsRes(Long commentId, Long planId, Long planCommentReportId, String reporter,
+		String reported,
 		String commentContent, String reportCategory, LocalDateTime createdAt, String reportReason) {
 		this.commentId = commentId;
+		this.planId = planId;
 		this.planCommentReportId = planCommentReportId;
 		this.reporter = reporter;
 		this.reported = reported;
