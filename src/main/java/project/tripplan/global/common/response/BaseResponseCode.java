@@ -24,6 +24,8 @@ public enum BaseResponseCode {
 	LOGOUT_SUCCESS(true, 1008, "로그아웃에 성공했습니다.", HttpStatus.OK),
 	GET_PlANS_DRAFTS_SUCCESS(true, 1009, "임시저장 목록 조회에 성공했습니다.", HttpStatus.OK),
 	GET_USER_POINT_HISTORY_SUCCESS(true, 1010, "포인트 지급 내역 조회에 성공했습니다.", HttpStatus.OK),
+	USER_REVIEW_BOOKMARK_GET_SUCCESS(true, 1011, "찜한 리뷰게시물 목록 조회에 성공했습니다.", HttpStatus.OK),
+	USER_REVIEW_GET_SUCCESS(true, 1012, "내가 작성한 리뷰게시물 목록 조회에 성공했습니다.", HttpStatus.OK),
 
 	//comment 1200 ~
 	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),
@@ -72,6 +74,7 @@ public enum BaseResponseCode {
 	GET_REVIEW_COMMENTS_LIST_SUCCESS(true, 1704, "리뷰 댓글 목록 불러오기에 성공했습니다.", HttpStatus.OK),
 	DELETE_REVIEW_SUCCESS(true, 1705, "리뷰 삭제가 완료되었습니다.", HttpStatus.OK),
 	GET_PLACEID_OTHER_REVIEW_SUCCESS(true, 1706, "같은장소의 다른 리뷰 목록 불러오기에 성공했습니다.", HttpStatus.OK),
+	GET_ALL_REVIEW_SUCCESS(true, 1707, "모든 리뷰 목록 불러오기에 성공했습니다.", HttpStatus.OK),
 
 	// admin 1800 ~
 	GET_REPORTED_HISTORY_SUCCESS(true, 1801, "신고된 목록 조회에 성공했습니다.", HttpStatus.OK),
@@ -105,6 +108,9 @@ public enum BaseResponseCode {
 	BOOKMARK_NOT_EXIST(false, 2301, "존재하지 않는 즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
 	UNAUTHORIZED_BOOKMARK_DELETE(false, 2302, "자신의 즐겨찾기만 제거할 수 있습니다.", HttpStatus.FORBIDDEN),
 
+	//reveiwBookmark 2350~
+	REVIEW_BOOKMARK_ALREADY_EXISTS(false, 2351, "이미 즐겨찾기한 리뷰 게시글입니다.", HttpStatus.FORBIDDEN),
+
 	//reviewBookmark 2350~
 	REVIEW_BOOKMARK_NOT_EXIST(false, 2351, "존재하지 않는 리뷰즐겨찾기항목 입니다.", HttpStatus.NOT_FOUND),
 
@@ -119,7 +125,8 @@ public enum BaseResponseCode {
 
 	//reviewLike 2550 ~
 	REVIEWLIKE_NOT_EXIST(false, 2551, "후기게시글 좋아요 ID가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
-	UNAUTHORIZED_REVIVELIKE_DELETE(false, 2502, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
+	UNAUTHORIZED_REVIVELIKE_DELETE(false, 2552, "본인이 누른 좋아요만 취소 가능합니다.", HttpStatus.FORBIDDEN),
+	REVIEW_LIKE_ALREADY_EXISTS(false, 2551, "이미 좋아요를 누른 리뷰 게시글입니다.", HttpStatus.FORBIDDEN),
 
 	//report 2600 ~
 	ALREADY_REPORTED_PLAN_COMMENT(false, 2601, "이미 신고한적 있는 게획글 댓글입니다.", HttpStatus.CONFLICT),

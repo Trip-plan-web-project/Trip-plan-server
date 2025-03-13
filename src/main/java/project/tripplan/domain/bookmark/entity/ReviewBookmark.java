@@ -18,13 +18,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import project.tripplan.domain.review.entity.Review;
 import project.tripplan.domain.user.entity.User;
+import project.tripplan.global.common.entity.BaseEntity;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ReviewBookmark {
+public class ReviewBookmark extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

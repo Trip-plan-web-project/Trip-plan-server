@@ -26,6 +26,12 @@ public class ReviewBookmarkService {
 		Review findReview = reviewRepository.findById(reviewId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.REVIEW_NOT_EXIST));
 
+		//이미 북마크가 존재하는지 확인
+		reviewBookmarkRepositoryCustom.findByReviewIdAndUserId(reviewId, user.getId())
+			.ifPresent(existingBookmark -> {
+				throw new CustomException(BaseResponseCode.REVIEW_BOOKMARK_ALREADY_EXISTS);
+			});
+
 		ReviewBookmark reviewBookmark = ReviewBookmark.builder()
 			.user(user)
 			.review(findReview)

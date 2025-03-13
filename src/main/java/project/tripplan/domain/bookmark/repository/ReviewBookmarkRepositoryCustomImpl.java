@@ -1,7 +1,11 @@
 package project.tripplan.domain.bookmark.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -40,4 +44,24 @@ public class ReviewBookmarkRepositoryCustomImpl implements ReviewBookmarkReposit
 		);
 	}
 
+	@Override
+	public Page<ReviewBookmark> findReviewBookmarksByUserId(Long userId, Pageable pageable) {
+		QReviewBookmark qReviewBookmark = QReviewBookmark.reviewBookmark;
+
+		List<ReviewBookmark> content = qf
+			.selectFrom(qReviewBookmark)
+			.where(qReviewBookmark.user.id.eq(userId))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(qReviewBookmark.id.desc())
+			.fetch();
+
+		long totalCount = qf
+			.select(qReviewBookmark.count())
+			.from(qReviewBookmark)
+			.where(qReviewBookmark.user.id.eq(userId))
+			.fetchOne();
+
+		return new PageImpl<>(content, pageable, totalCount);
+	}
 }

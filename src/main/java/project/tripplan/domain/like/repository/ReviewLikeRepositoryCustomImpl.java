@@ -39,4 +39,13 @@ public class ReviewLikeRepositoryCustomImpl implements ReviewLikeRepositoryCusto
 				.fetchOne()
 		);
 	}
+
+	@Override
+	public Long countLikesByReviewId(Long reviewId) {
+		Long count = qf.select(reviewLike.count())
+			.from(reviewLike)
+			.where(reviewLike.review.id.eq(reviewId))
+			.fetchOne();
+		return count != null ? count : 0L;
+	}
 }

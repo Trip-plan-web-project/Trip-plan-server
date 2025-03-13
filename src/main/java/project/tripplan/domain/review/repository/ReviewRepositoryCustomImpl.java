@@ -3,6 +3,9 @@ package project.tripplan.domain.review.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -41,5 +44,32 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 				.and(review.user.ne(user)))
 			.orderBy(review.createdAt.desc())
 			.fetch();
+	}
+
+	@Override
+	public List<Review> findByAllReview() {
+		return qf.selectFrom(review)
+			.join(review.user, user).fetchJoin()
+			.orderBy(review.createdAt.desc())
+			.fetch();
+	}
+
+	@Override
+	public Page<Review> findReviewsByUserId(Long userId, Pageable pageable) {
+		List<Review> content = qf
+			.selectFrom(review)
+			.where(review.user.id.eq(userId))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(review.id.desc())
+			.fetch();
+
+		long totalCount = qf
+			.select(review.count())
+			.from(review)
+			.where(review.user.id.eq(userId))
+			.fetchOne();
+
+		return new PageImpl<>(content, pageable, totalCount);
 	}
 }

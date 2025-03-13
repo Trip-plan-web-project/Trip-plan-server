@@ -73,4 +73,10 @@ public class ReviewController {
 		return new BaseResponse<>(BaseResponseCode.GET_PLACEID_OTHER_REVIEW_SUCCESS,
 			reviewService.getPlaceIdOtherReview(user, placeId));
 	}
+
+	@GetMapping("/review/all")
+	public BaseResponse<PlaceReviewRes> getAllReview() {
+		return new BaseResponse<>(BaseResponseCode.GET_ALL_REVIEW_SUCCESS,
+			reviewService.getAllReview());
+	}
 }
