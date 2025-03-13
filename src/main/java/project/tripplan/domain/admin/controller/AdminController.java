@@ -1,9 +1,7 @@
 package project.tripplan.domain.admin.controller;
 
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,10 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import project.tripplan.domain.admin.dto.AddPointListReq;
-import project.tripplan.domain.admin.dto.ReportedPlanCommentsRes;
-import project.tripplan.domain.admin.dto.ReportedPlanListRes;
-import project.tripplan.domain.admin.dto.ReportedReviewCommentsRes;
-import project.tripplan.domain.admin.dto.ReportedReviewRes;
 import project.tripplan.domain.admin.service.AdminService;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.response.BaseResponse;

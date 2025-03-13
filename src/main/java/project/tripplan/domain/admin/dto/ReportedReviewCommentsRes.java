@@ -15,6 +15,7 @@ import lombok.Setter;
 @Setter
 public class ReportedReviewCommentsRes {
 	private Long reviewCommentId;
+	private Long reviewId;
 	private Long reviewCommentReportId;
 	private String reporter;
 	private String reported;
@@ -23,9 +24,11 @@ public class ReportedReviewCommentsRes {
 	private LocalDateTime createdAt;
 	private List<Long> reportReason;
 
-	public ReportedReviewCommentsRes(Long reviewCommentId, Long reviewCommentReportId, String reporter, String reported,
+	public ReportedReviewCommentsRes(Long reviewCommentId, Long reviewId, Long reviewCommentReportId, String reporter,
+		String reported,
 		String commentContent, String reportCategory, LocalDateTime createdAt, String reportReason) {
 		this.reviewCommentId = reviewCommentId;
+		this.reviewId = reviewId;
 		this.reviewCommentReportId = reviewCommentReportId;
 		this.reporter = reporter;
 		this.reported = reported;
