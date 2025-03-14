@@ -29,6 +29,7 @@ import project.tripplan.domain.review.dto.PlaceReviewRes;
 import project.tripplan.domain.review.dto.ReviewDto;
 import project.tripplan.domain.review.dto.ReviewRes;
 import project.tripplan.domain.review.entity.Review;
+import project.tripplan.domain.review.entity.ReviewImage;
 import project.tripplan.domain.review.repository.ReviewRepository;
 import project.tripplan.domain.review.repository.ReviewRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
@@ -64,6 +65,14 @@ public class ReviewService {
 			.averageRating(reviewReq.getAverageRating())
 			.build();
 
+		if (reviewReq.getImageUrl() != null && !reviewReq.getImageUrl().isEmpty()) {
+			reviewReq.getImageUrl().forEach(imageUrl -> {
+				ReviewImage reviewImage = ReviewImage.builder()
+					.imageUrl(imageUrl)
+					.build();
+				review.addReviewImage(reviewImage);
+			});
+		}
 		reviewRepository.save(review);
 
 		Point point = Point.builder()
@@ -134,8 +143,8 @@ public class ReviewService {
 	}
 
 	@Transactional(readOnly = true)
-	public PlaceReviewRes getPlaceIdOtherReview(User user, String placeId) {
-		List<Review> reviews = reviewRepositoryCustom.findByPlaceIdAndUserNot(placeId, user);
+	public PlaceReviewRes getPlaceIdOtherReview(Long reviewId, User user) {
+		List<Review> reviews = reviewRepositoryCustom.findByReviewIdNot(reviewId, user.getId());
 
 		List<ReviewDto> summaries = reviews.stream()
 			.map(review -> {

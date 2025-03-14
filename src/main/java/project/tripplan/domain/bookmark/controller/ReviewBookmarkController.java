@@ -26,7 +26,7 @@ public class ReviewBookmarkController {
 			new AddReviewBookmarkRes(reviewBookmarkService.addReviewBookmark(user, reviewId)));
 	}
 
-	@DeleteMapping("/reivew/bookmarks/{reviewBookmarkId}")
+	@DeleteMapping("/review/bookmarks/{reviewBookmarkId}")
 	public BaseResponse<Void> deleteBookmark(@AuthenticationPrincipal User user, @PathVariable Long reviewBookmarkId) {
 		reviewBookmarkService.deleteReviewBookmark(user, reviewBookmarkId);
 		return new BaseResponse<>(BaseResponseCode.DELETE_REVIEW_BOOKMARK_SUCCESS);
