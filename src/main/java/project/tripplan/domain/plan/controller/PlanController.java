@@ -138,4 +138,10 @@ public class PlanController {
 		return new BaseResponse<>(BaseResponseCode.UPDATE_PLAN_SUCCESS,
 			planService.updatePlan(user, planDto, thumbnail));
 	}
+
+	@PatchMapping("/chat-bot/points")
+	public BaseResponse<Void> useChatBotPoints(@AuthenticationPrincipal User user) {
+		planService.useChatBotPoints(user);
+		return new BaseResponse<>(BaseResponseCode.USE_CHAT_BOT_POINT_SUCCESS);
+	}
 }

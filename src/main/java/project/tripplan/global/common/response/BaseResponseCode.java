@@ -26,6 +26,7 @@ public enum BaseResponseCode {
 	GET_USER_POINT_HISTORY_SUCCESS(true, 1010, "포인트 지급 내역 조회에 성공했습니다.", HttpStatus.OK),
 	USER_REVIEW_BOOKMARK_GET_SUCCESS(true, 1011, "찜한 리뷰게시물 목록 조회에 성공했습니다.", HttpStatus.OK),
 	USER_REVIEW_GET_SUCCESS(true, 1012, "내가 작성한 리뷰게시물 목록 조회에 성공했습니다.", HttpStatus.OK),
+	USE_CHAT_BOT_POINT_SUCCESS(true, 1013, "챗봇 포인트 사용에 성공했습니다.", HttpStatus.OK),
 
 	//comment 1200 ~
 	ADD_COMMENT_SUCCESS(true, 1201, "댓글을 추가하였습니다.", HttpStatus.OK),
@@ -91,6 +92,7 @@ public enum BaseResponseCode {
 	REFRESHTOKEN_NOT_EXIST(false, 2002, "리프레시 토큰이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 	INVALID_OAUTH2_REQUEST(false, 2003, "유효하지 않은 OAuth2 요청입니다.", HttpStatus.BAD_REQUEST),
 	FILE_DELETE_ERROR(false, 2004, "유저 업데이트에 실패했습니다", HttpStatus.BAD_REQUEST),
+	POINT_IS_NOT_ENOUGH(false, 2005, "포인트가 부족합니다.", HttpStatus.BAD_REQUEST),
 
 	//plan 2100 ~,
 	PLAN_NOT_EXIST(false, 2101, "존재하지 않는 게시글입니다.", HttpStatus.NOT_FOUND),
