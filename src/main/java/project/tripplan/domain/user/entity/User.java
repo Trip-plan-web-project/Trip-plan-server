@@ -58,4 +58,6 @@ public class User extends BaseEntity {
 	public void addPoint(int point) {
 		this.point += point;
 	}
+
+	public void usePoint(int point) {this.point -= point; }
 }

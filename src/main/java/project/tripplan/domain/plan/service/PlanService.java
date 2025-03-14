@@ -66,6 +66,7 @@ import project.tripplan.domain.point.entity.Point;
 import project.tripplan.domain.point.enums.PointStatus;
 import project.tripplan.domain.point.enums.PointType;
 import project.tripplan.domain.point.repository.PointRepository;
+import project.tripplan.domain.point.repository.PointRepositoryCustom;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.domain.user.repository.UserRepository;
@@ -96,6 +97,7 @@ public class PlanService {
 	private final BookmarkRepositoryCustom bookmarkRepositoryCustom;
 	private final StringRedisTemplate redisTemplate;
 	private final PointRepository pointRepository;
+	private final PointRepositoryCustom pointRepositoryCustom;
 
 	/**
 	 * 계획 저장 메서드
@@ -618,4 +620,12 @@ public class PlanService {
 		return false;
 	}
 
+	public void useChatBotPoints(User user) {
+		if (user.getPoint() - 20 >= 0) {
+			user.usePoint(20);
+			userRepository.save(user);
+		} else {
+			throw new CustomException(BaseResponseCode.POINT_IS_NOT_ENOUGH);
+		}
+	}
 }
