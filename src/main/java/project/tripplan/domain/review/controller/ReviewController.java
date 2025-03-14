@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.review.dto.AddReviewReq;
 import project.tripplan.domain.review.dto.PlaceReviewRes;
 import project.tripplan.domain.review.dto.ReviewImageRes;
@@ -23,6 +22,7 @@ import project.tripplan.domain.review.service.ReviewService;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.global.common.response.BaseResponse;
 import project.tripplan.global.common.response.BaseResponseCode;
+import project.tripplan.global.file.S3Service;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,7 +52,7 @@ public class ReviewController {
 		@AuthenticationPrincipal User user,
 		@RequestParam("image") MultipartFile image) {
 
-		return new BaseResponse<>(BaseResponseCode.GET_REVIEW_SUCCESS,
+		return new BaseResponse<>(BaseResponseCode.UPLOAD_REVIEW_IMAGE_SUCCESS,
 			ReviewImageRes.builder()
 				.imageUrl(
 					imagePrefix + "/" + s3Service.uploadReviewFile(image))

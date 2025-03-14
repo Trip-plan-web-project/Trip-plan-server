@@ -41,6 +41,8 @@ public class QReview extends EntityPathBase<Review> {
 
     public final ListPath<project.tripplan.domain.comment.entity.ReviewComment, project.tripplan.domain.comment.entity.QReviewComment> reviewComments = this.<project.tripplan.domain.comment.entity.ReviewComment, project.tripplan.domain.comment.entity.QReviewComment>createList("reviewComments", project.tripplan.domain.comment.entity.ReviewComment.class, project.tripplan.domain.comment.entity.QReviewComment.class, PathInits.DIRECT2);
 
+    public final ListPath<ReviewImage, QReviewImage> reviewImages = this.<ReviewImage, QReviewImage>createList("reviewImages", ReviewImage.class, QReviewImage.class, PathInits.DIRECT2);
+
     public final StringPath title = createString("title");
 
     //inherited

@@ -24,7 +24,6 @@ import project.tripplan.domain.bookmark.repository.ReviewBookmarkRepositoryCusto
 import project.tripplan.domain.comment.entity.PlanComment;
 import project.tripplan.domain.comment.repository.PlanCommentRepositoryCustom;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
-import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
 import project.tripplan.domain.point.repository.PointRepositoryCustom;
@@ -40,6 +39,7 @@ import project.tripplan.domain.user.dto.UserReviewRes;
 import project.tripplan.domain.user.entity.User;
 import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.domain.user.repository.UserRepositoryCustom;
+import project.tripplan.global.file.S3Service;
 
 @Service
 @RequiredArgsConstructor

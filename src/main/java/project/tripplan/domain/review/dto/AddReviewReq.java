@@ -1,6 +1,7 @@
 package project.tripplan.domain.review.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -32,4 +33,6 @@ public class AddReviewReq {
 	@Min(1)
 	@Max(5)
 	private Long averageRating;
+
+	private List<String> imageUrl;
 }

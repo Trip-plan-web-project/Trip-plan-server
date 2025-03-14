@@ -68,7 +68,16 @@ public class Review extends BaseEntity {
 	@Column(nullable = false)
 	private LocalDate visitedDay;
 
+	@OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
+	private List<ReviewImage> reviewImages = new ArrayList<>();
+
 	public void increaseViewCount() {
 		this.viewCount = this.viewCount + 1;
+	}
+
+	public void addReviewImage(ReviewImage reviewImage) {
+		this.reviewImages.add(reviewImage);
+		reviewImage.setReview(this);
 	}
 }

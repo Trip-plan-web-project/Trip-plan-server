@@ -56,7 +56,6 @@ import project.tripplan.domain.plan.entity.Plan;
 import project.tripplan.domain.plan.entity.PlanPlaceCategory;
 import project.tripplan.domain.plan.entity.PlanTransportationCategory;
 import project.tripplan.domain.plan.enums.PlanStatus;
-import project.tripplan.domain.plan.file.S3Service;
 import project.tripplan.domain.plan.repository.PlanPlaceCategoryRepositoryCustom;
 import project.tripplan.domain.plan.repository.PlanRepository;
 import project.tripplan.domain.plan.repository.PlanRepositoryCustom;
@@ -72,6 +71,7 @@ import project.tripplan.domain.user.enums.UserRole;
 import project.tripplan.domain.user.repository.UserRepository;
 import project.tripplan.global.common.exception.CustomException;
 import project.tripplan.global.common.response.BaseResponseCode;
+import project.tripplan.global.file.S3Service;
 
 @Service
 @RequiredArgsConstructor
