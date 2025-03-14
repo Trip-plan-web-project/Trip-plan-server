@@ -33,18 +33,21 @@ public class PlanLikeService {
 			.plan(findPlan)
 			.build();
 
+		findPlan.addPlanLikes(planLike);
+
 		planLikeRepository.save(planLike);
 
 		return planLike.getId();
 	}
 
 	public void deletePlanLike(User user, Long planLikeId) {
-		PlanLike findPlanLike = planLikeRepositoryCustom.findPlanLikeWithUser(planLikeId)
+		PlanLike findPlanLike = planLikeRepositoryCustom.findPlanLikeWithUserAndPlan(planLikeId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.PLANLIKE_NOT_EXIST));
 
 		if (findPlanLike.getUser().getId() != user.getId()) {
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_PLANLIKE_DELETE);
 		}
+		findPlanLike.getPlan().getPlanLikes().remove(findPlanLike);
 
 		planLikeRepository.delete(findPlanLike);
 	}

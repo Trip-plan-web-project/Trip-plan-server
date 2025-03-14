@@ -25,10 +25,11 @@ public class PlanCommentRepositoryCustomImpl implements PlanCommentRepositoryCus
 	private final QPlan plan = QPlan.plan;
 
 	@Override
-	public Optional<PlanComment> findByIdWithUser(Long commentId) {
+	public Optional<PlanComment> findByIdWithUserAndPlan(Long commentId) {
 		return Optional.ofNullable(
 			qf.selectFrom(planComment)
 				.join(planComment.user, user).fetchJoin()
+				.join(planComment.plan, plan).fetchJoin()
 				.where(planComment.id.eq(commentId))
 				.fetchOne()
 		);
