@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import project.tripplan.domain.bookmark.entity.Bookmark;
 import project.tripplan.domain.comment.entity.PlanComment;
 import project.tripplan.domain.like.entity.PlanLike;
 import project.tripplan.domain.plan.enums.PlanStatus;
@@ -86,6 +87,12 @@ public class Plan extends BaseEntity {
 	@Builder.Default
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PlanComment> planComments = new ArrayList<>();
+
+	public void addPlanComments(PlanComment comment) {
+		planComments.add(comment);
+	}
+
+	public void addPlanLikes(PlanLike like) {planLikes.add(like);}
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;

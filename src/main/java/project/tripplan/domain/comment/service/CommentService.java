@@ -36,12 +36,14 @@ public class CommentService {
 			.content(commentReq.getContent())
 			.build();
 
+		findPlan.addPlanComments(planComment);
+
 		return planCommentRepository.save(planComment).getId();
 	}
 
 	@Transactional
 	public void deleteComment(User user, Long commentId) {
-		PlanComment findPlanComment = planCommentRepositoryCustom.findByIdWithUser(commentId)
+		PlanComment findPlanComment = planCommentRepositoryCustom.findByIdWithUserAndPlan(commentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
 
 		if(findPlanComment.getUser().getId() != user.getId() && user.getUserRole() != UserRole.ADMIN) {
@@ -49,12 +51,13 @@ public class CommentService {
 			throw new CustomException(BaseResponseCode.UNAUTHORIZED_DELETE_COMMENT);
 		}
 
+		findPlanComment.getPlan().getPlanComments().remove(findPlanComment);
 		planCommentRepository.delete(findPlanComment);
 	}
 
 	@Transactional
 	public void updateComment(User user, Long commentId, CommentReq commentReq) {
-		PlanComment findPlanComment = planCommentRepositoryCustom.findByIdWithUser(commentId)
+		PlanComment findPlanComment = planCommentRepositoryCustom.findByIdWithUserAndPlan(commentId)
 			.orElseThrow(() -> new CustomException(BaseResponseCode.COMMENT_NOT_EXIST));
 
 		if(findPlanComment.getUser().getId() != user.getId()) {

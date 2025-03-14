@@ -8,7 +8,7 @@ import project.tripplan.domain.comment.entity.PlanComment;
 
 public interface PlanCommentRepositoryCustom {
   
-	Optional<PlanComment> findByIdWithUser(Long commentId);
+	Optional<PlanComment> findByIdWithUserAndPlan(Long commentId);
 
 	Page<PlanComment> findAllByPlanIdWithUser(Long planId, Pageable pageable);
 

@@ -30,10 +30,11 @@ public class PlanLikeRepositoryCustomImpl implements PlanLikeRepositoryCustom {
 	}
 
 	@Override
-	public Optional<PlanLike> findPlanLikeWithUser(Long planLikeId) {
+	public Optional<PlanLike> findPlanLikeWithUserAndPlan(Long planLikeId) {
 		return Optional.ofNullable(
 			qf.selectFrom(planLike)
 				.join(planLike.user, user).fetchJoin()
+				.join(planLike.plan, plan).fetchJoin()
 				.where(planLike.id.eq(planLikeId))
 				.fetchOne()
 		);
