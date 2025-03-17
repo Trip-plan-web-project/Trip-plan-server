@@ -211,38 +211,50 @@ public class PlanService {
 	@Transactional(readOnly = true)
 	public PlanNoOffsetRes getPlanNoOffset(PlanNoOffsetReq req) {
 
+		// 카테고리 IDs를 저장할 최종 Set (categoryNames, 지역검색 키워드 둘 다 OR로 합쳐서 사용)
+		Set<Long> finalCategoryIds = new HashSet<>();
+
 		// 1) categoryNames가 있는 경우, 자식까지 포함한 categoryIds 구하기 (OR 조건)
 		if (req.getCategoryNames() != null && !req.getCategoryNames().isEmpty()) {
 			Set<Long> allIds = placeCategoryService.findAllDescendantCategoryIds(req.getCategoryNames());
-			req.setCategoryNamecategoryIds(allIds);
+			finalCategoryIds.addAll(allIds);
 		}
 
-		// 2) keyword가 지역으로 판별되는 경우, placeCategory까지 검색
+		// 2) keyword가 지역으로 판별되는 경우, placeCategory까지 검색해서 OR 조건에 합침
 		String keyword = req.getKeyword();
 		if (keyword != null && !keyword.isEmpty()) {
-			// isLocationKeyword(keyword)
-			Set<Long> categoryIds = placeCategoryService.findAllSearchDescendantCategoryIds(keyword);
-			req.setTitleCategoryIds(categoryIds);
+			if (isLocationKeyword(keyword)) {
+				Set<Long> locationCategoryIds = placeCategoryService.findAllSearchDescendantCategoryIds(keyword);
+				finalCategoryIds.addAll(locationCategoryIds);
+				req.setKeyword(null);
+			}
 		}
 
-		// 2) DB 조회 (size+1 개)
+		// 3) 최종적으로 검색에 사용할 카테고리 목록 설정
+		//    finalCategoryIds가 비어 있다면 (== 검색할 카테고리가 전혀 없다면) null로 설정하여 검색 결과가 0건이 되도록 함
+		if (finalCategoryIds.isEmpty()) {
+			req.setCategoryNamecategoryIds(null);
+		} else {
+			req.setCategoryNamecategoryIds(finalCategoryIds);
+		}
+
+		// DB 조회 (size+1 개)
 		PlanContentAndTotalCountRes rawList = planRepositoryCustom.searchPlanNoOffset(req);
 
-		// 3) hasNext (size 이상이면 다음 페이지 존재)
+		// hasNext (size 이상이면 다음 페이지 존재)
 		boolean hasNext = rawList.getContent().size() > req.getSize();
 
-		// 4) 실제 반환 목록 (size까지만)
+		// 실제 반환 목록 (size까지만)
 		List<Plan> content = hasNext
 			? rawList.getContent().subList(0, req.getSize())
 			: rawList.getContent();
 
-		// 5) nextValue, nextId 설정
+		// nextValue, nextId 설정
 		String nextValue = null;
 		Long nextId = null;
 		if (!content.isEmpty()) {
 			Plan lastPlan = content.get(content.size() - 1);
 
-			// 전통 switch
 			switch (req.getSortBy()) {
 				case "viewCount":
 					// null 안전 처리
@@ -258,12 +270,12 @@ public class PlanService {
 			nextId = lastPlan.getId();
 		}
 
-		// 6) DTO 변환
+		// DTO 변환
 		List<PlanSearchRes> plans = content.stream()
 			.map(plan -> new PlanSearchRes(plan, prefix))
 			.toList();
 
-		// 7) 응답 구성
+		// 응답
 		PlanNoOffsetRes response = new PlanNoOffsetRes();
 		response.setPlans(plans);
 		response.setHasNext(hasNext);
@@ -613,7 +625,7 @@ public class PlanService {
 
 		if (keyword.endsWith("시") || keyword.endsWith("구") ||
 			keyword.endsWith("동") || keyword.endsWith("읍") ||
-			keyword.endsWith("면")) {
+			keyword.endsWith("면") || keyword.endsWith("역")) {
 			return true;
 		}
 

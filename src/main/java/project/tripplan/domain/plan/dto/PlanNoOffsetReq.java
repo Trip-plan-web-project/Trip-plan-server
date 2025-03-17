@@ -26,14 +26,8 @@ public class PlanNoOffsetReq {
 	// categoryNames로 넘어온 req에 대해 Service 단에서 세팅해서 Repository로 넘길 필드
 	private Set<Long> categoryNamecategoryIds;
 
-	// title로 넘어온 req에 대해 Service 단에서 세팅해서 Repository로 넘길 필드
-	private Set<Long> titleCategoryIds;
-
 	public void setCategoryNamecategoryIds(Set<Long> categoryNamecategoryIds) {
 		this.categoryNamecategoryIds = categoryNamecategoryIds;
 	}
 
-	public void setTitleCategoryIds(Set<Long> titleCategoryIds) {
-		this.titleCategoryIds = titleCategoryIds;
-	}
 }
