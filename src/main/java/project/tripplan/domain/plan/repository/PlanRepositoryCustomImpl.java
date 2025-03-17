@@ -42,7 +42,6 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 	private final QTransportationCategory transportationCategory = QTransportationCategory.transportationCategory;
 	private final QPlanPlaceCategory planPlaceCategory = QPlanPlaceCategory.planPlaceCategory;
 	private final QPlanTransportationCategory planTransport = QPlanTransportationCategory.planTransportationCategory;
-	private final QPlaceCategory placeCategory = QPlaceCategory.placeCategory;
 	private final QPlanDay planDay = QPlanDay.planDay;
 	private final QPlanDayDetail planDayDetail = QPlanDayDetail.planDayDetail;
 
@@ -105,17 +104,28 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 
 		BooleanBuilder orBuilder = new BooleanBuilder();
 
-		// 1) 제목 검색
+		// 1) 제목 검색 && 장소 카테고리 같이 검색
 		if (req.getKeyword() != null && !req.getKeyword().isBlank()) {
-			orBuilder.or(plan.title.likeIgnoreCase("%" + req.getKeyword() + "%"));
+			if (checkKeywordExistsInDB(req.getKeyword())) {
+				orBuilder.or(plan.title.likeIgnoreCase("%" + req.getKeyword() + "%"));
+			} else {
+				// categoryNamecategoryIds가 null이면 결과가 안 나오도록 처리
+				if (req.getCategoryNamecategoryIds() == null) {
+					builder.and(Expressions.FALSE);
+					return builder;
+				}
+			}
+		} else {
+			// keyword가 null이고 categoryNamecategoryIds가 null이면 결과가 안 나오도록 처리
+			if (req.getCategoryNamecategoryIds() == null) {
+				builder.and(Expressions.FALSE);
+				return builder;
+			}
 		}
 
 		if (req.getCategoryNamecategoryIds() != null && !req.getCategoryNamecategoryIds().isEmpty()) {
-			builder.and(pcFilter.id.in(req.getCategoryNamecategoryIds()));
-		}
-
-		if (req.getTitleCategoryIds() != null && !req.getTitleCategoryIds().isEmpty()) {
-			orBuilder.or(pcFilter.id.in(req.getTitleCategoryIds()));
+			log.info("CategoryNamecategoryIds != null");
+			builder.or(pcFilter.id.in(req.getCategoryNamecategoryIds()));
 		}
 
 		if (orBuilder.hasValue()) {
@@ -300,5 +310,18 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 			.fetchOne();
 
 		return Optional.ofNullable(result);
+	}
+
+	private boolean checkKeywordExistsInDB(String keyword) {
+		// plan은 Q클래스(QPlan)라고 가정
+		// 만약 plan.title likeIgnoreCase '%keyword%' 결과가 하나라도 있으면 true
+		Integer fetchOne = qf
+			.selectOne()
+			.from(plan)
+			.where(plan.title.likeIgnoreCase("%" + keyword + "%"))
+			.fetchFirst(); // 결과값이 하나라도 있으면 not null
+
+		// fetchOne != null 이면 키워드가 존재한다는 뜻
+		return (fetchOne != null);
 	}
 }
