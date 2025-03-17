@@ -118,7 +118,7 @@ public class ReviewService {
 			.placeId(review.getPlaceId())
 			.title(review.getTitle())
 			.nickname(review.getUser().getNickname())
-			.userImage(review.getUser().getImage())
+			.userImage(review.getUser().getImage() != null ? prefix + "/" + review.getUser().getImage() : null)
 			.content(review.getContent())
 			.viewCount(review.getViewCount())
 			.latitude(review.getLatitude())
