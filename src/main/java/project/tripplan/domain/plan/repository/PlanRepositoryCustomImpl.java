@@ -312,6 +312,16 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		return Optional.ofNullable(result);
 	}
 
+	@Override
+	public List<Plan> findAllByIds(List<Long> planIds) {
+		if (planIds == null || planIds.isEmpty()) return List.of();
+
+		return qf
+			.selectFrom(plan)
+			.where(plan.id.in(planIds))
+			.fetch();
+	}
+
 	private boolean checkKeywordExistsInDB(String keyword) {
 		// plan은 Q클래스(QPlan)라고 가정
 		// 만약 plan.title likeIgnoreCase '%keyword%' 결과가 하나라도 있으면 true
