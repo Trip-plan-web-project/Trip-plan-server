@@ -75,6 +75,7 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 
 		// 필터링 조건
 		BooleanBuilder builder = buildSearchCondition(req, ppcFilter, pcFilter);
+		builder.and(plan.status.eq(PlanStatus.PUBLIC));
 
 		// 쿼리 생성
 		JPAQuery<Plan> query = qf
@@ -228,6 +229,8 @@ public class PlanRepositoryCustomImpl implements PlanRepositoryCustom {
 		QPlaceCategory pcFilter = new QPlaceCategory("pcFilter");
 
 		BooleanBuilder builder = buildSearchCondition(req, ppcFilter, pcFilter);
+
+		builder.and(plan.status.eq(PlanStatus.PUBLIC));
 
 		Long countResult = qf
 			.select(plan.countDistinct())
